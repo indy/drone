@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="green">#dd00eb45</color>
-    <color name="blue">#ff4fb4e7</color>
+    <color name="pressed_drone">#CCD5500B</color>
+
+    <color name="green">#00eb45</color>
+    <color name="blue">#4fb4e7</color>
+    <color name="orange">#d5500b</color>
+
+    <color name="white">#ffffff</color>
+
+    <color name="pink">#ff00ff</color>
+    <color name="yellow">#ff0000</color>
+    <color name="cyan">#00aaaa</color>
+    <color name="deep_blue">#000066</color>
 </resources>

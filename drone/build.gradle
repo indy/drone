@@ -5,9 +5,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:13.0.+'
+    compile 'com.android.support:appcompat-v7:18.0.+'
     compile 'de.greenrobot:eventbus:2.0.2'
-    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
 }
 
 android {
@@ -16,7 +15,7 @@ android {
 
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion 17
+        targetSdkVersion 18
     }
 }
 
