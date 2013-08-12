@@ -21,10 +21,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 
 import java.util.ArrayList;
 
@@ -34,7 +32,7 @@ import java.util.ArrayList;
 public class TabsAdapter extends FragmentPagerAdapter
     implements ActionBar.TabListener {
 
-    private final SherlockFragmentActivity mActivity;
+    private final ActionBarActivity mActivity;
     private final ActionBar mActionBar;
     private final ViewPager mViewPager;
     private final ArrayList<TabInfo> mTabs = new ArrayList<TabInfo>();
@@ -50,7 +48,7 @@ public class TabsAdapter extends FragmentPagerAdapter
         }
     }
 
-    public TabsAdapter(SherlockFragmentActivity activity, ViewPager pager) {
+    public TabsAdapter(ActionBarActivity activity, ViewPager pager) {
         super(activity.getSupportFragmentManager());
         mActivity = activity;
         mActionBar = activity.getSupportActionBar();
@@ -64,7 +62,7 @@ public class TabsAdapter extends FragmentPagerAdapter
         Bundle args = null;
         TabInfo info = new TabInfo(clss, args);
 
-        Tab tab = mActionBar.newTab();
+        ActionBar.Tab tab = mActionBar.newTab();
         tab.setText(tabName);
         tab.setTag(info);
         tab.setTabListener(this);
@@ -95,7 +93,7 @@ public class TabsAdapter extends FragmentPagerAdapter
         };
 
     @Override
-    public void onTabSelected(Tab tab, FragmentTransaction ft) {
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
 
         mViewPager.setCurrentItem(tab.getPosition());
         /*
@@ -112,11 +110,11 @@ public class TabsAdapter extends FragmentPagerAdapter
     }
 
     @Override
-    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
     }
 
     @Override
-    public void onTabReselected(Tab tab, FragmentTransaction ft) {
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
     }
 
     public int getCurrentTabNum()

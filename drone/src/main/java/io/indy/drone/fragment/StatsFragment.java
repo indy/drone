@@ -17,21 +17,20 @@
 package io.indy.drone.fragment;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import io.indy.drone.R;
 
-public class StatsFragment extends SherlockFragment {
- 
+public class StatsFragment extends Fragment {
+/*
     @Override
     public SherlockFragmentActivity getSherlockActivity() {
         return super.getSherlockActivity();
     }
- 
+ */
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

@@ -17,16 +17,15 @@
 package io.indy.drone;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v4.view.ViewPager;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import io.indy.drone.fragment.MapFragment;
 import io.indy.drone.fragment.NewsFragment;
 import io.indy.drone.fragment.StatsFragment;
 
-public class MainActivity extends SherlockFragmentActivity {
+public class MainActivity extends ActionBarActivity {
  
     TabsAdapter mTabsAdapter;
 
@@ -50,4 +49,5 @@ public class MainActivity extends SherlockFragmentActivity {
         mTabsAdapter.addTab("Map", MapFragment.class);
         mTabsAdapter.addTab("Stats", StatsFragment.class);
     }
+
 }
