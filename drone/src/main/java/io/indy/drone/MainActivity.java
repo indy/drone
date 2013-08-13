@@ -20,13 +20,24 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import io.indy.drone.fragment.MapFragment;
 import io.indy.drone.fragment.NewsFragment;
 import io.indy.drone.fragment.StatsFragment;
 
 public class MainActivity extends ActionBarActivity {
- 
+
+    static private final boolean D = true;
+    static private final String TAG = MainActivity.class.getSimpleName();
+
+    static void ifd(final String message) {
+        if (D) Log.d(TAG, message);
+    }
+
     TabsAdapter mTabsAdapter;
 
     @Override
@@ -49,5 +60,26 @@ public class MainActivity extends ActionBarActivity {
         mTabsAdapter.addTab("Map", MapFragment.class);
         mTabsAdapter.addTab("Stats", StatsFragment.class);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        ifd("clicked " + item);
+
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                ifd("clicked on settings");
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
 }
