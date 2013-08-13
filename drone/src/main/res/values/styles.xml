@@ -4,52 +4,26 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
-    </style>
-
-    <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-    </style>
-
-
 
     <style name="Theme.Drone" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="android:actionBarItemBackground">@drawable/selectable_background_drone</item>
-        <!-- 
-        <item name="android:popupMenuStyle">@style/PopupMenu.Drone</item> -->
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Drone</item>
         <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Drone</item>
-        <!-- 
-        <item name="android:actionDropDownStyle">@style/DropDownNav.Drone</item> -->
         <item name="android:actionBarStyle">@style/ActionBar.Solid.Drone</item>
         <item name="android:actionModeBackground">@drawable/cab_background_top_drone</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_drone</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Drone</item>
-        
                 <!-- Light.DarkActionBar specific -->
         <item name="android:actionBarWidgetTheme">@style/Theme.Drone.Widget</item>
 
-
-
-
+        <!-- Support library compatibility -->
         <item name="actionBarItemBackground">@drawable/selectable_background_drone</item>
-        <!-- 
-        <item name="popupMenuStyle">@style/PopupMenu.Drone</item> -->
         <item name="dropDownListViewStyle">@style/DropDownListView.Drone</item>
         <item name="actionBarTabStyle">@style/ActionBarTabStyle.Drone</item>
-        <!-- 
-        <item name="actionDropDownStyle">@style/DropDownNav.Drone</item> -->
         <item name="actionBarStyle">@style/ActionBar.Solid.Drone</item>
         <item name="actionModeBackground">@drawable/cab_background_top_drone</item>
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_drone</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Drone</item>
-        
                 <!-- Light.DarkActionBar specific -->
         <item name="actionBarWidgetTheme">@style/Theme.Drone.Widget</item>
 
@@ -61,6 +35,7 @@
         <item name="android:backgroundSplit">@drawable/ab_bottom_solid_drone</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Drone</item>
 
+        <!-- Support library compatibility -->
         <item name="background">@drawable/ab_solid_drone</item>
         <item name="backgroundStacked">@drawable/ab_stacked_solid_drone</item>
         <item name="backgroundSplit">@drawable/ab_bottom_solid_drone</item>
@@ -72,52 +47,35 @@
         <item name="android:background">@drawable/ab_transparent_drone</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Drone</item>
 
+        <!-- Support library compatibility -->
         <item name="background">@drawable/ab_transparent_drone</item>
         <item name="progressBarStyle">@style/ProgressBar.Drone</item>
     </style>
-    <!-- 
-    <style name="PopupMenu.Drone" parent="@style/Widget.AppCompat.ListPopupWindow">
-        <item name="android:popupBackground">@drawable/menu_dropdown_panel_drone</item>
-    </style>
- -->
+
     <style name="DropDownListView.Drone" parent="@style/Widget.AppCompat.ListView.DropDown">
         <item name="android:listSelector">@drawable/selectable_background_drone</item>
     </style>
 
     <style name="ActionBarTabStyle.Drone" parent="@style/Widget.AppCompat.ActionBar.TabView">
         <item name="android:background">@drawable/tab_indicator_ab_drone</item>
+        <!-- Support library compatibility -->
         <item name="background">@drawable/tab_indicator_ab_drone</item>
     </style>
-    <!-- 
-    <style name="DropDownNav.Drone" parent="@style/Widget.AppCompat.Spinner">
-        <item name="android:background">@drawable/spinner_background_ab_drone</item>
-        <item name="android:popupBackground">@drawable/menu_dropdown_panel_drone</item>
-        <item name="android:dropDownSelector">@drawable/selectable_background_drone</item>
 
-        <item name="background">@drawable/spinner_background_ab_drone</item>
-    </style>
-     -->
     <style name="ProgressBar.Drone" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/progress_horizontal_drone</item>
     </style>
     
     <style name="ActionButton.CloseMode.Drone" parent="@style/Widget.AppCompat.ActionButton.CloseMode">
         <item name="android:background">@drawable/btn_cab_done_drone</item>
+        <!-- Support library compatibility -->
         <item name="background">@drawable/btn_cab_done_drone</item>
     </style>
 
     <!-- this style is only referenced in a Light.DarkActionBar based theme -->
     <style name="Theme.Drone.Widget" parent="@style/Theme.AppCompat">
-      <!-- 
-        <item name="android:popupMenuStyle">@style/PopupMenu.Drone</item> -->
         <item name="android:dropDownListViewStyle">@style/DropDownListView.Drone</item>
-
-        <!-- 
-        <item name="popupMenuStyle">@style/PopupMenu.Drone</item> -->
+        <!-- Support library compatibility -->
         <item name="dropDownListViewStyle">@style/DropDownListView.Drone</item>
-
     </style>
-
-    <!-- ================================================== -->
-
 </resources>
