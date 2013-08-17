@@ -1,4 +1,5 @@
 apply plugin: 'android'
+apply plugin: 'android-test'
 
 repositories {
     mavenCentral()
@@ -7,11 +8,15 @@ repositories {
 dependencies {
     compile 'com.android.support:appcompat-v7:18.0.+'
     compile 'de.greenrobot:eventbus:2.0.2'
+
+    testCompile 'junit:junit:4.10'
+    testCompile 'org.robolectric:robolectric:2.1.+'
+    testCompile 'com.squareup:fest-android:1.0.+'
 }
 
 android {
     compileSdkVersion 18
-    buildToolsVersion "17.0.0"
+    buildToolsVersion "18.0.1"
 
     defaultConfig {
         minSdkVersion 10
