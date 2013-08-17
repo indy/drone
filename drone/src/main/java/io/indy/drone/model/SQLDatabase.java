@@ -37,22 +37,26 @@ public class SQLDatabase {
     // The index (key) column name for use in where clauses.
     public static final String KEY_ID = "id";
 
-    public static final String NUMBER = "number";
     public static final String JSON_ID = "json_id";
+    public static final String NUMBER = "number";
     public static final String COUNTRY = "country";
     public static final String HAPPENED = "happened";
     public static final String TOWN = "town";
     public static final String LOCATION = "location";
     public static final String DEATHS = "deaths";
+    public static final String HAS_DEATHS_RANGE = "has_deaths_range";
     public static final String DEATHS_MIN = "deaths_min";
     public static final String DEATHS_MAX = "deaths_max";
     public static final String CIVILIANS = "civilians";
+    public static final String HAS_CIVILIANS_RANGE = "has_civilians_range";
     public static final String CIVILIANS_MIN = "civilians_min";
     public static final String CIVILIANS_MAX = "civilians_max";
     public static final String INJURIES = "injuries";
+    public static final String HAS_INJURIES_RANGE = "has_injuries_range";
     public static final String INJURIES_MIN = "injuries_min";
     public static final String INJURIES_MAX = "injuries_max";
     public static final String CHILDREN = "children";
+    public static final String HAS_CHILDREN_RANGE = "has_children_range";
     public static final String CHILDREN_MIN = "children_min";
     public static final String CHILDREN_MAX = "children_max";
     public static final String TWEET_ID = "tweet_id";
@@ -82,6 +86,10 @@ public class SQLDatabase {
         mModelHelper.close();
     }
 
+    public boolean isEmpty() {
+        return true;
+    }
+
     public void addStrikes(List<Strike> strikes) {
 
         SQLiteDatabase db = mModelHelper.getWritableDatabase();
@@ -90,24 +98,41 @@ public class SQLDatabase {
         for(Strike strike: strikes) {
             cv = new ContentValues();
 
-            cv.put(NUMBER, strike.getNumber());
             cv.put(JSON_ID, strike.getJsonId());
+            cv.put(NUMBER, strike.getNumber());
             cv.put(COUNTRY, strike.getCountry());
             cv.put(HAPPENED, strike.getHappened().toString());
             cv.put(TOWN, strike.getTown());
             cv.put(LOCATION, strike.getLocation());
+
             cv.put(DEATHS, strike.getDeaths());
-            cv.put(DEATHS_MIN, strike.getDeathsMin());
-            cv.put(DEATHS_MAX, strike.getDeathsMax());
+            cv.put(HAS_DEATHS_RANGE, strike.hasValidDeathsRange());
+            if(strike.hasValidDeathsRange()) {
+                cv.put(DEATHS_MIN, strike.getDeathsMin());
+                cv.put(DEATHS_MAX, strike.getDeathsMax());
+            }
+
             cv.put(CIVILIANS, strike.getCivilians());
-            cv.put(CIVILIANS_MIN, strike.getCiviliansMin());
-            cv.put(CIVILIANS_MAX, strike.getCiviliansMax());
+            cv.put(HAS_CIVILIANS_RANGE, strike.hasValidCivilianRange());
+            if(strike.hasValidCivilianRange()) {
+                cv.put(CIVILIANS_MIN, strike.getCiviliansMin());
+                cv.put(CIVILIANS_MAX, strike.getCiviliansMax());
+            }
+
             cv.put(INJURIES, strike.getInjuries());
-            cv.put(INJURIES_MIN, strike.getInjuriesMin());
-            cv.put(INJURIES_MAX, strike.getInjuriesMax());
+            cv.put(HAS_INJURIES_RANGE, strike.hasValidInjuriesRange());
+            if(strike.hasValidInjuriesRange()) {
+                cv.put(INJURIES_MIN, strike.getInjuriesMin());
+                cv.put(INJURIES_MAX, strike.getInjuriesMax());
+            }
+
             cv.put(CHILDREN, strike.getChildren());
-            cv.put(CHILDREN_MIN, strike.getChildrenMin());
-            cv.put(CHILDREN_MAX, strike.getChildrenMax());
+            cv.put(HAS_CHILDREN_RANGE, strike.hasValidChildrenRange());
+            if(strike.hasValidChildrenRange()) {
+                cv.put(CHILDREN_MIN, strike.getChildrenMin());
+                cv.put(CHILDREN_MAX, strike.getChildrenMax());
+            }
+
             cv.put(TWEET_ID, strike.getTweetId());
             cv.put(BUREAU_ID, strike.getBureauId());
             cv.put(BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
@@ -201,22 +226,26 @@ public class SQLDatabase {
 
             String table = new SQLTableStatement(STRIKE_TABLE)
                 .integer(KEY_ID, "primary key autoincrement")
+                .text(JSON_ID)
                 .integer(NUMBER)
-                .integer(JSON_ID)
                 .text(COUNTRY)
                 .timestamp(HAPPENED)
                 .text(TOWN)
                 .text(LOCATION)
                 .text(DEATHS)
+                .integer(HAS_DEATHS_RANGE)
                 .integer(DEATHS_MIN)
                 .integer(DEATHS_MAX)
                 .text(CIVILIANS)
+                .integer(HAS_CIVILIANS_RANGE)
                 .integer(CIVILIANS_MIN)
                 .integer(CIVILIANS_MAX)
                 .text(INJURIES)
+                .integer(HAS_INJURIES_RANGE)
                 .integer(INJURIES_MIN)
                 .integer(INJURIES_MAX)
                 .text(CHILDREN)
+                .integer(HAS_CHILDREN_RANGE)
                 .integer(CHILDREN_MIN)
                 .integer(CHILDREN_MAX)
                 .text(TWEET_ID)

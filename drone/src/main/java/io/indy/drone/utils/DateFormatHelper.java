@@ -33,6 +33,8 @@ public class DateFormatHelper {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+    private static final String DRONE_JSON_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+
     public static String formatTimeSpan(String timeToFormat) {
 
         String timeSpan = "";
@@ -60,6 +62,18 @@ public class DateFormatHelper {
         Date date = null;
         try {
             date = iso8601Format.parse(dateString);
+        } catch (ParseException e) {
+            ifd("ParseException: " + e);
+        }
+
+        return date;
+    }
+
+    public static Date parseDroneJsonDateString(String dateString) {
+        SimpleDateFormat format = new SimpleDateFormat(DRONE_JSON_DATE_FORMAT);
+        Date date = null;
+        try {
+            date = format.parse(dateString);
         } catch (ParseException e) {
             ifd("ParseException: " + e);
         }

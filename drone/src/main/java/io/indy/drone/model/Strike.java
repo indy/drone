@@ -18,7 +18,15 @@ package io.indy.drone.model;
 
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import io.indy.drone.utils.DateFormatHelper;
 
 public class Strike {
     private static final String TAG = "Strike";
@@ -28,26 +36,53 @@ public class Strike {
         if (D) Log.d(TAG, message);
     }
 
+    // the strings used as keys in the dronestre.am json feed
+    //
+    public static final String JSON_ID = "_id";
+    public static final String NUMBER = "number";
+    public static final String COUNTRY = "country";
+    public static final String HAPPENED = "date";
+    public static final String TOWN = "town";
+    public static final String LOCATION = "location";
+    public static final String DEATHS = "deaths";
+    public static final String DEATHS_MIN = "deaths_min";
+    public static final String DEATHS_MAX = "deaths_max";
+    public static final String CIVILIANS = "civilians";
+    public static final String INJURIES = "injuries";
+    public static final String CHILDREN = "children";
+    public static final String TWEET_ID = "tweet_id";
+    public static final String BUREAU_ID = "bureau_id";
+    public static final String BIJ_SUMMARY_SHORT = "bij_summary_short";
+    public static final String BIJ_LINK = "bij_link";
+    public static final String TARGET = "target";
+    public static final String LAT = "lat";
+    public static final String LON = "lon";
+    public static final String NAMES = "names";
+
+    private String mJsonId;
     private int mNumber;
-    private int mJsonId;
     private String mCountry;
     private Date mHappened;
     private String mTown;
     private String mLocation;
 
     private String mDeaths;
+    private boolean mHasValidDeathsRange;
     private int mDeathsMin;
     private int mDeathsMax;
 
     private String mCivilians;
+    private boolean mHasValidCivilianRange;
     private int mCiviliansMin;
     private int mCiviliansMax;
 
     private String mInjuries;
+    private boolean mHasValidInjuriesRange;
     private int mInjuriesMin;
     private int mInjuriesMax;
 
     private String mChildren;
+    private boolean mHasValidChildrenRange;
     private int mChildrenMin;
     private int mChildrenMax;
 
@@ -57,10 +92,42 @@ public class Strike {
     private String mBijLink;
     private String mTarget;
 
-    private float mLat;
-    private float mLon;
+    private double mLat;
+    private double mLon;
         
     private String mNames;
+
+    public boolean hasValidDeathsRange() {
+        return mHasValidDeathsRange;
+    }
+
+    public void confirmValidDeathsRange(boolean hasValidDeathsRange) {
+        mHasValidDeathsRange = hasValidDeathsRange;
+    }
+
+    public boolean hasValidCivilianRange() {
+        return mHasValidCivilianRange;
+    }
+
+    public void confirmValidCivilianRange(boolean hasValidCivilianRange) {
+        mHasValidCivilianRange = hasValidCivilianRange;
+    }
+
+    public boolean hasValidInjuriesRange() {
+        return mHasValidInjuriesRange;
+    }
+
+    public void confirmValidInjuriesRange(boolean hasValidInjuriesRange) {
+        mHasValidInjuriesRange = hasValidInjuriesRange;
+    }
+    public boolean hasValidChildrenRange() {
+        return mHasValidChildrenRange;
+    }
+
+    public void confirmValidChildrenRange(boolean hasValidChildrenRange) {
+        mHasValidChildrenRange = hasValidChildrenRange;
+    }
+
 
     public int getNumber() {
         return mNumber;
@@ -71,11 +138,11 @@ public class Strike {
         return this;
     }
 
-    public int getJsonId() {
+    public String getJsonId() {
         return mJsonId;
     }
 
-    public Strike setJsonId(int jsonId) {
+    public Strike setJsonId(String jsonId) {
         mJsonId = jsonId;
         return this;
     }
@@ -269,20 +336,20 @@ public class Strike {
         return this;
     }
 
-    public float getLat() {
+    public double getLat() {
         return mLat;
     }
 
-    public Strike setLat(float lat) {
+    public Strike setLat(double lat) {
         mLat = lat;
         return this;
     }
 
-    public float getLon() {
+    public double getLon() {
         return mLon;
     }
 
-    public Strike setLon(float lon) {
+    public Strike setLon(double lon) {
         mLon = lon;
         return this;
     }
@@ -294,5 +361,147 @@ public class Strike {
     public Strike setNames(String names) {
         mNames = names;
         return this;
+    }
+
+
+    private static Pattern SINGLE_NUMBER = Pattern.compile("^\\s*(\\d+)\\s*$");
+    private static Pattern RANGE = Pattern.compile("^\\s*(\\d+)\\s*-\\s*(\\d+)\\s*$");
+
+    public static class ParseException extends Exception {
+        public ParseException(String message){
+            super(message);
+        }
+    }
+
+    public static boolean hasValidMinMax(String s) {
+
+        Matcher matchSingle = SINGLE_NUMBER.matcher(s);
+        Matcher matchRange = RANGE.matcher(s);
+
+        return matchSingle.matches() || matchRange.matches();
+    }
+
+    public static int[] parseMinMax(String s) throws ParseException {
+
+        Matcher matcher = SINGLE_NUMBER.matcher(s);
+        if(matcher.matches()) {
+            int val = Integer.parseInt(matcher.group(1));
+            return new int[]{val, val};
+        }
+
+        matcher = RANGE.matcher(s);
+        if(matcher.matches()) {
+            int min = Integer.parseInt(matcher.group(1));
+            int max = Integer.parseInt(matcher.group(2));
+            return new int[]{min, max};
+        }
+
+        ifd("wat " + s);
+        throw new ParseException("cannot parse min/max from: " + s);
+    }
+
+
+    public static Strike fromJson(JSONObject jsonObject) {
+
+
+        Strike strike = new Strike();
+        try {
+            strike.setJsonId(jsonObject.getString(JSON_ID));
+            strike.setNumber(jsonObject.getInt(NUMBER));
+            strike.setCountry(jsonObject.getString(COUNTRY));
+            strike.setHappened(DateFormatHelper.parseDroneJsonDateString(jsonObject.getString(HAPPENED)));
+            strike.setTown(jsonObject.getString(TOWN));
+            strike.setLocation(jsonObject.getString(LOCATION));
+
+            //strike.setDeathsMin(jsonObject.getString(DEATHS_MIN));
+            //strike.setDeathsMax(jsonObject.getString(DEATHS_MAX));
+
+            String deaths = jsonObject.getString(DEATHS);
+            strike.setDeaths(deaths);
+            if(hasValidMinMax(deaths)) {
+                strike.confirmValidDeathsRange(true);
+                try {
+                    int[] minMax = parseMinMax(deaths);
+                    strike.setDeathsMin(minMax[0]);
+                    strike.setDeathsMax(minMax[1]);
+                } catch(ParseException e) {
+                    strike.confirmValidDeathsRange(false);
+                    Log.e(TAG, e.toString());
+                }
+            } else {
+                strike.confirmValidDeathsRange(false);
+            }
+
+            String civilians = jsonObject.getString(CIVILIANS);
+            strike.setCivilians(civilians);
+            if(hasValidMinMax(civilians)) {
+                strike.confirmValidCivilianRange(true);
+                try {
+                    int[] minMax = parseMinMax(civilians);
+                    strike.setCiviliansMin(minMax[0]);
+                    strike.setCiviliansMax(minMax[1]);
+                } catch(ParseException e) {
+                    strike.confirmValidCivilianRange(false);
+                    Log.e(TAG, e.toString());
+                }
+            } else {
+                strike.confirmValidCivilianRange(false);
+            }
+
+            String injuries = jsonObject.getString(INJURIES);
+            strike.setInjuries(injuries);
+            if(hasValidMinMax(injuries)) {
+                strike.confirmValidInjuriesRange(true);
+                try {
+                    int[] minMax = parseMinMax(injuries);
+                    strike.setInjuriesMin(minMax[0]);
+                    strike.setInjuriesMax(minMax[1]);
+                } catch(ParseException e) {
+                    strike.confirmValidInjuriesRange(false);
+                    Log.e(TAG, e.toString());
+                }
+            } else {
+                strike.confirmValidInjuriesRange(false);
+            }
+
+
+            String children = jsonObject.getString(CHILDREN);
+            strike.setChildren(children);
+            if(hasValidMinMax(children)) {
+                strike.confirmValidChildrenRange(true);
+                try {
+                    int[] minMax = parseMinMax(children);
+                    strike.setChildrenMin(minMax[0]);
+                    strike.setChildrenMax(minMax[1]);
+                } catch(ParseException e) {
+                    strike.confirmValidChildrenRange(false);
+                    Log.e(TAG, e.toString());
+                }
+            } else {
+                strike.confirmValidChildrenRange(false);
+            }
+
+            strike.setTweetId(jsonObject.getString(TWEET_ID));
+            strike.setBureauId(jsonObject.getString(BUREAU_ID));
+            strike.setBijSummaryShort(jsonObject.getString(BIJ_SUMMARY_SHORT));
+            strike.setBijLink(jsonObject.getString(BIJ_LINK));
+            strike.setTarget(jsonObject.getString(TARGET));
+            strike.setLat(Double.parseDouble(jsonObject.getString(LAT)));
+            strike.setLon(Double.parseDouble(jsonObject.getString(LON)));
+
+            JSONArray names = jsonObject.getJSONArray(NAMES);
+            // the NAMES array should only have one entry
+            for(int i=0;i<names.length();i++) {
+                names.getString(i);
+                strike.setNames(names.getString(i));
+            }
+
+            return strike;
+
+        } catch (JSONException e) {
+            Log.d(TAG, "JSONException: " + e);
+        }
+
+        return null;
     }
 }

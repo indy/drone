@@ -25,14 +25,18 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import io.indy.drone.async.PopulateDatabaseAsyncTask;
 import io.indy.drone.fragment.MapFragment;
 import io.indy.drone.fragment.NewsFragment;
 import io.indy.drone.fragment.StatsFragment;
+import io.indy.drone.model.SQLDatabase;
 
 public class MainActivity extends ActionBarActivity {
 
     static private final boolean D = true;
     static private final String TAG = MainActivity.class.getSimpleName();
+
+    private SQLDatabase mDatabase;
 
     static void ifd(final String message) {
         if (D) Log.d(TAG, message);
@@ -46,7 +50,21 @@ public class MainActivity extends ActionBarActivity {
         // Get the view from activity_main.xml
         setContentView(R.layout.activity_main);
 
+        mDatabase = new SQLDatabase(this);
+
         setupTabs();
+
+        if(mDatabase.isEmpty()) {
+            PopulateDatabaseAsyncTask task = new PopulateDatabaseAsyncTask(this, mDatabase, "strikes/data.json");
+            task.execute();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        ifd("onDestroy");
+        mDatabase.closeDatabase();
+        super.onDestroy();
     }
 
     private void setupTabs() {
