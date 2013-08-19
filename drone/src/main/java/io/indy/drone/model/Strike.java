@@ -36,29 +36,6 @@ public class Strike {
         if (D) Log.d(TAG, message);
     }
 
-    // the strings used as keys in the dronestre.am json feed
-    //
-    public static final String JSON_ID = "_id";
-    public static final String NUMBER = "number";
-    public static final String COUNTRY = "country";
-    public static final String HAPPENED = "date";
-    public static final String TOWN = "town";
-    public static final String LOCATION = "location";
-    public static final String DEATHS = "deaths";
-    public static final String DEATHS_MIN = "deaths_min";
-    public static final String DEATHS_MAX = "deaths_max";
-    public static final String CIVILIANS = "civilians";
-    public static final String INJURIES = "injuries";
-    public static final String CHILDREN = "children";
-    public static final String TWEET_ID = "tweet_id";
-    public static final String BUREAU_ID = "bureau_id";
-    public static final String BIJ_SUMMARY_SHORT = "bij_summary_short";
-    public static final String BIJ_LINK = "bij_link";
-    public static final String TARGET = "target";
-    public static final String LAT = "lat";
-    public static final String LON = "lon";
-    public static final String NAMES = "names";
-
     private String mJsonId;
     private int mNumber;
     private String mCountry;
@@ -403,6 +380,28 @@ public class Strike {
 
     public static Strike fromJson(JSONObject jsonObject) {
 
+        // the strings used as keys in the dronestre.am json feed
+        //
+        final String JSON_ID = "_id";
+        final String NUMBER = "number";
+        final String COUNTRY = "country";
+        final String HAPPENED = "date";
+        final String TOWN = "town";
+        final String LOCATION = "location";
+        final String DEATHS = "deaths";
+        final String DEATHS_MIN = "deaths_min";
+        final String DEATHS_MAX = "deaths_max";
+        final String CIVILIANS = "civilians";
+        final String INJURIES = "injuries";
+        final String CHILDREN = "children";
+        final String TWEET_ID = "tweet_id";
+        final String BUREAU_ID = "bureau_id";
+        final String BIJ_SUMMARY_SHORT = "bij_summary_short";
+        final String BIJ_LINK = "bij_link";
+        final String TARGET = "target";
+        final String LAT = "lat";
+        final String LON = "lon";
+        final String NAMES = "names";
 
         Strike strike = new Strike();
         try {
