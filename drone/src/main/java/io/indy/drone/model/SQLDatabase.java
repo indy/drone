@@ -87,7 +87,7 @@ public class SQLDatabase {
     }
 
     public boolean isEmpty() {
-        return true;
+        return false;
     }
 
     public void addStrikes(List<Strike> strikes) {
