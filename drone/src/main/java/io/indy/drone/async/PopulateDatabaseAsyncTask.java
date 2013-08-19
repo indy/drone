@@ -97,7 +97,7 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike
     protected List<Strike> doInBackground(Void... params) {
         JSONObject jsonObject = loadJsonFromFile(mPath);
         List<Strike> strikes = parseJson(jsonObject);
-        // mDatabase.loadStrikes(strikes);
+        mDatabase.addStrikes(strikes);
         return strikes;
     }
 
@@ -105,6 +105,7 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike
     protected void onPostExecute(List<Strike> result) {
         super.onPostExecute(result);
 
+        ifd("added " + result.size() + " strikes to the db");
         // fire an event
 
     }
