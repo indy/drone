@@ -41,7 +41,7 @@ public class DateFormatHelper {
 
         SimpleDateFormat iso8601Format = new SimpleDateFormat(DATE_FORMAT);
 
-        Date date = null;
+        Date date;
         if (timeToFormat != null) {
             try {
                 date = iso8601Format.parse(timeToFormat);
