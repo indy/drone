@@ -16,32 +16,79 @@
 
 package io.indy.drone.fragment;
 
+import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
+import io.indy.drone.MainActivity;
 import io.indy.drone.R;
+import io.indy.drone.model.SQLDatabase;
 
 public class NewsFragment extends Fragment {
+    private final boolean D = true;
+    private final String TAG = NewsFragment.class.getSimpleName();
 
-    /*
-    @Override
-    public SherlockFragmentActivity getSherlockActivity() {
-        return super.getSherlockActivity();
+//    private SQLDatabase mDatabase;
+
+    private ListView mListView;
+
+    private void ifd(final String message) {
+        if (D) Log.d(TAG, message);
     }
- */
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
- 
+
+    @SuppressWarnings("deprecation")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news, container, false);
+
+        MainActivity mainActivity = (MainActivity)getActivity();
+        SQLDatabase sqlDatabase = mainActivity.getDatabase();
+        Cursor cursor = sqlDatabase.getStrikeCursor();
+
+        SimpleCursorAdapter adapter;
+
+        String[] fieldsDB = { SQLDatabase.KEY_ID,
+                SQLDatabase.COUNTRY,
+                SQLDatabase.TOWN,
+                SQLDatabase.LOCATION,
+                SQLDatabase.BIJ_SUMMARY_SHORT};
+
+        int[] fieldsView = {R.id.strikeid, R.id.country, R.id.town, R.id.location, R.id.summary};
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            adapter = new SimpleCursorAdapter(getActivity(), R.layout.row_news,
+                    cursor, fieldsDB, fieldsView, 0);
+        } else {
+            adapter = new SimpleCursorAdapter(getActivity(), R.layout.row_news,
+                    cursor, fieldsDB, fieldsView);
+        }
+
+        mListView = (ListView) view.findViewById(R.id.listViewNews);
+        mListView.setAdapter(adapter);
+
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        CursorAdapter ca = (CursorAdapter)(mListView.getAdapter());
+        ca.getCursor().close();
     }
  
     @Override
