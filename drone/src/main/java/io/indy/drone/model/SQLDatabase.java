@@ -18,12 +18,15 @@ package io.indy.drone.model;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.List;
+
+import io.indy.drone.async.PopulateDatabaseAsyncTask;
 
 public class SQLDatabase {
 
@@ -35,7 +38,7 @@ public class SQLDatabase {
     }
 
     // The index (key) column name for use in where clauses.
-    public static final String KEY_ID = "id";
+    public static final String KEY_ID = "_id";
 
     public static final String JSON_ID = "json_id";
     public static final String NUMBER = "number";
@@ -79,6 +82,14 @@ public class SQLDatabase {
                 null,
                 ModelHelper.DATABASE_VERSION);
 
+
+        dummyOp();
+
+
+        ifd("getStrikeCursor");
+
+        Cursor c = getStrikeCursor();
+        ifd("cursor count is " + c.getCount());
     }
 
     // Called when you no longer need access to the database.
@@ -86,120 +97,42 @@ public class SQLDatabase {
         mModelHelper.close();
     }
 
-    public boolean isEmpty() {
-        return false;
+    // dummy method invoked by the Constructor in order to force creation of the db
+    // TODO: remove this once app has some functionality and queries db anyway
+    private void dummyOp() {
+        ifd("dummyOp");
+        mModelHelper.getReadableDatabase().rawQuery("select count(*) from strike", null);
     }
 
-    public void addStrikes(List<Strike> strikes) {
 
-        SQLiteDatabase db = mModelHelper.getWritableDatabase();
-        ContentValues cv;
-
-        for(Strike strike: strikes) {
-            cv = new ContentValues();
-
-            cv.put(JSON_ID, strike.getJsonId());
-            cv.put(NUMBER, strike.getNumber());
-            cv.put(COUNTRY, strike.getCountry());
-            cv.put(HAPPENED, strike.getHappened().toString());
-            cv.put(TOWN, strike.getTown());
-            cv.put(LOCATION, strike.getLocation());
-
-            cv.put(DEATHS, strike.getDeaths());
-            cv.put(HAS_DEATHS_RANGE, strike.hasValidDeathsRange());
-            if(strike.hasValidDeathsRange()) {
-                cv.put(DEATHS_MIN, strike.getDeathsMin());
-                cv.put(DEATHS_MAX, strike.getDeathsMax());
-            }
-
-            cv.put(CIVILIANS, strike.getCivilians());
-            cv.put(HAS_CIVILIANS_RANGE, strike.hasValidCivilianRange());
-            if(strike.hasValidCivilianRange()) {
-                cv.put(CIVILIANS_MIN, strike.getCiviliansMin());
-                cv.put(CIVILIANS_MAX, strike.getCiviliansMax());
-            }
-
-            cv.put(INJURIES, strike.getInjuries());
-            cv.put(HAS_INJURIES_RANGE, strike.hasValidInjuriesRange());
-            if(strike.hasValidInjuriesRange()) {
-                cv.put(INJURIES_MIN, strike.getInjuriesMin());
-                cv.put(INJURIES_MAX, strike.getInjuriesMax());
-            }
-
-            cv.put(CHILDREN, strike.getChildren());
-            cv.put(HAS_CHILDREN_RANGE, strike.hasValidChildrenRange());
-            if(strike.hasValidChildrenRange()) {
-                cv.put(CHILDREN_MIN, strike.getChildrenMin());
-                cv.put(CHILDREN_MAX, strike.getChildrenMax());
-            }
-
-            cv.put(TWEET_ID, strike.getTweetId());
-            cv.put(BUREAU_ID, strike.getBureauId());
-            cv.put(BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
-            cv.put(BIJ_LINK, strike.getBijLink());
-            cv.put(TARGET, strike.getTarget());
-            cv.put(LAT, strike.getLat());
-            cv.put(LON, strike.getLon());
-            cv.put(NAMES, strike.getNames());
-            
-            db.insert(ModelHelper.STRIKE_TABLE, null, cv);
-        }
-    }
-
-/*
-    // return all the tasks associated with the list
-    public List<Task> getTasks(int taskListId) {
-
-        Cursor cursor = getTasksCursor(taskListId);
-
-        int ID_INDEX = cursor.getColumnIndexOrThrow(KEY_ID);
-        int STATE_INDEX = cursor.getColumnIndexOrThrow(STATE);
-        int STARTED_AT_INDEX = cursor.getColumnIndexOrThrow(STARTED_AT);
-        int FINISHED_AT_INDEX = cursor.getColumnIndexOrThrow(FINISHED_AT);
-        int CONTENT_INDEX = cursor.getColumnIndexOrThrow(CONTENT);
-
-        List<Task> res = new ArrayList<Task>();
-        Task task;
-        while (cursor.moveToNext()) {
-
-            task = new Task.Builder().id(cursor.getInt(ID_INDEX))//.listId(taskListId)
-                    .content(cursor.getString(CONTENT_INDEX)).state(cursor.getInt(STATE_INDEX))
-                    .startedAt(cursor.getString(STARTED_AT_INDEX))
-                    .finishedAt(cursor.getString(FINISHED_AT_INDEX)).build();
-            res.add(task);
-        }
-
-        cursor.close();
-
-        return res;
-    }
-
-    public Cursor getTasksCursor(int taskListId) {
-
+    public Cursor getStrikeCursor() {
         // Specify the result column projection. Return the minimum set
         // of columns required to satisfy your requirements.
         String[] result_columns = new String[] {
-                KEY_ID, LIST_ID, STATE, STARTED_AT, FINISHED_AT, CONTENT
+                KEY_ID, COUNTRY, TOWN, LOCATION, BIJ_SUMMARY_SHORT
         };
 
-        String where = LIST_ID + "=? and " + STATE + "<?";
-        String whereArgs[] = {
-                Integer.toString(taskListId), Integer.toString(Task.STATE_CLOSED)
-        };
+        String where = null;
+        String whereArgs[] = null;
+//        String where = LIST_ID + "=? and " + STATE + "<?";
+//        String whereArgs[] = {
+//                Integer.toString(taskListId), Integer.toString(Task.STATE_CLOSED)
+//        };
 
         String groupBy = null;
         String having = null;
         String order = null;
 
         SQLiteDatabase db = mModelHelper.getReadableDatabase();
-        Cursor cursor = db.query(ModelHelper.TASK_TABLE, result_columns, where, whereArgs, groupBy,
+        Cursor cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns, where, whereArgs, groupBy,
                 having, order);
 
         return cursor;
-    }
-*/
 
-    private static class ModelHelper extends SQLiteOpenHelper {
+    }
+
+
+    public static class ModelHelper extends SQLiteOpenHelper {
 
         private static final String TAG = "ModelHelper";
         private static final boolean D = true;
@@ -214,8 +147,12 @@ public class SQLDatabase {
 
         private static final String STRIKE_TABLE = "strike";
 
+        private static Context mContext;
+
         public ModelHelper(Context context, String name, CursorFactory factory, int version) {
             super(context, name, factory, version);
+            mContext = context;
+            ifd("constructor");
         }
 
         // Called when no database exists in disk and the helper class needs
@@ -259,6 +196,9 @@ public class SQLDatabase {
                 .create();
 
             db.execSQL(table);
+
+            PopulateDatabaseAsyncTask task = new PopulateDatabaseAsyncTask(mContext, this, "strikes/data.json");
+            task.execute();
         }
 
         // Called when there is a database version mismatch meaning that
@@ -280,6 +220,64 @@ public class SQLDatabase {
 
             // Create a new one.
             onCreate(db);
+        }
+
+        public void addStrikes(List<Strike> strikes) {
+
+            ifd("addStrikes");
+
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues cv;
+
+            for(Strike strike: strikes) {
+                cv = new ContentValues();
+
+                cv.put(JSON_ID, strike.getJsonId());
+                cv.put(NUMBER, strike.getNumber());
+                cv.put(COUNTRY, strike.getCountry());
+                cv.put(HAPPENED, strike.getHappened().toString());
+                cv.put(TOWN, strike.getTown());
+                cv.put(LOCATION, strike.getLocation());
+
+                cv.put(DEATHS, strike.getDeaths());
+                cv.put(HAS_DEATHS_RANGE, strike.hasValidDeathsRange());
+                if(strike.hasValidDeathsRange()) {
+                    cv.put(DEATHS_MIN, strike.getDeathsMin());
+                    cv.put(DEATHS_MAX, strike.getDeathsMax());
+                }
+
+                cv.put(CIVILIANS, strike.getCivilians());
+                cv.put(HAS_CIVILIANS_RANGE, strike.hasValidCivilianRange());
+                if(strike.hasValidCivilianRange()) {
+                    cv.put(CIVILIANS_MIN, strike.getCiviliansMin());
+                    cv.put(CIVILIANS_MAX, strike.getCiviliansMax());
+                }
+
+                cv.put(INJURIES, strike.getInjuries());
+                cv.put(HAS_INJURIES_RANGE, strike.hasValidInjuriesRange());
+                if(strike.hasValidInjuriesRange()) {
+                    cv.put(INJURIES_MIN, strike.getInjuriesMin());
+                    cv.put(INJURIES_MAX, strike.getInjuriesMax());
+                }
+
+                cv.put(CHILDREN, strike.getChildren());
+                cv.put(HAS_CHILDREN_RANGE, strike.hasValidChildrenRange());
+                if(strike.hasValidChildrenRange()) {
+                    cv.put(CHILDREN_MIN, strike.getChildrenMin());
+                    cv.put(CHILDREN_MAX, strike.getChildrenMax());
+                }
+
+                cv.put(TWEET_ID, strike.getTweetId());
+                cv.put(BUREAU_ID, strike.getBureauId());
+                cv.put(BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
+                cv.put(BIJ_LINK, strike.getBijLink());
+                cv.put(TARGET, strike.getTarget());
+                cv.put(LAT, strike.getLat());
+                cv.put(LON, strike.getLon());
+                cv.put(NAMES, strike.getNames());
+
+                db.insert(STRIKE_TABLE, null, cv);
+            }
         }
     }
 }

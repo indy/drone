@@ -44,12 +44,12 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike
     private final String STRIKE = "strike";
 
     private Context mContext;
-    private SQLDatabase mDatabase;
+    private SQLDatabase.ModelHelper mModelHelper;
     private String mPath;
 
-    public PopulateDatabaseAsyncTask(Context context, SQLDatabase database, String path) {
+    public PopulateDatabaseAsyncTask(Context context, SQLDatabase.ModelHelper modelHelper, String path) {
         mContext = context;
-        mDatabase = database;
+        mModelHelper = modelHelper;
         mPath = path;
     }
 
@@ -97,7 +97,7 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike
     protected List<Strike> doInBackground(Void... params) {
         JSONObject jsonObject = loadJsonFromFile(mPath);
         List<Strike> strikes = parseJson(jsonObject);
-        mDatabase.addStrikes(strikes);
+        mModelHelper.addStrikes(strikes);
         return strikes;
     }
 

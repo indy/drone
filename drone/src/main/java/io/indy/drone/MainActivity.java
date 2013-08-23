@@ -44,20 +44,21 @@ public class MainActivity extends ActionBarActivity {
 
     TabsAdapter mTabsAdapter;
 
+    public SQLDatabase getDatabase() {
+        return mDatabase;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Get the view from activity_main.xml
         setContentView(R.layout.activity_main);
 
-        mDatabase = new SQLDatabase(this);
+        mDatabase = new SQLDatabase(getApplicationContext());
+
+        ifd("MainActivity hashcode " + System.identityHashCode(this));
 
         setupTabs();
-
-        if(mDatabase.isEmpty()) {
-            PopulateDatabaseAsyncTask task = new PopulateDatabaseAsyncTask(this, mDatabase, "strikes/data.json");
-            task.execute();
-        }
     }
 
     @Override
