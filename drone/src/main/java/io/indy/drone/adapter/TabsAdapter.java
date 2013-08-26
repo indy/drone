@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.indy.drone;
+package io.indy.drone.adapter;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

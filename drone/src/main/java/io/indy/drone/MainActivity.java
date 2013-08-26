@@ -25,7 +25,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import io.indy.drone.async.PopulateDatabaseAsyncTask;
+import io.indy.drone.adapter.TabsAdapter;
 import io.indy.drone.fragment.MapFragment;
 import io.indy.drone.fragment.NewsFragment;
 import io.indy.drone.fragment.StatsFragment;
