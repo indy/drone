@@ -26,7 +26,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
+
+import de.greenrobot.event.EventBus;
+
+import io.indy.drone.adapter.StrikeCursorAdapter;
+import io.indy.drone.event.UpdatedDatabaseEvent;
 
 import io.indy.drone.MainActivity;
 import io.indy.drone.R;
@@ -36,8 +40,7 @@ public class NewsFragment extends Fragment {
     private final boolean D = true;
     private final String TAG = NewsFragment.class.getSimpleName();
 
-//    private SQLDatabase mDatabase;
-
+    private StrikeCursorAdapter mStrikeCursorAdapter;
     private ListView mListView;
 
     private void ifd(final String message) {
@@ -53,40 +56,32 @@ public class NewsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_news, container, false);
 
-        MainActivity mainActivity = (MainActivity)getActivity();
-        SQLDatabase sqlDatabase = mainActivity.getDatabase();
-        Cursor cursor = sqlDatabase.getStrikeCursor();
-
-        SimpleCursorAdapter adapter;
-
-        String[] fieldsDB = { SQLDatabase.KEY_ID,
-                SQLDatabase.COUNTRY,
-                SQLDatabase.TOWN,
-                SQLDatabase.LOCATION,
-                SQLDatabase.BIJ_SUMMARY_SHORT};
-
-        int[] fieldsView = {R.id.strikeid, R.id.country, R.id.town, R.id.location, R.id.summary};
-
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            adapter = new SimpleCursorAdapter(getActivity(), R.layout.row_news,
-                    cursor, fieldsDB, fieldsView, 0);
+            mStrikeCursorAdapter = new StrikeCursorAdapter(getActivity(), getStrikeCursor(), 0);
         } else {
-            adapter = new SimpleCursorAdapter(getActivity(), R.layout.row_news,
-                    cursor, fieldsDB, fieldsView);
+            mStrikeCursorAdapter = new StrikeCursorAdapter(getActivity(), getStrikeCursor());
         }
 
         mListView = (ListView) view.findViewById(R.id.listViewNews);
-        mListView.setAdapter(adapter);
+        mListView.setAdapter(mStrikeCursorAdapter);
 
         return view;
+    }
+
+    private Cursor getStrikeCursor() {
+        MainActivity mainActivity = (MainActivity)getActivity();
+        SQLDatabase sqlDatabase = mainActivity.getDatabase();
+        return sqlDatabase.getStrikeCursor();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
+        // TODO: should these be in onDestroyView?
         CursorAdapter ca = (CursorAdapter)(mListView.getAdapter());
         ca.getCursor().close();
     }
@@ -96,5 +91,26 @@ public class NewsFragment extends Fragment {
         super.onSaveInstanceState(outState);
         setUserVisibleHint(true);
     }
- 
+
+
+    @Override
+    public void onStart() {
+        ifd("onStart");
+
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        ifd("onStop");
+
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public void onEvent(UpdatedDatabaseEvent event) {
+        ifd("received UpdatedDatabaseEvent");
+    }
 }
