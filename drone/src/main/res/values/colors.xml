@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="pressed_drone">#CCD5500B</color>
+    <color name="pressed_drone">#CC69D2E7</color>
 
     <color name="green">#00eb45</color>
     <color name="blue">#4fb4e7</color>
-    <color name="orange">#d5500b</color>
+    <color name="orange">#fa6900</color>
 
     <color name="white">#ffffff</color>
 
