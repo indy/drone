@@ -30,8 +30,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+
+import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
+
 
 public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike>> {
     private static final String TAG = "PopulateDatabaseAsyncTask";
@@ -105,8 +109,7 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike
     protected void onPostExecute(List<Strike> result) {
         super.onPostExecute(result);
 
-        ifd("added " + result.size() + " strikes to the db");
         // fire an event
-
+        EventBus.getDefault().post(new UpdatedDatabaseEvent());
     }
 }
