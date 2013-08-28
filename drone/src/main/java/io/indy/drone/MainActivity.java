@@ -57,12 +57,9 @@ public class MainActivity extends ActionBarActivity {
     private CharSequence mTitle;
 
     private SQLDatabase mDatabase;
-    TabsAdapter mTabsAdapter;
-
 
     private StrikeCursorAdapter mStrikeCursorAdapter;
     private ListView mListView;
-
 
     public SQLDatabase getDatabase() {
         return mDatabase;
@@ -139,11 +136,18 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    /** Swaps fragments in the main content view */
     private void selectItem(int position) {
         // Highlight the selected item, update the title, and close the drawer
         mDrawerList.setItemChecked(position, true);
         setTitle(mDrawerTitles[position]);
+
+        String[] countries = {"worldwide", "Pakistan", "Yemen", "Somalia"};
+        if(position == 0) {
+            updateStrikeCursor();
+        } else {
+            updateStrikeCursor(countries[position]);
+        }
+
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
@@ -211,6 +215,12 @@ public class MainActivity extends ActionBarActivity {
 
     private void updateStrikeCursor() {
         Cursor cursor = mDatabase.getStrikeCursor();
+        mStrikeCursorAdapter.changeCursor(cursor);
+        mStrikeCursorAdapter.notifyDataSetChanged();
+    }
+
+    private void updateStrikeCursor(String country) {
+        Cursor cursor = mDatabase.getStrikeCursor(country);
         mStrikeCursorAdapter.changeCursor(cursor);
         mStrikeCursorAdapter.notifyDataSetChanged();
     }

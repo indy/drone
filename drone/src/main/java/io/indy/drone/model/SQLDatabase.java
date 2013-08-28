@@ -27,6 +27,7 @@ import android.util.Log;
 import java.util.List;
 
 import io.indy.drone.async.PopulateDatabaseAsyncTask;
+import io.indy.drone.utils.DateFormatHelper;
 
 public class SQLDatabase {
 
@@ -108,31 +109,35 @@ public class SQLDatabase {
     }
 
     public Cursor getStrikeCursor() {
+        return getStrikeCursor(null, null);
+    }
+
+    public Cursor getStrikeCursor(String country) {
+        return getStrikeCursor(COUNTRY + "=?", new String[] {country});
+    }
+
+    private Cursor getStrikeCursor(String where, String[] whereArgs) {
         // Specify the result column projection. Return the minimum set
         // of columns required to satisfy your requirements.
         String[] result_columns = new String[] {
                 KEY_ID, COUNTRY, TOWN, LOCATION, BIJ_SUMMARY_SHORT
         };
 
-        String where = null;
-        String whereArgs[] = null;
-//        String where = LIST_ID + "=? and " + STATE + "<?";
-//        String whereArgs[] = {
-//                Integer.toString(taskListId), Integer.toString(Task.STATE_CLOSED)
-//        };
-
         String groupBy = null;
         String having = null;
-        String order = null;
+        String order = HAPPENED + " desc";
 
         SQLiteDatabase db = mModelHelper.getReadableDatabase();
-        Cursor cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns, where, whereArgs, groupBy,
-                having, order);
+        Cursor cursor = null;
+        try {
+            cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns, where, whereArgs, groupBy,
+                    having, order);
+        } catch(NullPointerException e) {
+            ifd("exception " + e);
+        }
 
         return cursor;
-
     }
-
 
     public static class ModelHelper extends SQLiteOpenHelper {
 
@@ -237,7 +242,7 @@ public class SQLDatabase {
                 cv.put(JSON_ID, strike.getJsonId());
                 cv.put(NUMBER, strike.getNumber());
                 cv.put(COUNTRY, strike.getCountry());
-                cv.put(HAPPENED, strike.getHappened().toString());
+                cv.put(HAPPENED, DateFormatHelper.dateToString(strike.getHappened()));
                 cv.put(TOWN, strike.getTown());
                 cv.put(LOCATION, strike.getLocation());
 
