@@ -79,6 +79,45 @@ public class MainActivity extends ActionBarActivity {
         mTabsAdapter.addTab("Map", MapFragment.class);
         mTabsAdapter.addTab("Stats", StatsFragment.class);
     }
+*/
+    @Override
+    public void onStart() {
+        super.onStart();
+        ifd("onStart");
+
+        EventBus.getDefault().registerSticky(this);
+
+        if(EventBus.getDefault().getStickyEvent(UpdatedDatabaseEvent.class) != null) {
+            // the database has been created for the first time
+            // the async task has loaded up the strikes in the asset's json file
+            // so update the adapter
+            // note: this code is here in case the async task has finished before onStart is called
+            setSupportProgressBarIndeterminateVisibility(false);
+            updateStrikeCursor();
+            EventBus.getDefault().removeStickyEvent(UpdatedDatabaseEvent.class);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ifd("onStop");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public void onEvent(UpdatedDatabaseEvent event) {
+        ifd("received UpdatedDatabaseEvent");
+
+        setSupportProgressBarIndeterminateVisibility(false);
+        updateStrikeCursor();
+    }
+
+    private void updateStrikeCursor() {
+        Cursor cursor = mDatabase.getStrikeCursor();
+        mStrikeCursorAdapter.changeCursor(cursor);
+        mStrikeCursorAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

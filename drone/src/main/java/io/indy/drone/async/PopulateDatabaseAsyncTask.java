@@ -107,9 +107,9 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike
 
     @Override
     protected void onPostExecute(List<Strike> result) {
+        ifd("PopulateDatabaseAsyncTask has updated the database");
         super.onPostExecute(result);
 
-        // fire an event
-        EventBus.getDefault().post(new UpdatedDatabaseEvent());
+        EventBus.getDefault().postSticky(new UpdatedDatabaseEvent());
     }
 }

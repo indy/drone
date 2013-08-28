@@ -81,15 +81,6 @@ public class SQLDatabase {
                 ModelHelper.DATABASE_NAME,
                 null,
                 ModelHelper.DATABASE_VERSION);
-
-
-        dummyOp();
-
-
-        ifd("getStrikeCursor");
-
-        Cursor c = getStrikeCursor();
-        ifd("cursor count is " + c.getCount());
     }
 
     // Called when you no longer need access to the database.
@@ -104,6 +95,17 @@ public class SQLDatabase {
         mModelHelper.getReadableDatabase().rawQuery("select count(*) from strike", null);
     }
 
+
+    public boolean hasData() {
+        Cursor c;
+        try {
+            c = getStrikeCursor();
+        } catch(NullPointerException e) {
+            ifd("hasData exception");
+            return false;
+        }
+        return (c.getCount() > 0);
+    }
 
     public Cursor getStrikeCursor() {
         // Specify the result column projection. Return the minimum set
