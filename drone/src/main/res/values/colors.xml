@@ -17,4 +17,10 @@
     <color name="drawer_background">#f3f3f4</color>
     <color name="drawer_text">#000</color>
 
+
+    <color name="strikelist_background">#e5e5e5</color>
+    <color name="strikecard_shadow_start">#d5d5d5</color> <!-- slightly darker than tasklist_background -->
+    <color name="strikecard_background">#ffffff</color>
+
+
 </resources>

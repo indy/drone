@@ -9,7 +9,12 @@
     <ListView
             android:id="@+id/listViewNews"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:background="@color/strikelist_background"/>
 
     <ListView
             android:id="@+id/left_drawer"

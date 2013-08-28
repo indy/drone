@@ -19,16 +19,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="0dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp">
+                android:paddingBottom="0dp"
+                android:paddingTop="8dp">
 
     <LinearLayout android:id="@+id/newsRow"
+                  android:padding="8dp"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:baselineAligned="false"
-                  android:orientation="vertical">
+                  android:orientation="vertical"
+                  android:background="@color/strikecard_background">
 
         <TextView
                 android:id="@+id/country"
@@ -79,9 +79,13 @@
                 android:layout_alignLeft="@id/country"
                 />
 
-
-
     </LinearLayout>
+
+    <View   android:layout_below="@id/newsRow"
+            android:layout_width="match_parent"
+            android:layout_height="5dip"
+            android:background="@drawable/drop_shadow">
+    </View>
 
 
 </RelativeLayout>
