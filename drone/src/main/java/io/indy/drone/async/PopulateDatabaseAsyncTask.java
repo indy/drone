@@ -35,16 +35,9 @@ import de.greenrobot.event.EventBus;
 import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
-
+import io.indy.drone.Flags;
 
 public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike>> {
-    private static final String TAG = "PopulateDatabaseAsyncTask";
-    private static final boolean D = true;
-
-    static void ifd(final String message) {
-        if (D) Log.d(TAG, message);
-    }
-
     private final String STRIKE = "strike";
 
     private Context mContext;
@@ -111,5 +104,11 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike
         super.onPostExecute(result);
 
         EventBus.getDefault().postSticky(new UpdatedDatabaseEvent());
+    }
+
+    private static final String TAG = "PopulateDatabaseAsyncTask";
+    private static final boolean D = true;
+    static void ifd(final String message) {
+        if (Flags.DEBUG && D) Log.d(TAG, message);
     }
 }

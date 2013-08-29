@@ -16,86 +16,53 @@
 
 package io.indy.drone.utils;
 
-import android.text.format.DateUtils;
 import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import io.indy.drone.Flags;
+
 public class DateFormatHelper {
+
+    private static final SimpleDateFormat sDisplayFormat = new SimpleDateFormat("d MMMM yyyy");
+    private static final SimpleDateFormat sSQLiteFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat sJSONFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+    public static Date parseSQLiteDateString(String dateString) {
+        Date date = null;
+        try {
+            date = sSQLiteFormat.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return date;
+    }
+
+    public static Date parseJsonDateString(String dateString) {
+        Date date = null;
+        try {
+            date = sJSONFormat.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return date;
+    }
+
+    public static String dateToSQLite(Date date) {
+        return sSQLiteFormat.format(date);
+    }
+
+    public static String dateToDisplay(Date date) {
+        return sDisplayFormat.format(date);
+    }
+
     static private final boolean D = true;
     static private final String TAG = "DateFormatHelper";
-
     static void ifd(final String message) {
-        if (D) Log.d(TAG, message);
+        if (Flags.DEBUG && D) Log.d(TAG, message);
     }
-
-    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-
-    private static final String DRONE_JSON_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-
-    public static String formatTimeSpan(String timeToFormat) {
-
-        String timeSpan = "";
-
-        SimpleDateFormat iso8601Format = new SimpleDateFormat(DATE_FORMAT);
-
-        Date date;
-        if (timeToFormat != null) {
-            try {
-                date = iso8601Format.parse(timeToFormat);
-            } catch (ParseException e) {
-                date = null;
-            }
-            if (date != null) {
-                long time = date.getTime();
-                timeSpan = (String) DateUtils.getRelativeTimeSpanString(time);
-                // Log.d(TAG, "timeSpan is " + timeSpan);
-            }
-        }
-        return timeSpan;
-    }
-
-    public static Date parseDateString(String dateString) {
-        SimpleDateFormat iso8601Format = new SimpleDateFormat(DATE_FORMAT);
-        Date date = null;
-        try {
-            date = iso8601Format.parse(dateString);
-        } catch (ParseException e) {
-            ifd("ParseException: " + e);
-        }
-
-        return date;
-    }
-
-    public static Date parseDroneJsonDateString(String dateString) {
-        SimpleDateFormat format = new SimpleDateFormat(DRONE_JSON_DATE_FORMAT);
-        Date date = null;
-        try {
-            date = format.parse(dateString);
-        } catch (ParseException e) {
-            ifd("ParseException: " + e);
-        }
-
-        return date;
-    }
-
-    public static String dateToString(Date date) {
-        return new SimpleDateFormat(DATE_FORMAT).format(date);
-    }
-
-    public static String oldDate() {
-        // create an old date string
-        Date date = new Date(0L);
-        String old = new SimpleDateFormat(DATE_FORMAT).format(date);
-        return old;
-    }
-
-    public static String today() {
-        Date date = new Date();
-        String today = new SimpleDateFormat(DATE_FORMAT).format(date);
-        return today;
-    }
-
 }

@@ -27,14 +27,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.indy.drone.utils.DateFormatHelper;
+import io.indy.drone.Flags;
 
 public class Strike {
-    private static final String TAG = "Strike";
-    private static final boolean D = true;
-
-    static void ifd(final String message) {
-        if (D) Log.d(TAG, message);
-    }
 
     private String mJsonId;
     private int mNumber;
@@ -408,7 +403,7 @@ public class Strike {
             strike.setJsonId(jsonObject.getString(JSON_ID));
             strike.setNumber(jsonObject.getInt(NUMBER));
             strike.setCountry(jsonObject.getString(COUNTRY));
-            strike.setHappened(DateFormatHelper.parseDroneJsonDateString(jsonObject.getString(HAPPENED)));
+            strike.setHappened(DateFormatHelper.parseJsonDateString(jsonObject.getString(HAPPENED)));
             strike.setTown(jsonObject.getString(TOWN));
             strike.setLocation(jsonObject.getString(LOCATION));
 
@@ -502,5 +497,11 @@ public class Strike {
         }
 
         return null;
+    }
+
+    private static final String TAG = "Strike";
+    private static final boolean D = true;
+    static void ifd(final String message) {
+        if (Flags.DEBUG && D) Log.d(TAG, message);
     }
 }

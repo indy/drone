@@ -42,12 +42,6 @@ import io.indy.drone.model.SQLDatabase;
 
 public class MainActivity extends ActionBarActivity {
 
-    static private final boolean D = true;
-    static private final String TAG = MainActivity.class.getSimpleName();
-    static void ifd(final String message) {
-        if (D) Log.d(TAG, message);
-    }
-
     private String[] mDrawerTitles;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -273,4 +267,9 @@ public class MainActivity extends ActionBarActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    static private final boolean D = true;
+    static private final String TAG = MainActivity.class.getSimpleName();
+    static void ifd(final String message) {
+        if (Flags.DEBUG && D) Log.d(TAG, message);
+    }
 }

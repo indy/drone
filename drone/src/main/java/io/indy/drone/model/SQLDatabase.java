@@ -28,15 +28,9 @@ import java.util.List;
 
 import io.indy.drone.async.PopulateDatabaseAsyncTask;
 import io.indy.drone.utils.DateFormatHelper;
+import io.indy.drone.Flags;
 
 public class SQLDatabase {
-
-    private static final String TAG = "SQLDatabase";
-    private static final boolean D = true;
-
-    static void ifd(final String message) {
-        if (D) Log.d(TAG, message);
-    }
 
     // The index (key) column name for use in where clauses.
     public static final String KEY_ID = "_id";
@@ -102,7 +96,7 @@ public class SQLDatabase {
         try {
             c = getStrikeCursor();
         } catch(NullPointerException e) {
-            ifd("hasData exception");
+            e.printStackTrace();
             return false;
         }
         return (c.getCount() > 0);
@@ -120,7 +114,7 @@ public class SQLDatabase {
         // Specify the result column projection. Return the minimum set
         // of columns required to satisfy your requirements.
         String[] result_columns = new String[] {
-                KEY_ID, COUNTRY, TOWN, LOCATION, BIJ_SUMMARY_SHORT
+                KEY_ID, COUNTRY, TOWN, LOCATION, BIJ_SUMMARY_SHORT, HAPPENED
         };
 
         String groupBy = null;
@@ -133,7 +127,7 @@ public class SQLDatabase {
             cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns, where, whereArgs, groupBy,
                     having, order);
         } catch(NullPointerException e) {
-            ifd("exception " + e);
+            e.printStackTrace();
         }
 
         return cursor;
@@ -242,7 +236,7 @@ public class SQLDatabase {
                 cv.put(JSON_ID, strike.getJsonId());
                 cv.put(NUMBER, strike.getNumber());
                 cv.put(COUNTRY, strike.getCountry());
-                cv.put(HAPPENED, DateFormatHelper.dateToString(strike.getHappened()));
+                cv.put(HAPPENED, DateFormatHelper.dateToSQLite(strike.getHappened()));
                 cv.put(TOWN, strike.getTown());
                 cv.put(LOCATION, strike.getLocation());
 
@@ -286,5 +280,11 @@ public class SQLDatabase {
                 db.insert(STRIKE_TABLE, null, cv);
             }
         }
+    }
+
+    private static final String TAG = "SQLDatabase";
+    private static final boolean D = true;
+    static void ifd(final String message) {
+        if (Flags.DEBUG && D) Log.d(TAG, message);
     }
 }
