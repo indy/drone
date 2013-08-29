@@ -72,7 +72,7 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike
             return new JSONObject(buf.toString());
 
         } catch (Exception e) {
-            Log.e(TAG, "Exception: " + e);
+            e.printStackTrace();
         }
 
         return null;
@@ -91,7 +91,7 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike
                 res.add(strike);
             }
         } catch (JSONException e) {
-            ifd("parseJson JSONException: " + e);
+            e.printStackTrace();
         }
 
         return res;

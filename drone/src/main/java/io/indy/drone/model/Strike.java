@@ -425,7 +425,7 @@ public class Strike {
                     strike.setDeathsMax(minMax[1]);
                 } catch(ParseException e) {
                     strike.confirmValidDeathsRange(false);
-                    Log.e(TAG, e.toString());
+                    e.printStackTrace();
                 }
             } else {
                 strike.confirmValidDeathsRange(false);
@@ -441,7 +441,7 @@ public class Strike {
                     strike.setCiviliansMax(minMax[1]);
                 } catch(ParseException e) {
                     strike.confirmValidCivilianRange(false);
-                    Log.e(TAG, e.toString());
+                    e.printStackTrace();
                 }
             } else {
                 strike.confirmValidCivilianRange(false);
@@ -457,7 +457,7 @@ public class Strike {
                     strike.setInjuriesMax(minMax[1]);
                 } catch(ParseException e) {
                     strike.confirmValidInjuriesRange(false);
-                    Log.e(TAG, e.toString());
+                    e.printStackTrace();
                 }
             } else {
                 strike.confirmValidInjuriesRange(false);
@@ -474,7 +474,7 @@ public class Strike {
                     strike.setChildrenMax(minMax[1]);
                 } catch(ParseException e) {
                     strike.confirmValidChildrenRange(false);
-                    Log.e(TAG, e.toString());
+                    e.printStackTrace();
                 }
             } else {
                 strike.confirmValidChildrenRange(false);
@@ -498,7 +498,7 @@ public class Strike {
             return strike;
 
         } catch (JSONException e) {
-            Log.d(TAG, "JSONException: " + e);
+            e.printStackTrace();
         }
 
         return null;
