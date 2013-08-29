@@ -11,7 +11,7 @@ public class DateFormatHelperTest {
     @Test
     public void testParseDroneJsonDateString() {
         String jsonDate = "2002-11-03T00:00:00.000Z";
-        Date d = DateFormatHelper.parseDroneJsonDateString(jsonDate);
+        Date d = DateFormatHelper.parseJsonDateString(jsonDate);
 
         Calendar c = Calendar.getInstance();
         c.setTime(d);
