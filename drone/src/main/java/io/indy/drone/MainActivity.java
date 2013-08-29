@@ -36,7 +36,6 @@ import android.widget.ListView;
 
 import de.greenrobot.event.EventBus;
 import io.indy.drone.adapter.StrikeCursorAdapter;
-import io.indy.drone.adapter.TabsAdapter;
 import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 

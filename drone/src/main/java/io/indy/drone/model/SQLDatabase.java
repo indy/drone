@@ -26,9 +26,9 @@ import android.util.Log;
 
 import java.util.List;
 
+import io.indy.drone.Flags;
 import io.indy.drone.async.PopulateDatabaseAsyncTask;
 import io.indy.drone.utils.DateFormatHelper;
-import io.indy.drone.Flags;
 
 public class SQLDatabase {
 

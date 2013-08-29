@@ -11,10 +11,10 @@ import android.widget.TextView;
 
 import java.util.Date;
 
+import io.indy.drone.Flags;
 import io.indy.drone.R;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.utils.DateFormatHelper;
-import io.indy.drone.Flags;
 
 public class StrikeCursorAdapter extends CursorAdapter {
 

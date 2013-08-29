@@ -31,11 +31,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-
+import io.indy.drone.Flags;
 import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
-import io.indy.drone.Flags;
 
 public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike>> {
     private final String STRIKE = "strike";

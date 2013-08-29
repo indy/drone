@@ -26,8 +26,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.indy.drone.utils.DateFormatHelper;
 import io.indy.drone.Flags;
+import io.indy.drone.utils.DateFormatHelper;
 
 public class Strike {
 

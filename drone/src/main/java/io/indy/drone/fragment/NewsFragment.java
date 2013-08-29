@@ -28,12 +28,10 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import de.greenrobot.event.EventBus;
-
-import io.indy.drone.adapter.StrikeCursorAdapter;
-import io.indy.drone.event.UpdatedDatabaseEvent;
-
 import io.indy.drone.MainActivity;
 import io.indy.drone.R;
+import io.indy.drone.adapter.StrikeCursorAdapter;
+import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 
 public class NewsFragment extends Fragment {
