@@ -17,22 +17,16 @@
 package io.indy.drone;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import de.greenrobot.event.EventBus;
@@ -40,15 +34,7 @@ import io.indy.drone.adapter.StrikeCursorAdapter;
 import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
-
-    private String[] mDrawerTitles;
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-
-    private ActionBarDrawerToggle mDrawerToggle;
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private SQLDatabase mDatabase;
 
@@ -92,53 +78,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    private void setupNavigationDrawer() {
-        mTitle = mDrawerTitle = getTitle();
-        mDrawerTitles = getResources().getStringArray(R.array.locations_array);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
-
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                getSupportActionBar().setTitle(mTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                getSupportActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-
-        // Set the drawer toggle as the DrawerListener
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        // Set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, mDrawerTitles));
-        // Set the list's click listener
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-    }
-
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            ifd("selected " + position);
-            selectItem(position);
-        }
-    }
-
-    private void selectItem(int position) {
-        // Highlight the selected item, update the title, and close the drawer
-        mDrawerList.setItemChecked(position, true);
-        setTitle(mDrawerTitles[position]);
+    @Override
+    protected void onDrawerItemClicked(int position) {
+        super.onDrawerItemClicked(position);
 
         String[] countries = {"worldwide", "Pakistan", "Yemen", "Somalia"};
         if(position == 0) {
@@ -150,11 +92,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
-    @Override
-    public void setTitle(CharSequence title) {
-        mTitle = title;
-        getSupportActionBar().setTitle(mTitle);
-    }
 
     @Override
     public void onDestroy() {
@@ -166,19 +103,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mDatabase.closeDatabase();
         super.onDestroy();
     }
-/*
-    private void setupTabs() {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        ViewPager pager = (ViewPager) findViewById(R.id.pager);
-        mTabsAdapter = new TabsAdapter(this, pager);
-
-        mTabsAdapter.addTab("News", NewsFragment.class);
-        mTabsAdapter.addTab("Map", MapFragment.class);
-        mTabsAdapter.addTab("Stats", StatsFragment.class);
-    }
-*/
     @Override
     public void onStart() {
         super.onStart();
@@ -248,28 +173,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    /* Called whenever we call invalidateOptionsMenu() */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        //menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
-        return super.onPrepareOptionsMenu(menu);
     }
 
     static private final boolean D = true;
