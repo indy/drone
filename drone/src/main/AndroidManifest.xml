@@ -15,13 +15,16 @@
         android:logo="@drawable/ic_logo"
         android:theme="@style/Theme.Drone" >
         <activity
-            android:name="io.indy.drone.MainActivity"
-            android:label="@string/app_name" >
+                android:name="io.indy.drone.MainActivity"
+                android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+                android:name="io.indy.drone.StrikeDetailActivity">
         </activity>
     </application>
 

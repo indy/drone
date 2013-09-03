@@ -16,6 +16,7 @@
 
 package io.indy.drone;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Build;
@@ -39,7 +40,7 @@ import io.indy.drone.adapter.StrikeCursorAdapter;
 import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
     private String[] mDrawerTitles;
     private DrawerLayout mDrawerLayout;
@@ -56,6 +57,12 @@ public class MainActivity extends ActionBarActivity {
 
     public SQLDatabase getDatabase() {
         return mDatabase;
+    }
+
+    public void onClick(View v) {
+        Intent intent = new Intent(this, StrikeDetailActivity.class);
+        intent.putExtra("STRIKE_ID", (String) v.getTag());
+        startActivity(intent);
     }
 
     @Override
@@ -83,7 +90,6 @@ public class MainActivity extends ActionBarActivity {
         } else {
             setSupportProgressBarIndeterminateVisibility(true);
         }
-
     }
 
     private void setupNavigationDrawer() {
