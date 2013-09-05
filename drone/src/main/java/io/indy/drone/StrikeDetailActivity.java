@@ -17,21 +17,48 @@
 package io.indy.drone;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 
+import io.indy.drone.model.SQLDatabase;
+
 public class StrikeDetailActivity extends BaseActivity {
+
+    public static final String STRIKE_ID = "STRIKE_ID";
+
+    private SQLDatabase mDatabase;
+    private String mStrikeId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // call this in onStart?
         Intent intent = getIntent();
-        String s = intent.getStringExtra("STRIKE_ID");
-        ifd("StrikeDetailActivity received " + s);
+        mStrikeId = intent.getStringExtra(STRIKE_ID);
 
         setupNavigationDrawer();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ifd("onStart");
+
+        mDatabase = new SQLDatabase(getApplicationContext());
+
+        Cursor c = mDatabase.getDetailedStrikeCursor(mStrikeId);
+        c.moveToFirst();
+
+        // get the data from the cursor
+        int ci = c.getColumnIndex(SQLDatabase.BIJ_SUMMARY_SHORT);
+        String s = c.getString(ci);
+
+        ifd(s);
+
+        c.close();
     }
 
     @Override

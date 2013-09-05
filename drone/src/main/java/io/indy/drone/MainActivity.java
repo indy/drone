@@ -47,7 +47,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void onClick(View v) {
         Intent intent = new Intent(this, StrikeDetailActivity.class);
-        intent.putExtra("STRIKE_ID", (String) v.getTag());
+        intent.putExtra(StrikeDetailActivity.STRIKE_ID, (String) v.getTag());
         startActivity(intent);
     }
 

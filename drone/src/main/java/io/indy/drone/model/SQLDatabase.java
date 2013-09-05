@@ -102,6 +102,36 @@ public class SQLDatabase {
         return (c.getCount() > 0);
     }
 
+    public Cursor getDetailedStrikeCursor(String strikeId) {
+        String[] result_columns = new String[] {
+            KEY_ID, HAPPENED, COUNTRY, TOWN, LOCATION, 
+            DEATHS, HAS_DEATHS_RANGE, DEATHS_MIN, DEATHS_MAX, 
+            CIVILIANS, HAS_CIVILIANS_RANGE, CIVILIANS_MIN, CIVILIANS_MAX, 
+            INJURIES, HAS_INJURIES_RANGE, INJURIES_MIN, INJURIES_MAX, 
+            CHILDREN, HAS_CHILDREN_RANGE, CHILDREN_MIN, CHILDREN_MAX, 
+            TWEET_ID, BUREAU_ID, BIJ_SUMMARY_SHORT, BIJ_LINK, TARGET, 
+            LAT, LON
+        };
+
+        String where = KEY_ID + "=?";
+        String[] whereArgs = {strikeId};
+        String groupBy = null;
+        String having = null;
+        String order = null;//HAPPENED + " desc";
+
+        SQLiteDatabase db = mModelHelper.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns, 
+                              where, whereArgs, 
+                              groupBy, having, order);
+        } catch(NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        return cursor;
+    }
+
     public Cursor getStrikeCursor() {
         return getStrikeCursor(null, null);
     }
