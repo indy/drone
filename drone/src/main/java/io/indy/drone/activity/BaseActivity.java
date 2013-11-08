@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.indy.drone;
+package io.indy.drone.activity;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -27,6 +27,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import io.indy.drone.Flags;
+import io.indy.drone.R;
 
 public abstract class BaseActivity extends ActionBarActivity {
 

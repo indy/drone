@@ -4,17 +4,16 @@
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context=".StrikeListActivity">
 
-    <ListView
-            android:id="@+id/listViewNews"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@null"
-            android:dividerHeight="0dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:background="@color/strikelist_background"/>
+    <fragment android:id="@+id/strike_list"
+              android:name="io.indy.drone.fragment.StrikeListFragment"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_marginLeft="16dp"
+              android:layout_marginRight="16dp"
+              tools:context=".StrikeListActivity"
+              tools:layout="@android:layout/list_content" />
 
     <ListView
             android:id="@+id/left_drawer"

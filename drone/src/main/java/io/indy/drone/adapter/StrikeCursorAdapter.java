@@ -12,7 +12,6 @@ import android.widget.TextView;
 import java.util.Date;
 
 import io.indy.drone.Flags;
-import io.indy.drone.MainActivity;
 import io.indy.drone.R;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.utils.DateFormatHelper;
@@ -28,21 +27,12 @@ public class StrikeCursorAdapter extends CursorAdapter {
     private int mSummaryIndex;
     private int mHappenedIndex;
 
-    private MainActivity mMainActivity;
-
     public StrikeCursorAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
         init(context);
     }
 
-    @SuppressWarnings("deprecation")
-    public StrikeCursorAdapter(Context context, Cursor cursor) {
-        super(context, cursor);
-        init(context);
-    }
-
     private void init(Context context) {
-        mMainActivity = (MainActivity) context;
         mLayoutInflater = LayoutInflater.from(context);
         updateColumnIndices();
     }
@@ -98,7 +88,6 @@ public class StrikeCursorAdapter extends CursorAdapter {
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         View v = mLayoutInflater.inflate(R.layout.row_news, parent, false);
         bindView(v, context, cursor);
-        v.setOnClickListener(mMainActivity);
         return v;
     }
 
