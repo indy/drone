@@ -36,7 +36,7 @@ import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 
-public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike>> {
+public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Integer, Void> {
     private final String STRIKE = "strike";
 
     private Context mContext;
@@ -70,39 +70,51 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Void, List<Strike
         return null;
     }
 
-    private List<Strike> parseJson(JSONObject json) {
-        List<Strike> res = new ArrayList<Strike>();
+    @Override
+    protected Void doInBackground(Void... params) {
+
+        JSONObject json = loadJsonFromFile(mPath);
 
         try {
             // TODO: check that status == "OK"
-
             JSONArray strikes = json.getJSONArray(STRIKE);
+            int len = strikes.length();
             Strike strike;
-            for (int i = 0; i < strikes.length(); i++) {
+
+            // list will show newest strikes first,
+            // so populate the db in newest->oldest order
+            for (int i = len - 1; i >= 0; i--) {
                 strike = Strike.fromJson(strikes.getJSONObject(i));
-                res.add(strike);
+                mModelHelper.addStrike(strike);
+                if(i == len - 5) {
+                    // get an UpdatedDatabaseEvent fired as soon as there's enough
+                    // data in the db to have a screen of strike information
+                    publishProgress(i);
+                } else if(i == len - 20) {
+                    // continue early population of list
+                    publishProgress(i);
+                }
+                if(i % 100 == 0) {
+                    // now populate at regular intervals
+                    publishProgress(i);
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return res;
+        return null;
+    }
+
+    protected void onProgressUpdate(Integer... i) {
+        EventBus.getDefault().post(new UpdatedDatabaseEvent());
     }
 
     @Override
-    protected List<Strike> doInBackground(Void... params) {
-        JSONObject jsonObject = loadJsonFromFile(mPath);
-        List<Strike> strikes = parseJson(jsonObject);
-        mModelHelper.addStrikes(strikes);
-        return strikes;
-    }
-
-    @Override
-    protected void onPostExecute(List<Strike> result) {
-        ifd("PopulateDatabaseAsyncTask has updated the database");
+    protected void onPostExecute(Void result) {
         super.onPostExecute(result);
-
-        EventBus.getDefault().postSticky(new UpdatedDatabaseEvent());
+        // final event to inform list that all strike data is in the db
+        EventBus.getDefault().post(new UpdatedDatabaseEvent());
     }
 
     private static final String TAG = "PopulateDatabaseAsyncTask";

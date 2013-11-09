@@ -90,18 +90,6 @@ public class SQLDatabase {
         mModelHelper.getReadableDatabase().rawQuery("select count(*) from strike", null);
     }
 
-
-    public boolean hasData() {
-        Cursor c;
-        try {
-            c = getStrikeCursor();
-        } catch(NullPointerException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return (c.getCount() > 0);
-    }
-
     public Cursor getDetailedStrikeCursor(String strikeId) {
         String[] result_columns = new String[] {
             KEY_ID, HAPPENED, COUNTRY, TOWN, LOCATION, 
@@ -132,11 +120,10 @@ public class SQLDatabase {
         return cursor;
     }
 
-    public Cursor getStrikeCursor() {
-        return getStrikeCursor(null, null);
-    }
-
     public Cursor getStrikeCursor(String country) {
+        if(country.equals("worldwide")) {
+            return getStrikeCursor(null, null);
+        }
         return getStrikeCursor(COUNTRY + "=?", new String[] {country});
     }
 
@@ -253,63 +240,61 @@ public class SQLDatabase {
             onCreate(db);
         }
 
-        public void addStrikes(List<Strike> strikes) {
-
-            ifd("addStrikes");
+        public void addStrike(Strike strike) {
 
             SQLiteDatabase db = getWritableDatabase();
             ContentValues cv;
 
-            for(Strike strike: strikes) {
-                cv = new ContentValues();
+            cv = new ContentValues();
 
-                cv.put(JSON_ID, strike.getJsonId());
-                cv.put(NUMBER, strike.getNumber());
-                cv.put(COUNTRY, strike.getCountry());
-                cv.put(HAPPENED, DateFormatHelper.dateToSQLite(strike.getHappened()));
-                cv.put(TOWN, strike.getTown());
-                cv.put(LOCATION, strike.getLocation());
+            cv.put(JSON_ID, strike.getJsonId());
+            cv.put(NUMBER, strike.getNumber());
+            cv.put(COUNTRY, strike.getCountry());
+            cv.put(HAPPENED, DateFormatHelper.dateToSQLite(strike.getHappened()));
+            cv.put(TOWN, strike.getTown());
+            cv.put(LOCATION, strike.getLocation());
 
-                cv.put(DEATHS, strike.getDeaths());
-                cv.put(HAS_DEATHS_RANGE, strike.hasValidDeathsRange());
-                if(strike.hasValidDeathsRange()) {
-                    cv.put(DEATHS_MIN, strike.getDeathsMin());
-                    cv.put(DEATHS_MAX, strike.getDeathsMax());
-                }
-
-                cv.put(CIVILIANS, strike.getCivilians());
-                cv.put(HAS_CIVILIANS_RANGE, strike.hasValidCivilianRange());
-                if(strike.hasValidCivilianRange()) {
-                    cv.put(CIVILIANS_MIN, strike.getCiviliansMin());
-                    cv.put(CIVILIANS_MAX, strike.getCiviliansMax());
-                }
-
-                cv.put(INJURIES, strike.getInjuries());
-                cv.put(HAS_INJURIES_RANGE, strike.hasValidInjuriesRange());
-                if(strike.hasValidInjuriesRange()) {
-                    cv.put(INJURIES_MIN, strike.getInjuriesMin());
-                    cv.put(INJURIES_MAX, strike.getInjuriesMax());
-                }
-
-                cv.put(CHILDREN, strike.getChildren());
-                cv.put(HAS_CHILDREN_RANGE, strike.hasValidChildrenRange());
-                if(strike.hasValidChildrenRange()) {
-                    cv.put(CHILDREN_MIN, strike.getChildrenMin());
-                    cv.put(CHILDREN_MAX, strike.getChildrenMax());
-                }
-
-                cv.put(TWEET_ID, strike.getTweetId());
-                cv.put(BUREAU_ID, strike.getBureauId());
-                cv.put(BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
-                cv.put(BIJ_LINK, strike.getBijLink());
-                cv.put(TARGET, strike.getTarget());
-                cv.put(LAT, strike.getLat());
-                cv.put(LON, strike.getLon());
-                cv.put(NAMES, strike.getNames());
-
-                db.insert(STRIKE_TABLE, null, cv);
+            cv.put(DEATHS, strike.getDeaths());
+            cv.put(HAS_DEATHS_RANGE, strike.hasValidDeathsRange());
+            if(strike.hasValidDeathsRange()) {
+                cv.put(DEATHS_MIN, strike.getDeathsMin());
+                cv.put(DEATHS_MAX, strike.getDeathsMax());
             }
+
+            cv.put(CIVILIANS, strike.getCivilians());
+            cv.put(HAS_CIVILIANS_RANGE, strike.hasValidCivilianRange());
+            if(strike.hasValidCivilianRange()) {
+                cv.put(CIVILIANS_MIN, strike.getCiviliansMin());
+                cv.put(CIVILIANS_MAX, strike.getCiviliansMax());
+            }
+
+            cv.put(INJURIES, strike.getInjuries());
+            cv.put(HAS_INJURIES_RANGE, strike.hasValidInjuriesRange());
+            if(strike.hasValidInjuriesRange()) {
+                cv.put(INJURIES_MIN, strike.getInjuriesMin());
+                cv.put(INJURIES_MAX, strike.getInjuriesMax());
+            }
+
+            cv.put(CHILDREN, strike.getChildren());
+            cv.put(HAS_CHILDREN_RANGE, strike.hasValidChildrenRange());
+            if(strike.hasValidChildrenRange()) {
+                cv.put(CHILDREN_MIN, strike.getChildrenMin());
+                cv.put(CHILDREN_MAX, strike.getChildrenMax());
+            }
+
+            cv.put(TWEET_ID, strike.getTweetId());
+            cv.put(BUREAU_ID, strike.getBureauId());
+            cv.put(BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
+            cv.put(BIJ_LINK, strike.getBijLink());
+            cv.put(TARGET, strike.getTarget());
+            cv.put(LAT, strike.getLat());
+            cv.put(LON, strike.getLon());
+            cv.put(NAMES, strike.getNames());
+
+            db.insert(STRIKE_TABLE, null, cv);
+
         }
+
     }
 
     private static final String TAG = "SQLDatabase";

@@ -24,8 +24,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import de.greenrobot.event.EventBus;
 import io.indy.drone.Flags;
 import io.indy.drone.adapter.StrikeCursorAdapter;
+import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 
 /**
@@ -43,9 +45,7 @@ public class StrikeListFragment extends ListFragment {
 
     private StrikeCursorAdapter mStrikeCursorAdapter;
 
-    public SQLDatabase getDatabase() {
-        return mDatabase;
-    }
+    private String mCurrentCountry;
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -96,6 +96,7 @@ public class StrikeListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mCurrentCountry = "worldwide";
     }
 
     @Override
@@ -104,7 +105,7 @@ public class StrikeListFragment extends ListFragment {
 
         mDatabase = new SQLDatabase(getActivity());
 
-        Cursor c = mDatabase.getStrikeCursor();
+        Cursor c = mDatabase.getStrikeCursor(mCurrentCountry);
 
         mStrikeCursorAdapter = new StrikeCursorAdapter(getActivity(), c, 0);
 
@@ -147,6 +148,27 @@ public class StrikeListFragment extends ListFragment {
         mCallbacks = sDummyCallbacks;
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ifd("onStart");
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ifd("onStop");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public void onEvent(UpdatedDatabaseEvent event) {
+        ifd("received UpdatedDatabaseEvent");
+        updateStrikeCursor();
+    }
+
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
@@ -171,25 +193,17 @@ public class StrikeListFragment extends ListFragment {
         if (position >= countries.length) {
             return;
         }
+        mCurrentCountry = countries[position];
 
-        if(position == 0) {
-            updateStrikeCursor();
-        } else {
-            updateStrikeCursor(countries[position]);
-        }
+        updateStrikeCursor();
     }
 
     private void updateStrikeCursor() {
-        Cursor cursor = mDatabase.getStrikeCursor();
+        Cursor cursor = mDatabase.getStrikeCursor(mCurrentCountry);
         mStrikeCursorAdapter.changeCursor(cursor);
         mStrikeCursorAdapter.notifyDataSetChanged();
     }
 
-    private void updateStrikeCursor(String country) {
-        Cursor cursor = mDatabase.getStrikeCursor(country);
-        mStrikeCursorAdapter.changeCursor(cursor);
-        mStrikeCursorAdapter.notifyDataSetChanged();
-    }
 
     /**
      * Turns on activate-on-click mode. When this mode is on, list items will be

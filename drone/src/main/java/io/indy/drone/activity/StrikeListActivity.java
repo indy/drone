@@ -77,14 +77,6 @@ public class StrikeListActivity extends BaseActivity
                     .setActivateOnItemClick(true);
         }
 
-        /* from MainActivity
-        if(mDatabase.hasData()) {
-            setSupportProgressBarIndeterminateVisibility(false);
-        } else {
-            setSupportProgressBarIndeterminateVisibility(true);
-        }
-        */
-
         // TODO: If exposing deep links into your app, handle intents here.
     }
 
@@ -101,46 +93,6 @@ public class StrikeListActivity extends BaseActivity
         super.onDestroy();
     }
     */
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        ifd("onStart");
-
-        EventBus.getDefault().registerSticky(this);
-
-        if(EventBus.getDefault().getStickyEvent(UpdatedDatabaseEvent.class) != null) {
-            // the database has been created for the first time
-            // the async task has loaded up the strikes in the asset's json file
-            // so update the adapter
-            // note: this code is here in case the async task has finished before onStart is called
-            setSupportProgressBarIndeterminateVisibility(false);
-            /* from MainActivity
-            updateStrikeCursor();
-            */
-            EventBus.getDefault().removeStickyEvent(UpdatedDatabaseEvent.class);
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        ifd("onStop");
-        EventBus.getDefault().unregister(this);
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    public void onEvent(UpdatedDatabaseEvent event) {
-        ifd("received UpdatedDatabaseEvent");
-
-        setSupportProgressBarIndeterminateVisibility(false);
-        /* from MainActivity
-        updateStrikeCursor();
-        */
-    }
-
-
 
     @Override
     protected void onDrawerItemClicked(int position) {
