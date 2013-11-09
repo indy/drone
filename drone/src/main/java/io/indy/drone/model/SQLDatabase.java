@@ -32,6 +32,8 @@ import io.indy.drone.utils.DateFormatHelper;
 
 public class SQLDatabase {
 
+    public static final String[] LOCATIONS = {"worldwide", "Pakistan", "Yemen", "Somalia"};
+
     // The index (key) column name for use in where clauses.
     public static final String KEY_ID = "_id";
 
@@ -121,7 +123,7 @@ public class SQLDatabase {
     }
 
     public Cursor getStrikeCursor(String country) {
-        if(country.equals("worldwide")) {
+        if(country.equals(LOCATIONS[0])) { // worldwide
             return getStrikeCursor(null, null);
         }
         return getStrikeCursor(COUNTRY + "=?", new String[] {country});

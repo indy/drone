@@ -45,7 +45,7 @@ public class StrikeListFragment extends ListFragment {
 
     private StrikeCursorAdapter mStrikeCursorAdapter;
 
-    private String mCurrentCountry;
+    private String mLocation;
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -96,7 +96,7 @@ public class StrikeListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCurrentCountry = "worldwide";
+        mLocation = SQLDatabase.LOCATIONS[0]; // worldwide
     }
 
     @Override
@@ -105,7 +105,7 @@ public class StrikeListFragment extends ListFragment {
 
         mDatabase = new SQLDatabase(getActivity());
 
-        Cursor c = mDatabase.getStrikeCursor(mCurrentCountry);
+        Cursor c = mDatabase.getStrikeCursor(mLocation);
 
         mStrikeCursorAdapter = new StrikeCursorAdapter(getActivity(), c, 0);
 
@@ -189,17 +189,17 @@ public class StrikeListFragment extends ListFragment {
 
     public void onRegionClicked(int position) {
 
-        String[] countries = {"worldwide", "Pakistan", "Yemen", "Somalia"};
-        if (position >= countries.length) {
+        String[] locations = SQLDatabase.LOCATIONS;
+        if (position >= locations.length) {
             return;
         }
-        mCurrentCountry = countries[position];
+        mLocation = locations[position];
 
         updateStrikeCursor();
     }
 
     private void updateStrikeCursor() {
-        Cursor cursor = mDatabase.getStrikeCursor(mCurrentCountry);
+        Cursor cursor = mDatabase.getStrikeCursor(mLocation);
         mStrikeCursorAdapter.changeCursor(cursor);
         mStrikeCursorAdapter.notifyDataSetChanged();
     }
