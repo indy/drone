@@ -16,14 +16,19 @@
 
 package io.indy.drone.fragment;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import io.indy.drone.Flags;
 import io.indy.drone.R;
+import io.indy.drone.model.SQLDatabase;
+import io.indy.drone.model.Strike;
 
 /**
  * A fragment representing a single Strike detail screen.
@@ -32,6 +37,13 @@ import io.indy.drone.R;
  * on handsets.
  */
 public class StrikeDetailFragment extends Fragment {
+
+    static private final boolean D = true;
+    static private final String TAG = "StrikeDetailFragment";
+    static void ifd(final String message) {
+        if (Flags.DEBUG && D) Log.d(TAG, message);
+    }
+
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -41,7 +53,7 @@ public class StrikeDetailFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting.
      */
-    private String mItem;
+    private String mStrikeID;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -58,8 +70,9 @@ public class StrikeDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = getArguments().getString(ARG_ITEM_ID);
+            mStrikeID = getArguments().getString(ARG_ITEM_ID);
         }
+
     }
 
     @Override
@@ -67,9 +80,12 @@ public class StrikeDetailFragment extends Fragment {
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_strike_detail, container, false);
 
+        SQLDatabase database = new SQLDatabase(getActivity());
+        Strike strike = database.getStrike(mStrikeID);
+
         // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.strike_detail)).setText(mItem);
+        if (mStrikeID != null) {
+            ((TextView) rootView.findViewById(R.id.strike_detail)).setText(strike.getBijSummaryShort());
         }
 
         return rootView;

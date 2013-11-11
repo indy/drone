@@ -16,9 +16,11 @@
 
 package io.indy.drone.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,7 +39,7 @@ import io.indy.drone.fragment.StrikeDetailFragment;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link io.indy.drone.fragment.StrikeDetailFragment}.
  */
-public class StrikeDetailActivity extends BaseActivity {
+public class StrikeDetailActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +48,6 @@ public class StrikeDetailActivity extends BaseActivity {
 
         // Show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
-
-        setupNavigationDrawer();
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -66,7 +66,8 @@ public class StrikeDetailActivity extends BaseActivity {
                     getIntent().getStringExtra(StrikeDetailFragment.ARG_ITEM_ID));
             StrikeDetailFragment fragment = new StrikeDetailFragment();
             fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
+            getSupportFragmentManager()
+                    .beginTransaction()
                     .add(R.id.strike_detail_container, fragment)
                     .commit();
         }
@@ -75,14 +76,7 @@ public class StrikeDetailActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-
         ifd("clicked " + item);
-
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
 
         switch (item.getItemId()) {
             case R.id.action_settings:

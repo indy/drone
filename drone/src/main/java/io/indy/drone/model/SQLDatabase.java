@@ -24,6 +24,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.Date;
 import java.util.List;
 
 import io.indy.drone.Flags;
@@ -85,41 +86,101 @@ public class SQLDatabase {
         mModelHelper.close();
     }
 
-    // dummy method invoked by the Constructor in order to force creation of the db
-    // TODO: remove this once app has some functionality and queries db anyway
-    private void dummyOp() {
-        ifd("dummyOp");
-        mModelHelper.getReadableDatabase().rawQuery("select count(*) from strike", null);
+    private Strike strikeFromCursor(Cursor cursor) {
+        Strike strike = new Strike();
+
+        String happenedString = cursor.getString(cursor.getColumnIndex(HAPPENED));
+        strike.setHappened(DateFormatHelper.parseSQLiteDateString(happenedString));
+
+        strike.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
+        strike.setTown(cursor.getString(cursor.getColumnIndex(TOWN)));
+        strike.setLocation(cursor.getString(cursor.getColumnIndex(LOCATION)));
+
+        strike.setDeaths(cursor.getString(cursor.getColumnIndex(DEATHS)));
+        int bool = cursor.getInt(cursor.getColumnIndex(HAS_DEATHS_RANGE));
+        if (bool == 1) {
+            strike.confirmValidDeathsRange(true);
+            strike.setDeathsMax(cursor.getInt(cursor.getColumnIndex(DEATHS_MAX)));
+            strike.setDeathsMin(cursor.getInt(cursor.getColumnIndex(DEATHS_MIN)));
+        } else {
+            strike.confirmValidDeathsRange(false);
+        }
+
+        strike.setCivilians(cursor.getString(cursor.getColumnIndex(CIVILIANS)));
+        bool = cursor.getInt(cursor.getColumnIndex(HAS_CIVILIANS_RANGE));
+        if (bool == 1) {
+            strike.confirmValidCivilianRange(true);
+            strike.setCiviliansMax(cursor.getInt(cursor.getColumnIndex(CIVILIANS_MAX)));
+            strike.setCiviliansMin(cursor.getInt(cursor.getColumnIndex(CIVILIANS_MIN)));
+        } else {
+            strike.confirmValidCivilianRange(false);
+        }
+
+        strike.setInjuries(cursor.getString(cursor.getColumnIndex(INJURIES)));
+        bool = cursor.getInt(cursor.getColumnIndex(HAS_INJURIES_RANGE));
+        if (bool == 1) {
+            strike.confirmValidInjuriesRange(true);
+            strike.setInjuriesMax(cursor.getInt(cursor.getColumnIndex(INJURIES_MAX)));
+            strike.setInjuriesMin(cursor.getInt(cursor.getColumnIndex(INJURIES_MIN)));
+        } else {
+            strike.confirmValidInjuriesRange(false);
+        }
+
+        strike.setChildren(cursor.getString(cursor.getColumnIndex(CHILDREN)));
+        bool = cursor.getInt(cursor.getColumnIndex(HAS_CHILDREN_RANGE));
+        if (bool == 1) {
+            strike.confirmValidChildrenRange(true);
+            strike.setChildrenMax(cursor.getInt(cursor.getColumnIndex(CHILDREN_MAX)));
+            strike.setChildrenMin(cursor.getInt(cursor.getColumnIndex(CHILDREN_MIN)));
+        } else {
+            strike.confirmValidChildrenRange(false);
+        }
+
+        strike.setTweetId(cursor.getString(cursor.getColumnIndex(TWEET_ID)));
+        strike.setBureauId(cursor.getString(cursor.getColumnIndex(BUREAU_ID)));
+        strike.setBijSummaryShort(cursor.getString(cursor.getColumnIndex(BIJ_SUMMARY_SHORT)));
+        strike.setBijLink(cursor.getString(cursor.getColumnIndex(BIJ_LINK)));
+        strike.setTarget(cursor.getString(cursor.getColumnIndex(TARGET)));
+
+        strike.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
+        strike.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
+
+        return strike;
     }
 
-    public Cursor getDetailedStrikeCursor(String strikeId) {
+    public Strike getStrike(String strikeId) {
         String[] result_columns = new String[] {
-            KEY_ID, HAPPENED, COUNTRY, TOWN, LOCATION, 
-            DEATHS, HAS_DEATHS_RANGE, DEATHS_MIN, DEATHS_MAX, 
-            CIVILIANS, HAS_CIVILIANS_RANGE, CIVILIANS_MIN, CIVILIANS_MAX, 
-            INJURIES, HAS_INJURIES_RANGE, INJURIES_MIN, INJURIES_MAX, 
-            CHILDREN, HAS_CHILDREN_RANGE, CHILDREN_MIN, CHILDREN_MAX, 
-            TWEET_ID, BUREAU_ID, BIJ_SUMMARY_SHORT, BIJ_LINK, TARGET, 
-            LAT, LON
+                KEY_ID, HAPPENED, COUNTRY, TOWN, LOCATION,
+                DEATHS, HAS_DEATHS_RANGE, DEATHS_MIN, DEATHS_MAX,
+                CIVILIANS, HAS_CIVILIANS_RANGE, CIVILIANS_MIN, CIVILIANS_MAX,
+                INJURIES, HAS_INJURIES_RANGE, INJURIES_MIN, INJURIES_MAX,
+                CHILDREN, HAS_CHILDREN_RANGE, CHILDREN_MIN, CHILDREN_MAX,
+                TWEET_ID, BUREAU_ID, BIJ_SUMMARY_SHORT, BIJ_LINK, TARGET,
+                LAT, LON
         };
 
         String where = KEY_ID + "=?";
         String[] whereArgs = {strikeId};
         String groupBy = null;
         String having = null;
-        String order = null;//HAPPENED + " desc";
+        String order = null;
+
+        Strike strike = null;
 
         SQLiteDatabase db = mModelHelper.getReadableDatabase();
-        Cursor cursor = null;
         try {
-            cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns, 
-                              where, whereArgs, 
-                              groupBy, having, order);
+            Cursor cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns,
+                    where, whereArgs,
+                    groupBy, having, order);
+
+            cursor.moveToNext();
+            strike = strikeFromCursor(cursor);
+            cursor.close();
+
         } catch(NullPointerException e) {
             e.printStackTrace();
         }
-
-        return cursor;
+        return strike;
     }
 
     public Cursor getStrikeCursor(String country) {
