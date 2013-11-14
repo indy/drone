@@ -8,6 +8,9 @@ obj/
 build/
 .gradle/
 
+# private files with keys
+private.xml
+
 # built application files
 *.apk
 *.ap_
