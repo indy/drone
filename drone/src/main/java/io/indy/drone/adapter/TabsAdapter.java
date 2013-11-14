@@ -30,7 +30,7 @@ import java.util.ArrayList;
 // https://code.google.com/p/android-ultimatestopwatch
 
 public class TabsAdapter extends FragmentPagerAdapter
-    implements ActionBar.TabListener {
+        implements ActionBar.TabListener {
 
     private final ActionBarActivity mActivity;
     private final ActionBar mActionBar;
@@ -84,13 +84,13 @@ public class TabsAdapter extends FragmentPagerAdapter
     }
 
     ViewPager.SimpleOnPageChangeListener MyViewPagerListener = new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                // Find the ViewPager Position
-                mActionBar.setSelectedNavigationItem(position);
-            }
-        };
+        @Override
+        public void onPageSelected(int position) {
+            super.onPageSelected(position);
+            // Find the ViewPager Position
+            mActionBar.setSelectedNavigationItem(position);
+        }
+    };
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
@@ -117,8 +117,7 @@ public class TabsAdapter extends FragmentPagerAdapter
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
     }
 
-    public int getCurrentTabNum()
-    {
+    public int getCurrentTabNum() {
         return mCurrentTab;
     }
 }

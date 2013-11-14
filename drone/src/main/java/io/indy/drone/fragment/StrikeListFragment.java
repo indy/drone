@@ -35,7 +35,7 @@ import io.indy.drone.model.SQLDatabase;
  * also supports tablet devices by allowing list items to be given an
  * 'activated' state upon selection. This helps indicate which item is
  * currently being viewed in a {@link io.indy.drone.fragment.StrikeDetailFragment}.
- * <p>
+ * <p/>
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
@@ -237,6 +237,7 @@ public class StrikeListFragment extends ListFragment {
 
     static private final boolean D = true;
     static private final String TAG = "StrikeListFragment";
+
     static void ifd(final String message) {
         if (Flags.DEBUG && D) Log.d(TAG, message);
     }

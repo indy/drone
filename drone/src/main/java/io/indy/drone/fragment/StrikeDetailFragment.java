@@ -16,7 +16,6 @@
 
 package io.indy.drone.fragment;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -27,7 +26,6 @@ import android.widget.TextView;
 
 import io.indy.drone.Flags;
 import io.indy.drone.R;
-import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 
 /**
@@ -40,6 +38,7 @@ public class StrikeDetailFragment extends Fragment {
 
     static private final boolean D = true;
     static private final String TAG = "StrikeDetailFragment";
+
     static void ifd(final String message) {
         if (Flags.DEBUG && D) Log.d(TAG, message);
     }
@@ -57,14 +56,14 @@ public class StrikeDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(getArguments().containsKey(Strike.BIJ_SUMMARY_SHORT)) {
+        if (getArguments().containsKey(Strike.BIJ_SUMMARY_SHORT)) {
             mSummary = getArguments().getString(Strike.BIJ_SUMMARY_SHORT);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_strike_detail, container, false);
 
         ((TextView) rootView.findViewById(R.id.strike_detail)).setText(mSummary);

@@ -36,12 +36,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-import de.greenrobot.event.EventBus;
 import io.indy.drone.Flags;
 import io.indy.drone.R;
 import io.indy.drone.fragment.StrikeDetailFragment;
 import io.indy.drone.fragment.StrikeListFragment;
-import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 
@@ -53,11 +51,11 @@ import io.indy.drone.model.Strike;
  * lead to a {@link io.indy.drone.activity.StrikeDetailActivity} representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
- * <p>
+ * <p/>
  * The activity makes heavy use of fragments. The list of items is a
  * {@link io.indy.drone.fragment.StrikeListFragment} and the item details
  * (if present) is a {@link io.indy.drone.fragment.StrikeDetailFragment}.
- * <p>
+ * <p/>
  * This activity also implements the required
  * {@link io.indy.drone.fragment.StrikeListFragment.Callbacks} interface
  * to listen for item selections.
@@ -65,13 +63,20 @@ import io.indy.drone.model.Strike;
 public class StrikeListActivity extends ActionBarActivity
         implements StrikeListFragment.Callbacks {
 
-    protected String[] mDrawerTitles;
-    protected DrawerLayout mDrawerLayout;
-    protected ListView mDrawerList;
+    static private final boolean D = true;
+    static private final String TAG = StrikeListActivity.class.getSimpleName();
 
-    protected ActionBarDrawerToggle mDrawerToggle;
-    protected CharSequence mDrawerTitle;
-    protected CharSequence mTitle;
+    static void ifd(final String message) {
+        if (Flags.DEBUG && D) Log.d(TAG, message);
+    }
+
+    private String[] mDrawerTitles;
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+
+    private ActionBarDrawerToggle mDrawerToggle;
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -146,7 +151,6 @@ public class StrikeListActivity extends ActionBarActivity
 
         Strike strike = mDatabase.getStrike(id);
 
-
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
@@ -220,8 +224,6 @@ public class StrikeListActivity extends ActionBarActivity
         return super.onCreateOptionsMenu(menu);
     }
 
-
-
     protected void setupNavigationDrawer() {
         mTitle = mDrawerTitle = getTitle();
         mDrawerTitles = getResources().getStringArray(R.array.locations_array);
@@ -257,7 +259,6 @@ public class StrikeListActivity extends ActionBarActivity
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
     }
 
-
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
@@ -292,12 +293,5 @@ public class StrikeListActivity extends ActionBarActivity
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         //menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
-    }
-
-
-    static private final boolean D = true;
-    static private final String TAG = StrikeListActivity.class.getSimpleName();
-    static void ifd(final String message) {
-        if (Flags.DEBUG && D) Log.d(TAG, message);
     }
 }

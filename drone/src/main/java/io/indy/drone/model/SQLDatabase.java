@@ -24,9 +24,6 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.util.Date;
-import java.util.List;
-
 import io.indy.drone.Flags;
 import io.indy.drone.async.PopulateDatabaseAsyncTask;
 import io.indy.drone.utils.DateFormatHelper;
@@ -37,7 +34,7 @@ public class SQLDatabase {
 
     // The index (key) column name for use in where clauses.
     public static final String KEY_ID = "_id";
-    
+
     // SQLDatabase open/upgrade helper
     private ModelHelper mModelHelper;
 
@@ -131,17 +128,17 @@ public class SQLDatabase {
     }
 
     public Strike getStrike(String strikeId) {
-        String[] result_columns = new String[] {
-                KEY_ID, Strike.HAPPENED, Strike.COUNTRY, Strike.TOWN, 
-                Strike.LOCATION, Strike.DEATHS, Strike.HAS_DEATHS_RANGE, 
-                Strike.DEATHS_MIN, Strike.DEATHS_MAX, Strike.CIVILIANS, 
-                Strike.HAS_CIVILIANS_RANGE, Strike.CIVILIANS_MIN, 
-                Strike.CIVILIANS_MAX, Strike.INJURIES, 
-                Strike.HAS_INJURIES_RANGE, Strike.INJURIES_MIN, 
-                Strike.INJURIES_MAX, Strike.CHILDREN, 
-                Strike.HAS_CHILDREN_RANGE, Strike.CHILDREN_MIN, 
-                Strike.CHILDREN_MAX, Strike.TWEET_ID, Strike.BUREAU_ID, 
-                Strike.BIJ_SUMMARY_SHORT, Strike.BIJ_LINK, Strike.TARGET, 
+        String[] result_columns = new String[]{
+                KEY_ID, Strike.HAPPENED, Strike.COUNTRY, Strike.TOWN,
+                Strike.LOCATION, Strike.DEATHS, Strike.HAS_DEATHS_RANGE,
+                Strike.DEATHS_MIN, Strike.DEATHS_MAX, Strike.CIVILIANS,
+                Strike.HAS_CIVILIANS_RANGE, Strike.CIVILIANS_MIN,
+                Strike.CIVILIANS_MAX, Strike.INJURIES,
+                Strike.HAS_INJURIES_RANGE, Strike.INJURIES_MIN,
+                Strike.INJURIES_MAX, Strike.CHILDREN,
+                Strike.HAS_CHILDREN_RANGE, Strike.CHILDREN_MIN,
+                Strike.CHILDREN_MAX, Strike.TWEET_ID, Strike.BUREAU_ID,
+                Strike.BIJ_SUMMARY_SHORT, Strike.BIJ_LINK, Strike.TARGET,
                 Strike.LAT, Strike.LON
         };
 
@@ -163,24 +160,24 @@ public class SQLDatabase {
             strike = strikeFromCursor(cursor);
             cursor.close();
 
-        } catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
         return strike;
     }
 
     public Cursor getStrikeCursor(String country) {
-        if(country.equals(LOCATIONS[0])) { // worldwide
+        if (country.equals(LOCATIONS[0])) { // worldwide
             return getStrikeCursor(null, null);
         }
-        return getStrikeCursor(Strike.COUNTRY + "=?", new String[] {country});
+        return getStrikeCursor(Strike.COUNTRY + "=?", new String[]{country});
     }
 
     private Cursor getStrikeCursor(String where, String[] whereArgs) {
         // Specify the result column projection. Return the minimum set
         // of columns required to satisfy your requirements.
-        String[] result_columns = new String[] {
-                KEY_ID, Strike.COUNTRY, Strike.TOWN, Strike.LOCATION, 
+        String[] result_columns = new String[]{
+                KEY_ID, Strike.COUNTRY, Strike.TOWN, Strike.LOCATION,
                 Strike.BIJ_SUMMARY_SHORT, Strike.HAPPENED
         };
 
@@ -193,7 +190,7 @@ public class SQLDatabase {
         try {
             cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns, where, whereArgs, groupBy,
                     having, order);
-        } catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
 
@@ -230,38 +227,38 @@ public class SQLDatabase {
             ifd("onCreate");
 
             String table = new SQLTableStatement(STRIKE_TABLE)
-                .integer(KEY_ID, "primary key autoincrement")
-                .text(Strike.JSON_ID)
-                .integer(Strike.NUMBER)
-                .text(Strike.COUNTRY)
-                .timestamp(Strike.HAPPENED)
-                .text(Strike.TOWN)
-                .text(Strike.LOCATION)
-                .text(Strike.DEATHS)
-                .integer(Strike.HAS_DEATHS_RANGE)
-                .integer(Strike.DEATHS_MIN)
-                .integer(Strike.DEATHS_MAX)
-                .text(Strike.CIVILIANS)
-                .integer(Strike.HAS_CIVILIANS_RANGE)
-                .integer(Strike.CIVILIANS_MIN)
-                .integer(Strike.CIVILIANS_MAX)
-                .text(Strike.INJURIES)
-                .integer(Strike.HAS_INJURIES_RANGE)
-                .integer(Strike.INJURIES_MIN)
-                .integer(Strike.INJURIES_MAX)
-                .text(Strike.CHILDREN)
-                .integer(Strike.HAS_CHILDREN_RANGE)
-                .integer(Strike.CHILDREN_MIN)
-                .integer(Strike.CHILDREN_MAX)
-                .text(Strike.TWEET_ID)
-                .text(Strike.BUREAU_ID)
-                .text(Strike.BIJ_SUMMARY_SHORT)
-                .text(Strike.BIJ_LINK)
-                .text(Strike.TARGET)
-                .real(Strike.LAT)
-                .real(Strike.LON)
-                .text(Strike.NAMES)
-                .create();
+                    .integer(KEY_ID, "primary key autoincrement")
+                    .text(Strike.JSON_ID)
+                    .integer(Strike.NUMBER)
+                    .text(Strike.COUNTRY)
+                    .timestamp(Strike.HAPPENED)
+                    .text(Strike.TOWN)
+                    .text(Strike.LOCATION)
+                    .text(Strike.DEATHS)
+                    .integer(Strike.HAS_DEATHS_RANGE)
+                    .integer(Strike.DEATHS_MIN)
+                    .integer(Strike.DEATHS_MAX)
+                    .text(Strike.CIVILIANS)
+                    .integer(Strike.HAS_CIVILIANS_RANGE)
+                    .integer(Strike.CIVILIANS_MIN)
+                    .integer(Strike.CIVILIANS_MAX)
+                    .text(Strike.INJURIES)
+                    .integer(Strike.HAS_INJURIES_RANGE)
+                    .integer(Strike.INJURIES_MIN)
+                    .integer(Strike.INJURIES_MAX)
+                    .text(Strike.CHILDREN)
+                    .integer(Strike.HAS_CHILDREN_RANGE)
+                    .integer(Strike.CHILDREN_MIN)
+                    .integer(Strike.CHILDREN_MAX)
+                    .text(Strike.TWEET_ID)
+                    .text(Strike.BUREAU_ID)
+                    .text(Strike.BIJ_SUMMARY_SHORT)
+                    .text(Strike.BIJ_LINK)
+                    .text(Strike.TARGET)
+                    .real(Strike.LAT)
+                    .real(Strike.LON)
+                    .text(Strike.NAMES)
+                    .create();
 
             db.execSQL(table);
 
@@ -302,6 +299,7 @@ public class SQLDatabase {
 
     private static final String TAG = "SQLDatabase";
     private static final boolean D = true;
+
     static void ifd(final String message) {
         if (Flags.DEBUG && D) Log.d(TAG, message);
     }

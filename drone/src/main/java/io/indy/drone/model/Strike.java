@@ -16,9 +16,8 @@
 
 package io.indy.drone.model;
 
-import android.util.Log;
-
 import android.content.ContentValues;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -99,7 +98,7 @@ public class Strike {
 
     private double mLat;
     private double mLon;
-        
+
     private String mNames;
 
     public boolean hasValidDeathsRange() {
@@ -125,6 +124,7 @@ public class Strike {
     public void confirmValidInjuriesRange(boolean hasValidInjuriesRange) {
         mHasValidInjuriesRange = hasValidInjuriesRange;
     }
+
     public boolean hasValidChildrenRange() {
         return mHasValidChildrenRange;
     }
@@ -373,7 +373,7 @@ public class Strike {
     private static Pattern RANGE = Pattern.compile("^\\s*(\\d+)\\s*-\\s*(\\d+)\\s*$");
 
     public static class ParseException extends Exception {
-        public ParseException(String message){
+        public ParseException(String message) {
             super(message);
         }
     }
@@ -389,13 +389,13 @@ public class Strike {
     public static int[] parseMinMax(String s) throws ParseException {
 
         Matcher matcher = SINGLE_NUMBER.matcher(s);
-        if(matcher.matches()) {
+        if (matcher.matches()) {
             int val = Integer.parseInt(matcher.group(1));
             return new int[]{val, val};
         }
 
         matcher = RANGE.matcher(s);
-        if(matcher.matches()) {
+        if (matcher.matches()) {
             int min = Integer.parseInt(matcher.group(1));
             int max = Integer.parseInt(matcher.group(2));
             return new int[]{min, max};
@@ -445,13 +445,13 @@ public class Strike {
 
             String deaths = jsonObject.getString(D_DEATHS);
             strike.setDeaths(deaths);
-            if(hasValidMinMax(deaths)) {
+            if (hasValidMinMax(deaths)) {
                 strike.confirmValidDeathsRange(true);
                 try {
                     int[] minMax = parseMinMax(deaths);
                     strike.setDeathsMin(minMax[0]);
                     strike.setDeathsMax(minMax[1]);
-                } catch(ParseException e) {
+                } catch (ParseException e) {
                     strike.confirmValidDeathsRange(false);
                     e.printStackTrace();
                 }
@@ -461,13 +461,13 @@ public class Strike {
 
             String civilians = jsonObject.getString(D_CIVILIANS);
             strike.setCivilians(civilians);
-            if(hasValidMinMax(civilians)) {
+            if (hasValidMinMax(civilians)) {
                 strike.confirmValidCivilianRange(true);
                 try {
                     int[] minMax = parseMinMax(civilians);
                     strike.setCiviliansMin(minMax[0]);
                     strike.setCiviliansMax(minMax[1]);
-                } catch(ParseException e) {
+                } catch (ParseException e) {
                     strike.confirmValidCivilianRange(false);
                     e.printStackTrace();
                 }
@@ -477,13 +477,13 @@ public class Strike {
 
             String injuries = jsonObject.getString(D_INJURIES);
             strike.setInjuries(injuries);
-            if(hasValidMinMax(injuries)) {
+            if (hasValidMinMax(injuries)) {
                 strike.confirmValidInjuriesRange(true);
                 try {
                     int[] minMax = parseMinMax(injuries);
                     strike.setInjuriesMin(minMax[0]);
                     strike.setInjuriesMax(minMax[1]);
-                } catch(ParseException e) {
+                } catch (ParseException e) {
                     strike.confirmValidInjuriesRange(false);
                     e.printStackTrace();
                 }
@@ -494,13 +494,13 @@ public class Strike {
 
             String children = jsonObject.getString(D_CHILDREN);
             strike.setChildren(children);
-            if(hasValidMinMax(children)) {
+            if (hasValidMinMax(children)) {
                 strike.confirmValidChildrenRange(true);
                 try {
                     int[] minMax = parseMinMax(children);
                     strike.setChildrenMin(minMax[0]);
                     strike.setChildrenMax(minMax[1]);
-                } catch(ParseException e) {
+                } catch (ParseException e) {
                     strike.confirmValidChildrenRange(false);
                     e.printStackTrace();
                 }
@@ -518,7 +518,7 @@ public class Strike {
 
             JSONArray names = jsonObject.getJSONArray(D_NAMES);
             // the NAMES array should only have one entry
-            for(int i=0;i<names.length();i++) {
+            for (int i = 0; i < names.length(); i++) {
                 names.getString(i);
                 strike.setNames(names.getString(i));
             }
@@ -545,28 +545,28 @@ public class Strike {
 
         cv.put(DEATHS, getDeaths());
         cv.put(HAS_DEATHS_RANGE, hasValidDeathsRange());
-        if(hasValidDeathsRange()) {
+        if (hasValidDeathsRange()) {
             cv.put(DEATHS_MIN, getDeathsMin());
             cv.put(DEATHS_MAX, getDeathsMax());
         }
 
         cv.put(CIVILIANS, getCivilians());
         cv.put(HAS_CIVILIANS_RANGE, hasValidCivilianRange());
-        if(hasValidCivilianRange()) {
+        if (hasValidCivilianRange()) {
             cv.put(CIVILIANS_MIN, getCiviliansMin());
             cv.put(CIVILIANS_MAX, getCiviliansMax());
         }
 
         cv.put(INJURIES, getInjuries());
         cv.put(HAS_INJURIES_RANGE, hasValidInjuriesRange());
-        if(hasValidInjuriesRange()) {
+        if (hasValidInjuriesRange()) {
             cv.put(INJURIES_MIN, getInjuriesMin());
             cv.put(INJURIES_MAX, getInjuriesMax());
         }
 
         cv.put(CHILDREN, getChildren());
         cv.put(HAS_CHILDREN_RANGE, hasValidChildrenRange());
-        if(hasValidChildrenRange()) {
+        if (hasValidChildrenRange()) {
             cv.put(CHILDREN_MIN, getChildrenMin());
             cv.put(CHILDREN_MAX, getChildrenMax());
         }
@@ -585,6 +585,7 @@ public class Strike {
 
     private static final String TAG = "Strike";
     private static final boolean D = true;
+
     static void ifd(final String message) {
         if (Flags.DEBUG && D) Log.d(TAG, message);
     }

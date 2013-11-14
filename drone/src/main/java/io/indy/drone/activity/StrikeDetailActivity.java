@@ -16,7 +16,6 @@
 
 package io.indy.drone.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -26,17 +25,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import io.indy.drone.Flags;
 import io.indy.drone.R;
 import io.indy.drone.fragment.StrikeDetailFragment;
-import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 
 /**
@@ -44,7 +40,7 @@ import io.indy.drone.model.Strike;
  * activity is only used on handset devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
  * in a {@link StrikeListActivity}.
- * <p>
+ * <p/>
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link io.indy.drone.fragment.StrikeDetailFragment}.
  */
@@ -138,6 +134,7 @@ public class StrikeDetailActivity extends ActionBarActivity {
 
     static private final boolean D = true;
     static private final String TAG = StrikeDetailActivity.class.getSimpleName();
+
     static void ifd(final String message) {
         if (Flags.DEBUG && D) Log.d(TAG, message);
     }

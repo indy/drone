@@ -61,7 +61,7 @@ public class StrikeCursorAdapter extends CursorAdapter {
 
         view.setTag(cursor.getString(mStrikeIDIndex));
 
-        TextView strike = (TextView)view.findViewById(R.id.strikeid);
+        TextView strike = (TextView) view.findViewById(R.id.strikeid);
         strike.setText(cursor.getString(mStrikeIDIndex));
 
         TextView happened = (TextView) view.findViewById(R.id.happened);
@@ -69,19 +69,19 @@ public class StrikeCursorAdapter extends CursorAdapter {
         Date time = DateFormatHelper.parseSQLiteDateString(timeString);
         happened.setText(DateFormatHelper.dateToDisplay(time));
 
-        TextView country = (TextView)view.findViewById(R.id.country);
+        TextView country = (TextView) view.findViewById(R.id.country);
         country.setText(cursor.getString(mCountryIndex));
 
-        TextView location = (TextView)view.findViewById(R.id.location);
+        TextView location = (TextView) view.findViewById(R.id.location);
         String loc = cursor.getString(mTownIndex);
-        if(loc.equals("")) {
+        if (loc.equals("")) {
             loc = cursor.getString(mLocationIndex);
-        } else if(!cursor.getString(mLocationIndex).equals("")) {
+        } else if (!cursor.getString(mLocationIndex).equals("")) {
             loc = cursor.getString(mTownIndex) + " - " + cursor.getString(mLocationIndex);
         }
         location.setText(loc);
 
-        TextView summary = (TextView)view.findViewById(R.id.summary);
+        TextView summary = (TextView) view.findViewById(R.id.summary);
         summary.setText(cursor.getString(mSummaryIndex));
     }
 

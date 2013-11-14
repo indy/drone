@@ -27,8 +27,6 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import io.indy.drone.Flags;
@@ -56,7 +54,7 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Integer, Void> {
 
             BufferedReader in = new BufferedReader(new InputStreamReader(json));
             String str;
-            while ((str=in.readLine()) != null) {
+            while ((str = in.readLine()) != null) {
                 buf.append(str);
             }
             in.close();
@@ -86,15 +84,15 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Integer, Void> {
             for (int i = len - 1; i >= 0; i--) {
                 strike = Strike.fromJson(strikes.getJSONObject(i));
                 mModelHelper.addStrike(strike);
-                if(i == len - 5) {
+                if (i == len - 5) {
                     // get an UpdatedDatabaseEvent fired as soon as there's enough
                     // data in the db to have a screen of strike information
                     publishProgress(i);
-                } else if(i == len - 20) {
+                } else if (i == len - 20) {
                     // continue early population of list
                     publishProgress(i);
                 }
-                if(i % 100 == 0) {
+                if (i % 100 == 0) {
                     // now populate at regular intervals
                     publishProgress(i);
                 }
@@ -119,6 +117,7 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Integer, Void> {
 
     private static final String TAG = "PopulateDatabaseAsyncTask";
     private static final boolean D = true;
+
     static void ifd(final String message) {
         if (Flags.DEBUG && D) Log.d(TAG, message);
     }

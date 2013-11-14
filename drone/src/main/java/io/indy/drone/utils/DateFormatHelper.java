@@ -62,6 +62,7 @@ public class DateFormatHelper {
 
     static private final boolean D = true;
     static private final String TAG = "DateFormatHelper";
+
     static void ifd(final String message) {
         if (Flags.DEBUG && D) Log.d(TAG, message);
     }
