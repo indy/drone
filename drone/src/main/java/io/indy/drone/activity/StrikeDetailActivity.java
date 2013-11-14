@@ -29,10 +29,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import io.indy.drone.Flags;
 import io.indy.drone.R;
 import io.indy.drone.fragment.StrikeDetailFragment;
+import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 
 /**
@@ -44,14 +46,18 @@ import io.indy.drone.model.Strike;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link io.indy.drone.fragment.StrikeDetailFragment}.
  */
-public class StrikeDetailActivity extends ActionBarActivity {
+public class StrikeDetailActivity extends BaseActivity {
 
-    private GoogleMap mMap;
+    private SQLDatabase mDatabase;
+
+    private String mStrikeId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_strike_detail);
+
+        mDatabase = new SQLDatabase(this);
 
         // Show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -66,12 +72,16 @@ public class StrikeDetailActivity extends ActionBarActivity {
         // http://developer.android.com/guide/components/fragments.html
         //
         if (savedInstanceState == null) {
+
+            mStrikeId = getIntent().getStringExtra(SQLDatabase.KEY_ID);
+            Strike strike = mDatabase.getStrike(mStrikeId);
+
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
 
             Bundle arguments = new Bundle();
-            arguments.putString(Strike.BIJ_SUMMARY_SHORT,
-                    getIntent().getStringExtra(Strike.BIJ_SUMMARY_SHORT));
+            arguments.putString(Strike.BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
+
             StrikeDetailFragment fragment = new StrikeDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager()
@@ -79,25 +89,7 @@ public class StrikeDetailActivity extends ActionBarActivity {
                     .add(R.id.strike_detail_container, fragment)
                     .commit();
 
-            Intent intent = getIntent();
-            double lat = intent.getDoubleExtra(Strike.LAT, 0.0);
-            double lon = intent.getDoubleExtra(Strike.LON, 0.0);
-            setUpMapIfNeeded(lat, lon);
-        }
-    }
-
-    private void setUpMapIfNeeded(double lat, double lon) {
-        // Do a null check to confirm that we have not already instantiated the map.
-        if (mMap == null) {
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
-                    .getMap();
-
-            // Check if we were successful in obtaining the map.
-            if (mMap != null) {
-                // The Map is verified. It is now safe to manipulate the map.
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 7));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(10), 3000, null);
-            }
+            setUpMapIfNeeded(strike);
         }
     }
 

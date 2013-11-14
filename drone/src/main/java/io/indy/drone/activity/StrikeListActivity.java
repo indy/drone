@@ -35,6 +35,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import io.indy.drone.Flags;
 import io.indy.drone.R;
@@ -60,7 +61,7 @@ import io.indy.drone.model.Strike;
  * {@link io.indy.drone.fragment.StrikeListFragment.Callbacks} interface
  * to listen for item selections.
  */
-public class StrikeListActivity extends ActionBarActivity
+public class StrikeListActivity extends BaseActivity
         implements StrikeListFragment.Callbacks {
 
     static private final boolean D = true;
@@ -85,9 +86,6 @@ public class StrikeListActivity extends ActionBarActivity
     private boolean mTwoPane;
 
     private SQLDatabase mDatabase;
-
-    private GoogleMap mMap;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,9 +147,10 @@ public class StrikeListActivity extends ActionBarActivity
     @Override
     public void onItemSelected(String id) {
 
-        Strike strike = mDatabase.getStrike(id);
 
         if (mTwoPane) {
+            Strike strike = mDatabase.getStrike(id);
+
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
@@ -166,34 +165,14 @@ public class StrikeListActivity extends ActionBarActivity
                     .replace(R.id.strike_detail_container, fragment)
                     .commit();
 
-            setUpMapIfNeeded(strike.getLat(), strike.getLon());
+            setUpMapIfNeeded(strike);
 
         } else {
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, StrikeDetailActivity.class);
-            detailIntent.putExtra(Strike.BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
-            detailIntent.putExtra(Strike.LAT, strike.getLat());
-            detailIntent.putExtra(Strike.LON, strike.getLon());
-
+            detailIntent.putExtra(SQLDatabase.KEY_ID, id);
             startActivity(detailIntent);
-        }
-    }
-
-    private void setUpMapIfNeeded(double lat, double lon) {
-        // Do a null check to confirm that we have not already instantiated the map.
-        if (mMap == null) {
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
-                    .getMap();
-
-            // Check if we were successful in obtaining the map.
-            if (mMap != null) {
-                // The Map is verified. It is now safe to manipulate the map.
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 7));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
-            }
-        } else {
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(lat, lon)), 3000, null);
         }
     }
 
