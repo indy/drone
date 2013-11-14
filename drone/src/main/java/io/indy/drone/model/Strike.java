@@ -18,6 +18,8 @@ package io.indy.drone.model;
 
 import android.util.Log;
 
+import android.content.ContentValues;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +32,37 @@ import io.indy.drone.Flags;
 import io.indy.drone.utils.DateFormatHelper;
 
 public class Strike {
+
+    public static final String JSON_ID = "json_id";
+    public static final String NUMBER = "number";
+    public static final String COUNTRY = "country";
+    public static final String HAPPENED = "happened";
+    public static final String TOWN = "town";
+    public static final String LOCATION = "location";
+    public static final String DEATHS = "deaths";
+    public static final String HAS_DEATHS_RANGE = "has_deaths_range";
+    public static final String DEATHS_MIN = "deaths_min";
+    public static final String DEATHS_MAX = "deaths_max";
+    public static final String CIVILIANS = "civilians";
+    public static final String HAS_CIVILIANS_RANGE = "has_civilians_range";
+    public static final String CIVILIANS_MIN = "civilians_min";
+    public static final String CIVILIANS_MAX = "civilians_max";
+    public static final String INJURIES = "injuries";
+    public static final String HAS_INJURIES_RANGE = "has_injuries_range";
+    public static final String INJURIES_MIN = "injuries_min";
+    public static final String INJURIES_MAX = "injuries_max";
+    public static final String CHILDREN = "children";
+    public static final String HAS_CHILDREN_RANGE = "has_children_range";
+    public static final String CHILDREN_MIN = "children_min";
+    public static final String CHILDREN_MAX = "children_max";
+    public static final String TWEET_ID = "tweet_id";
+    public static final String BUREAU_ID = "bureau_id";
+    public static final String BIJ_SUMMARY_SHORT = "bij_summary_short";
+    public static final String BIJ_LINK = "bij_link";
+    public static final String TARGET = "target";
+    public static final String LAT = "lat";
+    public static final String LON = "lon";
+    public static final String NAMES = "names";
 
     private String mJsonId;
     private int mNumber;
@@ -377,40 +410,40 @@ public class Strike {
 
         // the strings used as keys in the dronestre.am json feed
         //
-        final String JSON_ID = "_id";
-        final String NUMBER = "number";
-        final String COUNTRY = "country";
-        final String HAPPENED = "date";
-        final String TOWN = "town";
-        final String LOCATION = "location";
-        final String DEATHS = "deaths";
-        final String DEATHS_MIN = "deaths_min";
-        final String DEATHS_MAX = "deaths_max";
-        final String CIVILIANS = "civilians";
-        final String INJURIES = "injuries";
-        final String CHILDREN = "children";
-        final String TWEET_ID = "tweet_id";
-        final String BUREAU_ID = "bureau_id";
-        final String BIJ_SUMMARY_SHORT = "bij_summary_short";
-        final String BIJ_LINK = "bij_link";
-        final String TARGET = "target";
-        final String LAT = "lat";
-        final String LON = "lon";
-        final String NAMES = "names";
+        final String D_JSON_ID = "_id";
+        final String D_NUMBER = "number";
+        final String D_COUNTRY = "country";
+        final String D_HAPPENED = "date";
+        final String D_TOWN = "town";
+        final String D_LOCATION = "location";
+        final String D_DEATHS = "deaths";
+        final String D_DEATHS_MIN = "deaths_min";
+        final String D_DEATHS_MAX = "deaths_max";
+        final String D_CIVILIANS = "civilians";
+        final String D_INJURIES = "injuries";
+        final String D_CHILDREN = "children";
+        final String D_TWEET_ID = "tweet_id";
+        final String D_BUREAU_ID = "bureau_id";
+        final String D_BIJ_SUMMARY_SHORT = "bij_summary_short";
+        final String D_BIJ_LINK = "bij_link";
+        final String D_TARGET = "target";
+        final String D_LAT = "lat";
+        final String D_LON = "lon";
+        final String D_NAMES = "names";
 
         Strike strike = new Strike();
         try {
-            strike.setJsonId(jsonObject.getString(JSON_ID));
-            strike.setNumber(jsonObject.getInt(NUMBER));
-            strike.setCountry(jsonObject.getString(COUNTRY));
-            strike.setHappened(DateFormatHelper.parseJsonDateString(jsonObject.getString(HAPPENED)));
-            strike.setTown(jsonObject.getString(TOWN));
-            strike.setLocation(jsonObject.getString(LOCATION));
+            strike.setJsonId(jsonObject.getString(D_JSON_ID));
+            strike.setNumber(jsonObject.getInt(D_NUMBER));
+            strike.setCountry(jsonObject.getString(D_COUNTRY));
+            strike.setHappened(DateFormatHelper.parseJsonDateString(jsonObject.getString(D_HAPPENED)));
+            strike.setTown(jsonObject.getString(D_TOWN));
+            strike.setLocation(jsonObject.getString(D_LOCATION));
 
-            //strike.setDeathsMin(jsonObject.getString(DEATHS_MIN));
-            //strike.setDeathsMax(jsonObject.getString(DEATHS_MAX));
+            //strike.setDeathsMin(jsonObject.getString(D_DEATHS_MIN));
+            //strike.setDeathsMax(jsonObject.getString(D_DEATHS_MAX));
 
-            String deaths = jsonObject.getString(DEATHS);
+            String deaths = jsonObject.getString(D_DEATHS);
             strike.setDeaths(deaths);
             if(hasValidMinMax(deaths)) {
                 strike.confirmValidDeathsRange(true);
@@ -426,7 +459,7 @@ public class Strike {
                 strike.confirmValidDeathsRange(false);
             }
 
-            String civilians = jsonObject.getString(CIVILIANS);
+            String civilians = jsonObject.getString(D_CIVILIANS);
             strike.setCivilians(civilians);
             if(hasValidMinMax(civilians)) {
                 strike.confirmValidCivilianRange(true);
@@ -442,7 +475,7 @@ public class Strike {
                 strike.confirmValidCivilianRange(false);
             }
 
-            String injuries = jsonObject.getString(INJURIES);
+            String injuries = jsonObject.getString(D_INJURIES);
             strike.setInjuries(injuries);
             if(hasValidMinMax(injuries)) {
                 strike.confirmValidInjuriesRange(true);
@@ -459,7 +492,7 @@ public class Strike {
             }
 
 
-            String children = jsonObject.getString(CHILDREN);
+            String children = jsonObject.getString(D_CHILDREN);
             strike.setChildren(children);
             if(hasValidMinMax(children)) {
                 strike.confirmValidChildrenRange(true);
@@ -475,15 +508,15 @@ public class Strike {
                 strike.confirmValidChildrenRange(false);
             }
 
-            strike.setTweetId(jsonObject.getString(TWEET_ID));
-            strike.setBureauId(jsonObject.getString(BUREAU_ID));
-            strike.setBijSummaryShort(jsonObject.getString(BIJ_SUMMARY_SHORT));
-            strike.setBijLink(jsonObject.getString(BIJ_LINK));
-            strike.setTarget(jsonObject.getString(TARGET));
-            strike.setLat(Double.parseDouble(jsonObject.getString(LAT)));
-            strike.setLon(Double.parseDouble(jsonObject.getString(LON)));
+            strike.setTweetId(jsonObject.getString(D_TWEET_ID));
+            strike.setBureauId(jsonObject.getString(D_BUREAU_ID));
+            strike.setBijSummaryShort(jsonObject.getString(D_BIJ_SUMMARY_SHORT));
+            strike.setBijLink(jsonObject.getString(D_BIJ_LINK));
+            strike.setTarget(jsonObject.getString(D_TARGET));
+            strike.setLat(Double.parseDouble(jsonObject.getString(D_LAT)));
+            strike.setLon(Double.parseDouble(jsonObject.getString(D_LON)));
 
-            JSONArray names = jsonObject.getJSONArray(NAMES);
+            JSONArray names = jsonObject.getJSONArray(D_NAMES);
             // the NAMES array should only have one entry
             for(int i=0;i<names.length();i++) {
                 names.getString(i);
@@ -497,6 +530,57 @@ public class Strike {
         }
 
         return null;
+    }
+
+    public ContentValues asContentValues() {
+
+        ContentValues cv = new ContentValues();
+
+        cv.put(JSON_ID, getJsonId());
+        cv.put(NUMBER, getNumber());
+        cv.put(COUNTRY, getCountry());
+        cv.put(HAPPENED, DateFormatHelper.dateToSQLite(getHappened()));
+        cv.put(TOWN, getTown());
+        cv.put(LOCATION, getLocation());
+
+        cv.put(DEATHS, getDeaths());
+        cv.put(HAS_DEATHS_RANGE, hasValidDeathsRange());
+        if(hasValidDeathsRange()) {
+            cv.put(DEATHS_MIN, getDeathsMin());
+            cv.put(DEATHS_MAX, getDeathsMax());
+        }
+
+        cv.put(CIVILIANS, getCivilians());
+        cv.put(HAS_CIVILIANS_RANGE, hasValidCivilianRange());
+        if(hasValidCivilianRange()) {
+            cv.put(CIVILIANS_MIN, getCiviliansMin());
+            cv.put(CIVILIANS_MAX, getCiviliansMax());
+        }
+
+        cv.put(INJURIES, getInjuries());
+        cv.put(HAS_INJURIES_RANGE, hasValidInjuriesRange());
+        if(hasValidInjuriesRange()) {
+            cv.put(INJURIES_MIN, getInjuriesMin());
+            cv.put(INJURIES_MAX, getInjuriesMax());
+        }
+
+        cv.put(CHILDREN, getChildren());
+        cv.put(HAS_CHILDREN_RANGE, hasValidChildrenRange());
+        if(hasValidChildrenRange()) {
+            cv.put(CHILDREN_MIN, getChildrenMin());
+            cv.put(CHILDREN_MAX, getChildrenMax());
+        }
+
+        cv.put(TWEET_ID, getTweetId());
+        cv.put(BUREAU_ID, getBureauId());
+        cv.put(BIJ_SUMMARY_SHORT, getBijSummaryShort());
+        cv.put(BIJ_LINK, getBijLink());
+        cv.put(TARGET, getTarget());
+        cv.put(LAT, getLat());
+        cv.put(LON, getLon());
+        cv.put(NAMES, getNames());
+
+        return cv;
     }
 
     private static final String TAG = "Strike";

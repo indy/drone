@@ -8,6 +8,7 @@ repositories {
 dependencies {
     compile 'com.android.support:appcompat-v7:18.0.+'
     compile 'de.greenrobot:eventbus:2.0.2'
+    compile 'com.google.android.gms:play-services:4.0.30'
 
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.1.+'

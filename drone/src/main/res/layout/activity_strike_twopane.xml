@@ -31,14 +31,38 @@
         android:name="io.indy.drone.fragment.StrikeListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="2"
         tools:layout="@android:layout/list_content" />
 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:tools="http://schemas.android.com/tools"
+                  android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:layout_weight="3"
+                  android:orientation="vertical">
+
+        <fragment android:id="@+id/map"
+                  android:layout_width="match_parent"
+                  android:layout_height="0dp"
+                  android:layout_weight="1"
+                  android:name="com.google.android.gms.maps.SupportMapFragment"/>
+
+        <FrameLayout android:id="@+id/strike_detail_container"
+                     android:layout_width="match_parent"
+                     android:layout_height="0dp"
+                     android:layout_weight="1"
+                     tools:context=".StrikeDetailActivity"
+                     tools:ignore="MergeRootFrame" />
+    </LinearLayout>
+
+
+<!--
     <FrameLayout
         android:id="@+id/strike_detail_container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3" />
+-->
 
 </LinearLayout>
 

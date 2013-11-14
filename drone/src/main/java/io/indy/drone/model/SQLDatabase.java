@@ -37,37 +37,6 @@ public class SQLDatabase {
 
     // The index (key) column name for use in where clauses.
     public static final String KEY_ID = "_id";
-
-    public static final String JSON_ID = "json_id";
-    public static final String NUMBER = "number";
-    public static final String COUNTRY = "country";
-    public static final String HAPPENED = "happened";
-    public static final String TOWN = "town";
-    public static final String LOCATION = "location";
-    public static final String DEATHS = "deaths";
-    public static final String HAS_DEATHS_RANGE = "has_deaths_range";
-    public static final String DEATHS_MIN = "deaths_min";
-    public static final String DEATHS_MAX = "deaths_max";
-    public static final String CIVILIANS = "civilians";
-    public static final String HAS_CIVILIANS_RANGE = "has_civilians_range";
-    public static final String CIVILIANS_MIN = "civilians_min";
-    public static final String CIVILIANS_MAX = "civilians_max";
-    public static final String INJURIES = "injuries";
-    public static final String HAS_INJURIES_RANGE = "has_injuries_range";
-    public static final String INJURIES_MIN = "injuries_min";
-    public static final String INJURIES_MAX = "injuries_max";
-    public static final String CHILDREN = "children";
-    public static final String HAS_CHILDREN_RANGE = "has_children_range";
-    public static final String CHILDREN_MIN = "children_min";
-    public static final String CHILDREN_MAX = "children_max";
-    public static final String TWEET_ID = "tweet_id";
-    public static final String BUREAU_ID = "bureau_id";
-    public static final String BIJ_SUMMARY_SHORT = "bij_summary_short";
-    public static final String BIJ_LINK = "bij_link";
-    public static final String TARGET = "target";
-    public static final String LAT = "lat";
-    public static final String LON = "lon";
-    public static final String NAMES = "names";
     
     // SQLDatabase open/upgrade helper
     private ModelHelper mModelHelper;
@@ -86,77 +55,94 @@ public class SQLDatabase {
         mModelHelper.close();
     }
 
+    private String stringVal(Cursor cursor, String columnName) {
+        return cursor.getString(cursor.getColumnIndex(columnName));
+    }
+
+    private int intVal(Cursor cursor, String columnName) {
+        return cursor.getInt(cursor.getColumnIndex(columnName));
+    }
+
+    private double doubleVal(Cursor cursor, String columnName) {
+        return cursor.getDouble(cursor.getColumnIndex(columnName));
+    }
+
+
     private Strike strikeFromCursor(Cursor cursor) {
         Strike strike = new Strike();
 
-        String happenedString = cursor.getString(cursor.getColumnIndex(HAPPENED));
+        String happenedString = stringVal(cursor, Strike.HAPPENED);
         strike.setHappened(DateFormatHelper.parseSQLiteDateString(happenedString));
 
-        strike.setCountry(cursor.getString(cursor.getColumnIndex(COUNTRY)));
-        strike.setTown(cursor.getString(cursor.getColumnIndex(TOWN)));
-        strike.setLocation(cursor.getString(cursor.getColumnIndex(LOCATION)));
+        strike.setCountry(stringVal(cursor, Strike.COUNTRY));
+        strike.setTown(stringVal(cursor, Strike.TOWN));
+        strike.setLocation(stringVal(cursor, Strike.LOCATION));
 
-        strike.setDeaths(cursor.getString(cursor.getColumnIndex(DEATHS)));
-        int bool = cursor.getInt(cursor.getColumnIndex(HAS_DEATHS_RANGE));
+        strike.setDeaths(stringVal(cursor, Strike.DEATHS));
+        int bool = intVal(cursor, Strike.HAS_DEATHS_RANGE);
         if (bool == 1) {
             strike.confirmValidDeathsRange(true);
-            strike.setDeathsMax(cursor.getInt(cursor.getColumnIndex(DEATHS_MAX)));
-            strike.setDeathsMin(cursor.getInt(cursor.getColumnIndex(DEATHS_MIN)));
+            strike.setDeathsMax(intVal(cursor, Strike.DEATHS_MAX));
+            strike.setDeathsMin(intVal(cursor, Strike.DEATHS_MIN));
         } else {
             strike.confirmValidDeathsRange(false);
         }
 
-        strike.setCivilians(cursor.getString(cursor.getColumnIndex(CIVILIANS)));
-        bool = cursor.getInt(cursor.getColumnIndex(HAS_CIVILIANS_RANGE));
+        strike.setCivilians(stringVal(cursor, Strike.CIVILIANS));
+        bool = intVal(cursor, Strike.HAS_CIVILIANS_RANGE);
         if (bool == 1) {
             strike.confirmValidCivilianRange(true);
-            strike.setCiviliansMax(cursor.getInt(cursor.getColumnIndex(CIVILIANS_MAX)));
-            strike.setCiviliansMin(cursor.getInt(cursor.getColumnIndex(CIVILIANS_MIN)));
+            strike.setCiviliansMax(intVal(cursor, Strike.CIVILIANS_MAX));
+            strike.setCiviliansMin(intVal(cursor, Strike.CIVILIANS_MIN));
         } else {
             strike.confirmValidCivilianRange(false);
         }
 
-        strike.setInjuries(cursor.getString(cursor.getColumnIndex(INJURIES)));
-        bool = cursor.getInt(cursor.getColumnIndex(HAS_INJURIES_RANGE));
+        strike.setInjuries(stringVal(cursor, Strike.INJURIES));
+        bool = intVal(cursor, Strike.HAS_INJURIES_RANGE);
         if (bool == 1) {
             strike.confirmValidInjuriesRange(true);
-            strike.setInjuriesMax(cursor.getInt(cursor.getColumnIndex(INJURIES_MAX)));
-            strike.setInjuriesMin(cursor.getInt(cursor.getColumnIndex(INJURIES_MIN)));
+            strike.setInjuriesMax(intVal(cursor, Strike.INJURIES_MAX));
+            strike.setInjuriesMin(intVal(cursor, Strike.INJURIES_MIN));
         } else {
             strike.confirmValidInjuriesRange(false);
         }
 
-        strike.setChildren(cursor.getString(cursor.getColumnIndex(CHILDREN)));
-        bool = cursor.getInt(cursor.getColumnIndex(HAS_CHILDREN_RANGE));
+        strike.setChildren(stringVal(cursor, Strike.CHILDREN));
+        bool = intVal(cursor, Strike.HAS_CHILDREN_RANGE);
         if (bool == 1) {
             strike.confirmValidChildrenRange(true);
-            strike.setChildrenMax(cursor.getInt(cursor.getColumnIndex(CHILDREN_MAX)));
-            strike.setChildrenMin(cursor.getInt(cursor.getColumnIndex(CHILDREN_MIN)));
+            strike.setChildrenMax(intVal(cursor, Strike.CHILDREN_MAX));
+            strike.setChildrenMin(intVal(cursor, Strike.CHILDREN_MIN));
         } else {
             strike.confirmValidChildrenRange(false);
         }
 
-        strike.setTweetId(cursor.getString(cursor.getColumnIndex(TWEET_ID)));
-        strike.setBureauId(cursor.getString(cursor.getColumnIndex(BUREAU_ID)));
-        strike.setBijSummaryShort(cursor.getString(cursor.getColumnIndex(BIJ_SUMMARY_SHORT)));
-        strike.setBijLink(cursor.getString(cursor.getColumnIndex(BIJ_LINK)));
-        strike.setTarget(cursor.getString(cursor.getColumnIndex(TARGET)));
+        strike.setTweetId(stringVal(cursor, Strike.TWEET_ID));
+        strike.setBureauId(stringVal(cursor, Strike.BUREAU_ID));
+        strike.setBijSummaryShort(stringVal(cursor, Strike.BIJ_SUMMARY_SHORT));
+        strike.setBijLink(stringVal(cursor, Strike.BIJ_LINK));
+        strike.setTarget(stringVal(cursor, Strike.TARGET));
 
-        strike.setLat(cursor.getDouble(cursor.getColumnIndex(LAT)));
-        strike.setLon(cursor.getDouble(cursor.getColumnIndex(LON)));
+        strike.setLat(doubleVal(cursor, Strike.LAT));
+        strike.setLon(doubleVal(cursor, Strike.LON));
 
         return strike;
     }
 
     public Strike getStrike(String strikeId) {
         String[] result_columns = new String[] {
-                KEY_ID, HAPPENED, COUNTRY, TOWN, LOCATION,
-                DEATHS, HAS_DEATHS_RANGE, DEATHS_MIN, DEATHS_MAX,
-                CIVILIANS, HAS_CIVILIANS_RANGE, CIVILIANS_MIN, CIVILIANS_MAX,
-                INJURIES, HAS_INJURIES_RANGE, INJURIES_MIN, INJURIES_MAX,
-                CHILDREN, HAS_CHILDREN_RANGE, CHILDREN_MIN, CHILDREN_MAX,
-                TWEET_ID, BUREAU_ID, BIJ_SUMMARY_SHORT, BIJ_LINK, TARGET,
-                LAT, LON
+                KEY_ID, Strike.HAPPENED, Strike.COUNTRY, Strike.TOWN, 
+                Strike.LOCATION, Strike.DEATHS, Strike.HAS_DEATHS_RANGE, 
+                Strike.DEATHS_MIN, Strike.DEATHS_MAX, Strike.CIVILIANS, 
+                Strike.HAS_CIVILIANS_RANGE, Strike.CIVILIANS_MIN, 
+                Strike.CIVILIANS_MAX, Strike.INJURIES, 
+                Strike.HAS_INJURIES_RANGE, Strike.INJURIES_MIN, 
+                Strike.INJURIES_MAX, Strike.CHILDREN, 
+                Strike.HAS_CHILDREN_RANGE, Strike.CHILDREN_MIN, 
+                Strike.CHILDREN_MAX, Strike.TWEET_ID, Strike.BUREAU_ID, 
+                Strike.BIJ_SUMMARY_SHORT, Strike.BIJ_LINK, Strike.TARGET, 
+                Strike.LAT, Strike.LON
         };
 
         String where = KEY_ID + "=?";
@@ -187,19 +173,20 @@ public class SQLDatabase {
         if(country.equals(LOCATIONS[0])) { // worldwide
             return getStrikeCursor(null, null);
         }
-        return getStrikeCursor(COUNTRY + "=?", new String[] {country});
+        return getStrikeCursor(Strike.COUNTRY + "=?", new String[] {country});
     }
 
     private Cursor getStrikeCursor(String where, String[] whereArgs) {
         // Specify the result column projection. Return the minimum set
         // of columns required to satisfy your requirements.
         String[] result_columns = new String[] {
-                KEY_ID, COUNTRY, TOWN, LOCATION, BIJ_SUMMARY_SHORT, HAPPENED
+                KEY_ID, Strike.COUNTRY, Strike.TOWN, Strike.LOCATION, 
+                Strike.BIJ_SUMMARY_SHORT, Strike.HAPPENED
         };
 
         String groupBy = null;
         String having = null;
-        String order = HAPPENED + " desc";
+        String order = Strike.HAPPENED + " desc";
 
         SQLiteDatabase db = mModelHelper.getReadableDatabase();
         Cursor cursor = null;
@@ -244,36 +231,36 @@ public class SQLDatabase {
 
             String table = new SQLTableStatement(STRIKE_TABLE)
                 .integer(KEY_ID, "primary key autoincrement")
-                .text(JSON_ID)
-                .integer(NUMBER)
-                .text(COUNTRY)
-                .timestamp(HAPPENED)
-                .text(TOWN)
-                .text(LOCATION)
-                .text(DEATHS)
-                .integer(HAS_DEATHS_RANGE)
-                .integer(DEATHS_MIN)
-                .integer(DEATHS_MAX)
-                .text(CIVILIANS)
-                .integer(HAS_CIVILIANS_RANGE)
-                .integer(CIVILIANS_MIN)
-                .integer(CIVILIANS_MAX)
-                .text(INJURIES)
-                .integer(HAS_INJURIES_RANGE)
-                .integer(INJURIES_MIN)
-                .integer(INJURIES_MAX)
-                .text(CHILDREN)
-                .integer(HAS_CHILDREN_RANGE)
-                .integer(CHILDREN_MIN)
-                .integer(CHILDREN_MAX)
-                .text(TWEET_ID)
-                .text(BUREAU_ID)
-                .text(BIJ_SUMMARY_SHORT)
-                .text(BIJ_LINK)
-                .text(TARGET)
-                .real(LAT)
-                .real(LON)
-                .text(NAMES)
+                .text(Strike.JSON_ID)
+                .integer(Strike.NUMBER)
+                .text(Strike.COUNTRY)
+                .timestamp(Strike.HAPPENED)
+                .text(Strike.TOWN)
+                .text(Strike.LOCATION)
+                .text(Strike.DEATHS)
+                .integer(Strike.HAS_DEATHS_RANGE)
+                .integer(Strike.DEATHS_MIN)
+                .integer(Strike.DEATHS_MAX)
+                .text(Strike.CIVILIANS)
+                .integer(Strike.HAS_CIVILIANS_RANGE)
+                .integer(Strike.CIVILIANS_MIN)
+                .integer(Strike.CIVILIANS_MAX)
+                .text(Strike.INJURIES)
+                .integer(Strike.HAS_INJURIES_RANGE)
+                .integer(Strike.INJURIES_MIN)
+                .integer(Strike.INJURIES_MAX)
+                .text(Strike.CHILDREN)
+                .integer(Strike.HAS_CHILDREN_RANGE)
+                .integer(Strike.CHILDREN_MIN)
+                .integer(Strike.CHILDREN_MAX)
+                .text(Strike.TWEET_ID)
+                .text(Strike.BUREAU_ID)
+                .text(Strike.BIJ_SUMMARY_SHORT)
+                .text(Strike.BIJ_LINK)
+                .text(Strike.TARGET)
+                .real(Strike.LAT)
+                .real(Strike.LON)
+                .text(Strike.NAMES)
                 .create();
 
             db.execSQL(table);
@@ -306,56 +293,9 @@ public class SQLDatabase {
         public void addStrike(Strike strike) {
 
             SQLiteDatabase db = getWritableDatabase();
-            ContentValues cv;
-
-            cv = new ContentValues();
-
-            cv.put(JSON_ID, strike.getJsonId());
-            cv.put(NUMBER, strike.getNumber());
-            cv.put(COUNTRY, strike.getCountry());
-            cv.put(HAPPENED, DateFormatHelper.dateToSQLite(strike.getHappened()));
-            cv.put(TOWN, strike.getTown());
-            cv.put(LOCATION, strike.getLocation());
-
-            cv.put(DEATHS, strike.getDeaths());
-            cv.put(HAS_DEATHS_RANGE, strike.hasValidDeathsRange());
-            if(strike.hasValidDeathsRange()) {
-                cv.put(DEATHS_MIN, strike.getDeathsMin());
-                cv.put(DEATHS_MAX, strike.getDeathsMax());
-            }
-
-            cv.put(CIVILIANS, strike.getCivilians());
-            cv.put(HAS_CIVILIANS_RANGE, strike.hasValidCivilianRange());
-            if(strike.hasValidCivilianRange()) {
-                cv.put(CIVILIANS_MIN, strike.getCiviliansMin());
-                cv.put(CIVILIANS_MAX, strike.getCiviliansMax());
-            }
-
-            cv.put(INJURIES, strike.getInjuries());
-            cv.put(HAS_INJURIES_RANGE, strike.hasValidInjuriesRange());
-            if(strike.hasValidInjuriesRange()) {
-                cv.put(INJURIES_MIN, strike.getInjuriesMin());
-                cv.put(INJURIES_MAX, strike.getInjuriesMax());
-            }
-
-            cv.put(CHILDREN, strike.getChildren());
-            cv.put(HAS_CHILDREN_RANGE, strike.hasValidChildrenRange());
-            if(strike.hasValidChildrenRange()) {
-                cv.put(CHILDREN_MIN, strike.getChildrenMin());
-                cv.put(CHILDREN_MAX, strike.getChildrenMax());
-            }
-
-            cv.put(TWEET_ID, strike.getTweetId());
-            cv.put(BUREAU_ID, strike.getBureauId());
-            cv.put(BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
-            cv.put(BIJ_LINK, strike.getBijLink());
-            cv.put(TARGET, strike.getTarget());
-            cv.put(LAT, strike.getLat());
-            cv.put(LON, strike.getLon());
-            cv.put(NAMES, strike.getNames());
+            ContentValues cv = strike.asContentValues();
 
             db.insert(STRIKE_TABLE, null, cv);
-
         }
 
     }

@@ -14,6 +14,7 @@ import java.util.Date;
 import io.indy.drone.Flags;
 import io.indy.drone.R;
 import io.indy.drone.model.SQLDatabase;
+import io.indy.drone.model.Strike;
 import io.indy.drone.utils.DateFormatHelper;
 
 public class StrikeCursorAdapter extends CursorAdapter {
@@ -40,11 +41,11 @@ public class StrikeCursorAdapter extends CursorAdapter {
     private void updateColumnIndices() {
         Cursor c = getCursor();
         mStrikeIDIndex = c.getColumnIndex(SQLDatabase.KEY_ID);
-        mCountryIndex = c.getColumnIndex(SQLDatabase.COUNTRY);
-        mTownIndex = c.getColumnIndex(SQLDatabase.TOWN);
-        mLocationIndex = c.getColumnIndex(SQLDatabase.LOCATION);
-        mSummaryIndex = c.getColumnIndex(SQLDatabase.BIJ_SUMMARY_SHORT);
-        mHappenedIndex = c.getColumnIndex(SQLDatabase.HAPPENED);
+        mCountryIndex = c.getColumnIndex(Strike.COUNTRY);
+        mTownIndex = c.getColumnIndex(Strike.TOWN);
+        mLocationIndex = c.getColumnIndex(Strike.LOCATION);
+        mSummaryIndex = c.getColumnIndex(Strike.BIJ_SUMMARY_SHORT);
+        mHappenedIndex = c.getColumnIndex(Strike.HAPPENED);
     }
 
     @Override

@@ -44,16 +44,7 @@ public class StrikeDetailFragment extends Fragment {
         if (Flags.DEBUG && D) Log.d(TAG, message);
     }
 
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
-    public static final String ARG_ITEM_ID = "item_id";
-
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private String mStrikeID;
+    private String mSummary;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -66,13 +57,9 @@ public class StrikeDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            mStrikeID = getArguments().getString(ARG_ITEM_ID);
+        if(getArguments().containsKey(Strike.BIJ_SUMMARY_SHORT)) {
+            mSummary = getArguments().getString(Strike.BIJ_SUMMARY_SHORT);
         }
-
     }
 
     @Override
@@ -80,13 +67,7 @@ public class StrikeDetailFragment extends Fragment {
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_strike_detail, container, false);
 
-        SQLDatabase database = new SQLDatabase(getActivity());
-        Strike strike = database.getStrike(mStrikeID);
-
-        // Show the dummy content as text in a TextView.
-        if (mStrikeID != null) {
-            ((TextView) rootView.findViewById(R.id.strike_detail)).setText(strike.getBijSummaryShort());
-        }
+        ((TextView) rootView.findViewById(R.id.strike_detail)).setText(mSummary);
 
         return rootView;
     }

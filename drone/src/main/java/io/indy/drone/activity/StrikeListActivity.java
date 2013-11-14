@@ -17,11 +17,24 @@
 package io.indy.drone.activity;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import de.greenrobot.event.EventBus;
 import io.indy.drone.Flags;
@@ -29,6 +42,8 @@ import io.indy.drone.R;
 import io.indy.drone.fragment.StrikeDetailFragment;
 import io.indy.drone.fragment.StrikeListFragment;
 import io.indy.drone.event.UpdatedDatabaseEvent;
+import io.indy.drone.model.SQLDatabase;
+import io.indy.drone.model.Strike;
 
 
 /**
@@ -47,8 +62,16 @@ import io.indy.drone.event.UpdatedDatabaseEvent;
  * {@link io.indy.drone.fragment.StrikeListFragment.Callbacks} interface
  * to listen for item selections.
  */
-public class StrikeListActivity extends BaseActivity
+public class StrikeListActivity extends ActionBarActivity
         implements StrikeListFragment.Callbacks {
+
+    protected String[] mDrawerTitles;
+    protected DrawerLayout mDrawerLayout;
+    protected ListView mDrawerList;
+
+    protected ActionBarDrawerToggle mDrawerToggle;
+    protected CharSequence mDrawerTitle;
+    protected CharSequence mTitle;
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -56,10 +79,17 @@ public class StrikeListActivity extends BaseActivity
      */
     private boolean mTwoPane;
 
+    private SQLDatabase mDatabase;
+
+    private GoogleMap mMap;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_strike_list);
+
+        mDatabase = new SQLDatabase(this);
 
         setupNavigationDrawer();
 
@@ -94,9 +124,10 @@ public class StrikeListActivity extends BaseActivity
     }
     */
 
-    @Override
     protected void onDrawerItemClicked(int position) {
-        super.onDrawerItemClicked(position);
+        // Highlight the selected item, update the title, and close the drawer
+        mDrawerList.setItemChecked(position, true);
+        setTitle(mDrawerTitles[position]);
 
         ((StrikeListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.strike_list))
@@ -113,26 +144,53 @@ public class StrikeListActivity extends BaseActivity
     @Override
     public void onItemSelected(String id) {
 
+        Strike strike = mDatabase.getStrike(id);
+
+
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(StrikeDetailFragment.ARG_ITEM_ID, id);
+            //arguments.putString(StrikeDetailFragment.ARG_ITEM_ID, id);
+
+            arguments.putString(Strike.BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
+
             StrikeDetailFragment fragment = new StrikeDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.strike_detail_container, fragment)
                     .commit();
 
+            setUpMapIfNeeded(strike.getLat(), strike.getLon());
+
         } else {
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, StrikeDetailActivity.class);
-            detailIntent.putExtra(StrikeDetailFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra(Strike.BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
+            detailIntent.putExtra(Strike.LAT, strike.getLat());
+            detailIntent.putExtra(Strike.LON, strike.getLon());
+
             startActivity(detailIntent);
         }
+    }
 
+    private void setUpMapIfNeeded(double lat, double lon) {
+        // Do a null check to confirm that we have not already instantiated the map.
+        if (mMap == null) {
+            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+                    .getMap();
+
+            // Check if we were successful in obtaining the map.
+            if (mMap != null) {
+                // The Map is verified. It is now safe to manipulate the map.
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 7));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+            }
+        } else {
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(lat, lon)), 3000, null);
+        }
     }
 
     @Override
@@ -161,6 +219,81 @@ public class StrikeListActivity extends BaseActivity
 
         return super.onCreateOptionsMenu(menu);
     }
+
+
+
+    protected void setupNavigationDrawer() {
+        mTitle = mDrawerTitle = getTitle();
+        mDrawerTitles = getResources().getStringArray(R.array.locations_array);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                getSupportActionBar().setTitle(mTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                getSupportActionBar().setTitle(mDrawerTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+
+        // Set the drawer toggle as the DrawerListener
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        // Set the adapter for the list view
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.drawer_list_item, mDrawerTitles));
+        // Set the list's click listener
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+    }
+
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            ifd("selected " + position);
+            onDrawerItemClicked(position);
+        }
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getSupportActionBar().setTitle(mTitle);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    /* Called whenever we call invalidateOptionsMenu() */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the nav drawer is open, hide action items related to the content view
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        //menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
 
     static private final boolean D = true;
     static private final String TAG = StrikeListActivity.class.getSimpleName();
