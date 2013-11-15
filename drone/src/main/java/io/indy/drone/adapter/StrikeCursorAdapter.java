@@ -81,13 +81,21 @@ public class StrikeCursorAdapter extends CursorAdapter {
         }
         location.setText(loc);
 
-        TextView summary = (TextView) view.findViewById(R.id.summary);
-        summary.setText(cursor.getString(mSummaryIndex));
+        int smallestWidth = context.getResources().getConfiguration().smallestScreenWidthDp;
+        if (smallestWidth < 600) {
+        } else {
+            TextView summary = (TextView) view.findViewById(R.id.summary);
+            summary.setText(cursor.getString(mSummaryIndex));
+        }
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        View v = mLayoutInflater.inflate(R.layout.row_news, parent, false);
+
+        int smallestWidth = context.getResources().getConfiguration().smallestScreenWidthDp;
+        int resource = smallestWidth < 600 ? R.layout.row_news : R.layout.row_news_extra;
+        View v = mLayoutInflater.inflate(resource, parent, false);
+
         bindView(v, context, cursor);
         return v;
     }

@@ -61,6 +61,16 @@
                 android:fontFamily="sans-serif-light"/>
 
         <TextView
+                android:id="@+id/summary"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="0dp"
+                android:text="@string/filler"
+                android:paddingBottom="8dp"
+                android:fontFamily="sans-serif-light"/>
+
+        <TextView
                 android:id="@+id/strikeid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
