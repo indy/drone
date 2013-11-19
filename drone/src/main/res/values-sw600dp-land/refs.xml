@@ -9,4 +9,5 @@
     -->
     <item type="layout" name="activity_strike_list">@layout/activity_strike_twopane</item>
     <bool name="has_two_panes">true</bool>
+    <bool name="high_detail_rows">false</bool>
 </resources>
