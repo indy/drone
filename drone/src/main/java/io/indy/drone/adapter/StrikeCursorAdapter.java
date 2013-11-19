@@ -61,9 +61,6 @@ public class StrikeCursorAdapter extends CursorAdapter {
 
         view.setTag(cursor.getString(mStrikeIDIndex));
 
-        TextView strike = (TextView) view.findViewById(R.id.strikeid);
-        strike.setText(cursor.getString(mStrikeIDIndex));
-
         TextView happened = (TextView) view.findViewById(R.id.happened);
         String timeString = cursor.getString(mHappenedIndex);
         Date time = DateFormatHelper.parseSQLiteDateString(timeString);

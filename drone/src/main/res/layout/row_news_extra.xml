@@ -17,6 +17,7 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:paddingBottom="0dp"
@@ -30,25 +31,33 @@
                   android:orientation="vertical"
                   android:background="@color/strikecard_background">
 
-        <TextView
-                android:id="@+id/happened"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="0dp"
-                android:text="@string/filler"
-                android:paddingBottom="8dp"
-                android:fontFamily="sans-serif-light"/>
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:baselineAligned="false"
+                      android:orientation="horizontal">
 
-        <TextView
-                android:id="@+id/country"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="0dp"
-                android:text="@string/filler"
-                android:paddingBottom="8dp"
-                android:fontFamily="sans-serif-light"/>
+            <TextView
+                    android:id="@+id/country"
+                    android:textSize="16sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="0dp"
+                    android:paddingBottom="8dp"
+                    android:fontFamily="sans-serif-light"
+                    tools:text="Pakistan"/>
+
+            <TextView
+                    android:id="@+id/happened"
+                    android:textSize="16sp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="0dp"
+                    android:paddingBottom="8dp"
+                    android:fontFamily="sans-serif-light"
+                    android:gravity="right"
+                    tools:text="30 July 2013"/>
+        </LinearLayout>
 
         <TextView
                 android:id="@+id/location"
@@ -56,9 +65,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="0dp"
-                android:text="@string/filler"
                 android:paddingBottom="8dp"
-                android:fontFamily="sans-serif-light"/>
+                android:fontFamily="sans-serif-light"
+                tools:text="South Waziristan"/>
 
         <TextView
                 android:id="@+id/summary"
@@ -69,16 +78,6 @@
                 android:text="@string/filler"
                 android:paddingBottom="8dp"
                 android:fontFamily="sans-serif-light"/>
-
-        <TextView
-                android:id="@+id/strikeid"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Small Text"
-                android:layout_below="@id/country"
-                android:layout_alignLeft="@id/country"
-                />
 
     </LinearLayout>
 
