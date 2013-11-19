@@ -27,6 +27,7 @@ public class StrikeCursorAdapter extends CursorAdapter {
     private int mLocationIndex;
     private int mSummaryIndex;
     private int mHappenedIndex;
+    private int mDroneSummaryIndex;
 
     public StrikeCursorAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
@@ -46,6 +47,7 @@ public class StrikeCursorAdapter extends CursorAdapter {
         mLocationIndex = c.getColumnIndex(Strike.LOCATION);
         mSummaryIndex = c.getColumnIndex(Strike.BIJ_SUMMARY_SHORT);
         mHappenedIndex = c.getColumnIndex(Strike.HAPPENED);
+        mDroneSummaryIndex = c.getColumnIndex(Strike.DRONE_SUMMARY);
     }
 
     @Override
@@ -77,6 +79,9 @@ public class StrikeCursorAdapter extends CursorAdapter {
             loc = cursor.getString(mTownIndex) + " - " + cursor.getString(mLocationIndex);
         }
         location.setText(loc);
+
+        TextView droneSum = (TextView) view.findViewById(R.id.droneSummary);
+        droneSum.setText(cursor.getString(mDroneSummaryIndex));
 
         Boolean highDetail = context.getResources().getBoolean(R.bool.high_detail_rows);
         if (highDetail) {
