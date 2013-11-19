@@ -62,6 +62,7 @@ public class Strike {
     public static final String LAT = "lat";
     public static final String LON = "lon";
     public static final String NAMES = "names";
+    public static final String DRONE_SUMMARY = "drone_summary";
 
     private String mJsonId;
     private int mNumber;
@@ -101,6 +102,8 @@ public class Strike {
 
     private String mNames;
 
+    private String mDroneSummary;
+
     public boolean hasValidDeathsRange() {
         return mHasValidDeathsRange;
     }
@@ -132,7 +135,6 @@ public class Strike {
     public void confirmValidChildrenRange(boolean hasValidChildrenRange) {
         mHasValidChildrenRange = hasValidChildrenRange;
     }
-
 
     public int getNumber() {
         return mNumber;
@@ -368,6 +370,72 @@ public class Strike {
         return this;
     }
 
+    public String getDroneSummary() {
+        return mDroneSummary;
+    }
+
+    public void buildDroneSummary() {
+        String res = "";
+        // 12-25 deaths, 1-2 children killed, 4-3 civilians, 10 injuries
+
+        if(mHasValidDeathsRange) {
+            if(mDeathsMin != mDeathsMax) {
+                res += mDeathsMin + "-" + mDeathsMax + " deaths, ";
+            } else {
+                if(mDeathsMin == 0) {
+                } else if(mDeathsMin == 1) {
+                    res += mDeathsMin + " death, ";
+                } else {
+                    res += mDeathsMin + " deaths, ";
+                }
+            }
+        }
+
+        if(mHasValidChildrenRange) {
+            if(mChildrenMin != mChildrenMax) {
+                res += mChildrenMin + "-" + mChildrenMax + " children killed, ";
+            } else {
+                if(mChildrenMin == 0) {
+                } else if(mChildrenMin == 1) {
+                    res += mChildrenMin + " child killed, ";
+                } else {
+                    res += mChildrenMin + " children killed, ";
+                }
+            }
+        }
+
+        if(mHasValidCivilianRange) {
+            if(mCiviliansMin != mCiviliansMax) {
+                res += mCiviliansMin + "-" + mCiviliansMax + " civilians, ";
+            } else {
+                if(mCiviliansMin == 0) {
+                } else if(mCiviliansMin == 1) {
+                    res += mCiviliansMin + " civilian, ";
+                } else {
+                    res += mCiviliansMin + " civilians, ";
+                }
+            }
+        }
+
+        if(mHasValidInjuriesRange) {
+            if(mInjuriesMin != mInjuriesMax) {
+                res += mInjuriesMin + "-" + mInjuriesMax + " injuries, ";
+            } else {
+                if(mInjuriesMin == 0) {
+                } else if(mInjuriesMin == 1) {
+                    res += mInjuriesMin + " injury, ";
+                } else {
+                    res += mInjuriesMin + " injuries, ";
+                }
+            }
+        }
+
+        if(res.length() == 0) {
+            mDroneSummary = "";
+        } else {
+            mDroneSummary = res.substring(0, res.length() - 2);
+        }
+    }
 
     private static Pattern SINGLE_NUMBER = Pattern.compile("^\\s*(\\d+)\\s*$");
     private static Pattern RANGE = Pattern.compile("^\\s*(\\d+)\\s*-\\s*(\\d+)\\s*$");
@@ -522,6 +590,8 @@ public class Strike {
                 names.getString(i);
                 strike.setNames(names.getString(i));
             }
+            
+            strike.buildDroneSummary();
 
             return strike;
 
@@ -579,6 +649,8 @@ public class Strike {
         cv.put(LAT, getLat());
         cv.put(LON, getLon());
         cv.put(NAMES, getNames());
+
+        cv.put(DRONE_SUMMARY, getDroneSummary());
 
         return cv;
     }

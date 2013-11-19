@@ -177,8 +177,13 @@ public class SQLDatabase {
         // Specify the result column projection. Return the minimum set
         // of columns required to satisfy your requirements.
         String[] result_columns = new String[]{
-                KEY_ID, Strike.COUNTRY, Strike.TOWN, Strike.LOCATION,
-                Strike.BIJ_SUMMARY_SHORT, Strike.HAPPENED
+                KEY_ID,
+                Strike.COUNTRY,
+                Strike.TOWN,
+                Strike.LOCATION,
+                Strike.BIJ_SUMMARY_SHORT,
+                Strike.HAPPENED,
+                Strike.DRONE_SUMMARY
         };
 
         String groupBy = null;
@@ -208,7 +213,7 @@ public class SQLDatabase {
 
         private static final String DATABASE_NAME = "drone.db";
 
-        private static final int DATABASE_VERSION = 1;
+        private static final int DATABASE_VERSION = 5;
 
         private static final String STRIKE_TABLE = "strike";
 
@@ -258,6 +263,7 @@ public class SQLDatabase {
                     .real(Strike.LAT)
                     .real(Strike.LON)
                     .text(Strike.NAMES)
+                    .text(Strike.DRONE_SUMMARY)
                     .create();
 
             db.execSQL(table);
