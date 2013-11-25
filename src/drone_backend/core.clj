@@ -1,29 +1,36 @@
 (ns drone-backend.core
   (:require [drone-backend.augment :as augment]
-            [clojure.data.json :as json]
+            [drone-backend.io :as io]
             [clojure.string :as str])
   (:gen-class))
 
+(def *latest-installed-strike* 2)
 (def data005 "resources/test-data/data-005.json")
 
-(defn fetch-url [address]
-  (with-open [stream (.openStream (java.net.URL. address))]
-    (let  [buf (java.io.BufferedReader. 
-                (java.io.InputStreamReader. stream))]
-      (apply str (line-seq buf)))))
+(defn save-diffed [strikes]
+  (loop [id *latest-installed-strike*]
+    (when (< id (count strikes))
+      (io/save (filter #(> (:number %) id) strikes) 
+               (str "strikes-id-" id ".json"))
+      (recur (inc id)))))
 
-(defn as-json [string]
-  (json/read-str string :key-fn #(keyword (str/replace % "_" "-"))))
+(defn save [strikes]
+  (do 
+    (io/save-count (apply max (map :number strikes)) "strikes-count.json")
+    (io/save strikes "strikes-complete.json")
+    (save-diffed strikes)))
 
-(defn process [string]
-  (let [strikes (:strike (as-json string))]
-    (augment/process strikes)))
+(defn process [json]
+  (-> json
+      :strike                         ; get strike list from json
+      augment/process                 ; augment the strikes 
+      save))
 
 (defn process-file [filename]
-  (process (slurp filename)))
+  (process (io/read-json-file filename)))
 
 (defn process-url [url]
-  (process (fetch-url url)))
+  (process (io/fetch-json-url url)))
 
 (defn -main [& terms]
   2)
