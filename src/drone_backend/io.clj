@@ -19,14 +19,9 @@
 (defn read-json-file [filename]
   (as-json (slurp filename)))
 
-
-(defn inform [strikes]
-  (reduce (fn [a strike] (str a " " (:number strike))) "" strikes))
-
 (defn save-count [number filename]
-  (println (str filename " " number)))
+  (spit filename number))
 
 (defn save [strikes filename]
-  (println (str "saving " (count strikes) " strikes into " filename " " (inform strikes))))
-
+  (spit filename (json/write-str strikes)))
 
