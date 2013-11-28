@@ -2,6 +2,8 @@
 /lib
 /classes
 /checkouts
+/cache
+.nrepl-port
 pom.xml
 pom.xml.asc
 *.jar
