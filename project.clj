@@ -5,4 +5,5 @@
             :url "http://www.apache.org/licenses/LICENSE-2.0"}
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojure/data.json "0.2.3"]]
-  :main drone-backend.core)
+  :main drone-backend.core
+  :aot [drone-backend.core])
