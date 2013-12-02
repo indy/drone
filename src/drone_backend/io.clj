@@ -1,7 +1,6 @@
 (ns drone-backend.io
   (:require [clojure.data.json :as json]
-            [clojure.string :as str])
-  (:gen-class))
+            [clojure.string :as str]))
 
 (defn fetch-url [address]
   (with-open [stream (.openStream (java.net.URL. address))]
