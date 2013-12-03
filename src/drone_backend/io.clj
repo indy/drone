@@ -8,6 +8,8 @@
                 (java.io.InputStreamReader. stream))]
       (apply str (line-seq buf)))))
 
+(defn file-exists? [filename]
+  (.exists (clojure.java.io/as-file filename)))
 
 (defn as-json [string]
   (json/read-str string :key-fn #(keyword (str/replace % "_" "-"))))
@@ -16,11 +18,12 @@
   (as-json (fetch-url address)))
 
 (defn read-json-file [filename]
-  (as-json (slurp filename)))
+  (when (file-exists? filename)
+   (as-json (slurp filename))))
 
 (defn save-count [number filename]
   (spit filename number))
 
-(defn save [strikes filename]
-  (spit filename (json/write-str strikes)))
+(defn save [data filename]
+  (spit filename (json/write-str data)))
 

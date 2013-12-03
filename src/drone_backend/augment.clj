@@ -1,5 +1,6 @@
 (ns drone-backend.augment
-  (:require [clojure.string :as str]))
+  (:require [drone-backend.twitter :as twitter]
+            [clojure.string :as str]))
 
 (def SINGLE-NUMBER #"^\s*(\d+)\s*$")
 (def RANGE #"^\s*(\d+)\s*-\s*(\d+)\s*$")
@@ -50,10 +51,17 @@
                                           ["death" "civilian" "child" "injury"])))]
     (conj strike {:drone-app-summary summary-text})))
 
-(defn process [strikes]
-  (map #(-> % 
-            rangify
-            summarise
-            ;; fetch-url-in-tweet
-            )
+(defn add-information-url3 [strikes tweet-info]
+  (map (fn [s]
+         (assoc s :information-url "foobar"))
        strikes))
+
+(defn add-information-url [strikes tweet-info]
+  (map (fn [s]
+         (assoc s :information-url (twitter/get-info (:tweet-id s) tweet-info)))
+       strikes))
+
+(defn process [strikes tweet-info]
+  (let [s (add-information-url strikes tweet-info)]
+    (map #(-> % rangify summarise)
+         s)))
