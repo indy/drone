@@ -4,7 +4,10 @@ A Clojure library designed to ... well, that part is up to you.
 
 ## Usage
 
-execute update.sh script to output files into the ./cache directory
+build the jar file with:
+  lein uberjar
+
+execute refresh.sh script to output files into the ./cache directory
 
 ## License
 
