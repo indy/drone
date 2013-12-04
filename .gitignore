@@ -2,7 +2,7 @@
 /lib
 /classes
 /checkouts
-/cache
+/cache/strikes*
 .nrepl-port
 pom.xml
 pom.xml.asc
