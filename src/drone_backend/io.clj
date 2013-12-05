@@ -27,3 +27,6 @@
 (defn save [data filename]
   (spit filename (json/write-str data)))
 
+(defn save-strikes [data filename]
+  (save {:status "OK" :strike data} filename))
+

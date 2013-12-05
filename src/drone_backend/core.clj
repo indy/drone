@@ -14,16 +14,16 @@
   "for each 'latest id' that a client may have, save only the strikes required to get that client upto date"
   (loop [id latest-installed-strike]
     (when (< id (count strikes))
-      (io/save (filter #(> (:number %) id) strikes) 
-               (str save-folder "/" "strikes-id-" id ".json"))
+      (io/save-strikes (filter #(> (:number %) id) strikes) 
+                       (str save-folder "/" "strikes-id-" id ".json"))
       (recur (inc id)))))
 
 (defn save-all [strikes save-folder]
   (do 
     (io/save-count (apply max (map :number strikes)) 
                    (str save-folder "/" "strikes-count.json"))
-    (io/save strikes 
-             (str save-folder "/" "strikes-complete.json"))
+    (io/save-strikes strikes 
+                     (str save-folder "/" "strikes-complete.json"))
     (save-diffed strikes save-folder)
     (twitter/save-local-cache strikes save-folder)))
 
