@@ -154,10 +154,8 @@ public class StrikeListActivity extends BaseActivity
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
-            Bundle arguments = new Bundle();
-            //arguments.putString(StrikeDetailFragment.ARG_ITEM_ID, id);
 
-            arguments.putString(Strike.BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
+            Bundle arguments = strikeIntoBundle(strike);
 
             StrikeDetailFragment fragment = new StrikeDetailFragment();
             fragment.setArguments(arguments);

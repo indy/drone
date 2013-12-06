@@ -64,7 +64,6 @@ public class SQLDatabase {
         return cursor.getDouble(cursor.getColumnIndex(columnName));
     }
 
-
     private Strike strikeFromCursor(Cursor cursor) {
         Strike strike = new Strike();
 
@@ -124,6 +123,9 @@ public class SQLDatabase {
         strike.setLat(doubleVal(cursor, Strike.LAT));
         strike.setLon(doubleVal(cursor, Strike.LON));
 
+        strike.setDroneSummary(stringVal(cursor, Strike.DRONE_SUMMARY));
+        strike.setInformationUrl(stringVal(cursor, Strike.INFORMATION_URL));
+
         return strike;
     }
 
@@ -139,7 +141,7 @@ public class SQLDatabase {
                 Strike.HAS_CHILDREN_RANGE, Strike.CHILDREN_MIN,
                 Strike.CHILDREN_MAX, Strike.TWEET_ID, Strike.BUREAU_ID,
                 Strike.BIJ_SUMMARY_SHORT, Strike.BIJ_LINK, Strike.TARGET,
-                Strike.LAT, Strike.LON
+                Strike.LAT, Strike.LON, Strike.DRONE_SUMMARY, Strike.INFORMATION_URL
         };
 
         String where = KEY_ID + "=?";
@@ -183,7 +185,8 @@ public class SQLDatabase {
                 Strike.LOCATION,
                 Strike.BIJ_SUMMARY_SHORT,
                 Strike.HAPPENED,
-                Strike.DRONE_SUMMARY
+                Strike.DRONE_SUMMARY,
+                Strike.INFORMATION_URL
         };
 
         String groupBy = null;
@@ -213,7 +216,7 @@ public class SQLDatabase {
 
         private static final String DATABASE_NAME = "drone.db";
 
-        private static final int DATABASE_VERSION = 5;
+        private static final int DATABASE_VERSION = 6;
 
         private static final String STRIKE_TABLE = "strike";
 
@@ -264,11 +267,14 @@ public class SQLDatabase {
                     .real(Strike.LON)
                     .text(Strike.NAMES)
                     .text(Strike.DRONE_SUMMARY)
+                    .text(Strike.INFORMATION_URL)
                     .create();
 
             db.execSQL(table);
 
-            PopulateDatabaseAsyncTask task = new PopulateDatabaseAsyncTask(mContext, this, "strikes/data.json");
+            PopulateDatabaseAsyncTask task = new PopulateDatabaseAsyncTask(mContext,
+                    this,
+                    "strikes/strikes-complete.json");
             task.execute();
         }
 
