@@ -16,12 +16,15 @@
 
 package io.indy.drone.fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import io.indy.drone.Flags;
@@ -44,6 +47,7 @@ public class StrikeDetailFragment extends Fragment {
     }
 
     private String mSummary;
+    private String mUrl;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -65,6 +69,28 @@ public class StrikeDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_strike_detail, container, false);
+
+        if (getArguments().containsKey(Strike.BIJ_SUMMARY_SHORT)) {
+            String s = getArguments().getString(Strike.BIJ_SUMMARY_SHORT);
+            ifd("bij summary: " + s);
+        }
+
+        if (getArguments().containsKey(Strike.INFORMATION_URL)) {
+            mUrl = getArguments().getString(Strike.INFORMATION_URL);
+            ifd("information url: " + mUrl);
+        }
+
+        final Button b = (Button) rootView.findViewById(R.id.btn_info_link);
+        b.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                ifd("clicked a button for : " + mUrl);
+                if(!mUrl.isEmpty()) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrl));
+                    startActivity(browserIntent);
+                }
+            }
+        });
 
         ((TextView) rootView.findViewById(R.id.strike_detail)).setText(mSummary);
 
