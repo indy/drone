@@ -16,6 +16,7 @@
 
 package io.indy.drone.activity;
 
+import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
@@ -73,5 +74,18 @@ public class BaseActivity extends ActionBarActivity {
                 .flat(false));
     }
 
+    protected Bundle strikeIntoBundle(Strike strike) {
+        Bundle bundle = new Bundle();
+
+        bundle.putString(Strike.BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
+
+        ifd(strike.getInformationUrl());
+
+        if(strike.getInformationUrl() != null) {
+            bundle.putString(Strike.INFORMATION_URL, strike.getInformationUrl());
+        }
+
+        return bundle;
+    }
 
 }

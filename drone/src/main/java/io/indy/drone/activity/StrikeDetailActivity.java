@@ -79,10 +79,8 @@ public class StrikeDetailActivity extends BaseActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
 
-            Bundle arguments = new Bundle();
-            arguments.putString(Strike.BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
-
             StrikeDetailFragment fragment = new StrikeDetailFragment();
+            Bundle arguments = strikeIntoBundle(strike);
             fragment.setArguments(arguments);
             getSupportFragmentManager()
                     .beginTransaction()
