@@ -63,6 +63,7 @@ public class Strike {
     public static final String LON = "lon";
     public static final String NAMES = "names";
     public static final String DRONE_SUMMARY = "drone_summary";
+    public static final String INFORMATION_URL = "information_url";
 
     private String mJsonId;
     private int mNumber;
@@ -103,6 +104,7 @@ public class Strike {
     private String mNames;
 
     private String mDroneSummary;
+    private String mInformationUrl;
 
     public boolean hasValidDeathsRange() {
         return mHasValidDeathsRange;
@@ -374,67 +376,16 @@ public class Strike {
         return mDroneSummary;
     }
 
-    public void buildDroneSummary() {
-        String res = "";
-        // 12-25 deaths, 1-2 children killed, 4-3 civilians, 10 injuries
+    public Strike setDroneSummary(String summary) {
+        mDroneSummary = summary;
+        return this;
+    }
 
-        if(mHasValidDeathsRange) {
-            if(mDeathsMin != mDeathsMax) {
-                res += mDeathsMin + "-" + mDeathsMax + " deaths, ";
-            } else {
-                if(mDeathsMin == 0) {
-                } else if(mDeathsMin == 1) {
-                    res += mDeathsMin + " death, ";
-                } else {
-                    res += mDeathsMin + " deaths, ";
-                }
-            }
-        }
+    public String getInformationUrl() { return mInformationUrl; }
 
-        if(mHasValidChildrenRange) {
-            if(mChildrenMin != mChildrenMax) {
-                res += mChildrenMin + "-" + mChildrenMax + " children killed, ";
-            } else {
-                if(mChildrenMin == 0) {
-                } else if(mChildrenMin == 1) {
-                    res += mChildrenMin + " child killed, ";
-                } else {
-                    res += mChildrenMin + " children killed, ";
-                }
-            }
-        }
-
-        if(mHasValidCivilianRange) {
-            if(mCiviliansMin != mCiviliansMax) {
-                res += mCiviliansMin + "-" + mCiviliansMax + " civilians, ";
-            } else {
-                if(mCiviliansMin == 0) {
-                } else if(mCiviliansMin == 1) {
-                    res += mCiviliansMin + " civilian, ";
-                } else {
-                    res += mCiviliansMin + " civilians, ";
-                }
-            }
-        }
-
-        if(mHasValidInjuriesRange) {
-            if(mInjuriesMin != mInjuriesMax) {
-                res += mInjuriesMin + "-" + mInjuriesMax + " injuries, ";
-            } else {
-                if(mInjuriesMin == 0) {
-                } else if(mInjuriesMin == 1) {
-                    res += mInjuriesMin + " injury, ";
-                } else {
-                    res += mInjuriesMin + " injuries, ";
-                }
-            }
-        }
-
-        if(res.length() == 0) {
-            mDroneSummary = "";
-        } else {
-            mDroneSummary = res.substring(0, res.length() - 2);
-        }
+    public Strike setInformationUrl(String url) {
+        mInformationUrl = url;
+        return this;
     }
 
     private static Pattern SINGLE_NUMBER = Pattern.compile("^\\s*(\\d+)\\s*$");
@@ -478,26 +429,41 @@ public class Strike {
 
         // the strings used as keys in the dronestre.am json feed
         //
-        final String D_JSON_ID = "_id";
+        final String D_JSON_ID = "-id";
         final String D_NUMBER = "number";
         final String D_COUNTRY = "country";
         final String D_HAPPENED = "date";
         final String D_TOWN = "town";
         final String D_LOCATION = "location";
         final String D_DEATHS = "deaths";
-        final String D_DEATHS_MIN = "deaths_min";
-        final String D_DEATHS_MAX = "deaths_max";
         final String D_CIVILIANS = "civilians";
         final String D_INJURIES = "injuries";
         final String D_CHILDREN = "children";
-        final String D_TWEET_ID = "tweet_id";
-        final String D_BUREAU_ID = "bureau_id";
-        final String D_BIJ_SUMMARY_SHORT = "bij_summary_short";
-        final String D_BIJ_LINK = "bij_link";
+        final String D_TWEET_ID = "tweet-id";
+        final String D_BUREAU_ID = "bureau-id";
+        final String D_BIJ_SUMMARY_SHORT = "bij-summary-short";
+        final String D_BIJ_LINK = "bij-link";
         final String D_TARGET = "target";
         final String D_LAT = "lat";
         final String D_LON = "lon";
         final String D_NAMES = "names";
+
+        final String D_INFORMATION_URL = "information-url";
+
+        final String D_HAS_VALID_CHILDREN_RANGE = "has-valid-children-range";
+        final String D_CHILDREN_MIN = "children-min";
+        final String D_CHILDREN_MAX = "children-max";
+        final String D_HAS_VALID_CIVILIANS_RANGE = "has-valid-civilians-range";
+        final String D_CIVILIANS_MIN = "civilians-min";
+        final String D_CIVILIANS_MAX = "civilians-max";
+        final String D_HAS_VALID_DEATHS_RANGE = "has-valid-deaths-range";
+        final String D_DEATHS_MIN = "deaths-min";
+        final String D_DEATHS_MAX = "deaths-max";
+        final String D_HAS_VALID_INJURIES_RANGE = "has-valid-injuries-range";
+        final String D_INJURIES_MIN = "injuries-min";
+        final String D_INJURIES_MAX = "injuries-max";
+
+        final String D_DRONE_APP_SUMMARY = "drone-app-summary";
 
         Strike strike = new Strike();
         try {
@@ -508,70 +474,46 @@ public class Strike {
             strike.setTown(jsonObject.getString(D_TOWN));
             strike.setLocation(jsonObject.getString(D_LOCATION));
 
-            //strike.setDeathsMin(jsonObject.getString(D_DEATHS_MIN));
-            //strike.setDeathsMax(jsonObject.getString(D_DEATHS_MAX));
+            strike.setDroneSummary(jsonObject.getString(D_DRONE_APP_SUMMARY));
 
-            String deaths = jsonObject.getString(D_DEATHS);
-            strike.setDeaths(deaths);
-            if (hasValidMinMax(deaths)) {
+            if(jsonObject.getString(D_INFORMATION_URL).equals("null")) {
+                strike.setInformationUrl("");
+            } else {
+                strike.setInformationUrl(jsonObject.getString(D_INFORMATION_URL));
+            }
+
+            strike.setDeaths(jsonObject.getString(D_DEATHS));
+            if (jsonObject.getBoolean(D_HAS_VALID_DEATHS_RANGE)) {
                 strike.confirmValidDeathsRange(true);
-                try {
-                    int[] minMax = parseMinMax(deaths);
-                    strike.setDeathsMin(minMax[0]);
-                    strike.setDeathsMax(minMax[1]);
-                } catch (ParseException e) {
-                    strike.confirmValidDeathsRange(false);
-                    e.printStackTrace();
-                }
+                strike.setDeathsMin(jsonObject.getInt(D_DEATHS_MIN));
+                strike.setDeathsMax(jsonObject.getInt(D_DEATHS_MAX));
             } else {
                 strike.confirmValidDeathsRange(false);
             }
 
-            String civilians = jsonObject.getString(D_CIVILIANS);
-            strike.setCivilians(civilians);
-            if (hasValidMinMax(civilians)) {
+            strike.setCivilians(jsonObject.getString(D_CIVILIANS));
+            if (jsonObject.getBoolean(D_HAS_VALID_CIVILIANS_RANGE)) {
                 strike.confirmValidCivilianRange(true);
-                try {
-                    int[] minMax = parseMinMax(civilians);
-                    strike.setCiviliansMin(minMax[0]);
-                    strike.setCiviliansMax(minMax[1]);
-                } catch (ParseException e) {
-                    strike.confirmValidCivilianRange(false);
-                    e.printStackTrace();
-                }
+                strike.setCiviliansMin(jsonObject.getInt(D_CIVILIANS_MIN));
+                strike.setCiviliansMax(jsonObject.getInt(D_CIVILIANS_MAX));
             } else {
                 strike.confirmValidCivilianRange(false);
             }
 
-            String injuries = jsonObject.getString(D_INJURIES);
-            strike.setInjuries(injuries);
-            if (hasValidMinMax(injuries)) {
+            strike.setInjuries(jsonObject.getString(D_INJURIES));
+            if (jsonObject.getBoolean(D_HAS_VALID_INJURIES_RANGE)) {
                 strike.confirmValidInjuriesRange(true);
-                try {
-                    int[] minMax = parseMinMax(injuries);
-                    strike.setInjuriesMin(minMax[0]);
-                    strike.setInjuriesMax(minMax[1]);
-                } catch (ParseException e) {
-                    strike.confirmValidInjuriesRange(false);
-                    e.printStackTrace();
-                }
+                strike.setInjuriesMin(jsonObject.getInt(D_INJURIES_MIN));
+                strike.setInjuriesMax(jsonObject.getInt(D_INJURIES_MAX));
             } else {
                 strike.confirmValidInjuriesRange(false);
             }
 
-
-            String children = jsonObject.getString(D_CHILDREN);
-            strike.setChildren(children);
-            if (hasValidMinMax(children)) {
+            strike.setChildren(jsonObject.getString(D_CHILDREN));
+            if (jsonObject.getBoolean(D_HAS_VALID_CHILDREN_RANGE)) {
                 strike.confirmValidChildrenRange(true);
-                try {
-                    int[] minMax = parseMinMax(children);
-                    strike.setChildrenMin(minMax[0]);
-                    strike.setChildrenMax(minMax[1]);
-                } catch (ParseException e) {
-                    strike.confirmValidChildrenRange(false);
-                    e.printStackTrace();
-                }
+                strike.setChildrenMin(jsonObject.getInt(D_CHILDREN_MIN));
+                strike.setChildrenMax(jsonObject.getInt(D_CHILDREN_MAX));
             } else {
                 strike.confirmValidChildrenRange(false);
             }
@@ -590,8 +532,6 @@ public class Strike {
                 names.getString(i);
                 strike.setNames(names.getString(i));
             }
-            
-            strike.buildDroneSummary();
 
             return strike;
 
@@ -651,6 +591,8 @@ public class Strike {
         cv.put(NAMES, getNames());
 
         cv.put(DRONE_SUMMARY, getDroneSummary());
+
+        cv.put(INFORMATION_URL, getInformationUrl());
 
         return cv;
     }
