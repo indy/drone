@@ -16,12 +16,17 @@
 
 package io.indy.drone.activity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,11 +36,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import java.util.Date;
 
 import io.indy.drone.Flags;
 import io.indy.drone.R;
@@ -43,6 +44,8 @@ import io.indy.drone.fragment.StrikeDetailFragment;
 import io.indy.drone.fragment.StrikeListFragment;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
+import io.indy.drone.service.ScheduledService;
+import io.indy.drone.utils.DateFormatHelper;
 
 
 /**
@@ -71,6 +74,11 @@ public class StrikeListActivity extends BaseActivity
         if (Flags.DEBUG && D) Log.d(TAG, message);
     }
 
+    PendingIntent pi;
+    BroadcastReceiver br;
+    AlarmManager am;
+
+
     private String[] mDrawerTitles;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -95,6 +103,7 @@ public class StrikeListActivity extends BaseActivity
         mDatabase = new SQLDatabase(this);
 
         setupNavigationDrawer();
+        setupAlarm();
 
         if (findViewById(R.id.strike_detail_container) != null) {
             // The detail container view will be present only in the
@@ -113,6 +122,55 @@ public class StrikeListActivity extends BaseActivity
         // TODO: If exposing deep links into your app, handle intents here.
     }
 
+    private void setupAlarm() {
+
+        // check a SharedPreferences variable to see if we've already setup an inexact alarm
+        // otherwise the time until the next alarm will reset every time StrikeListActivity
+        // is used.
+        // var: time that the alarm was last triggered
+        // if this was 2-3 hours ago the alarm was cancelled and requires a reset
+
+        boolean requireAlarm = false;
+        Date today = new Date();
+
+        SharedPreferences settings = getSharedPreferences(ScheduledService.PREFS_FILENAME, 0);
+        String alarmSetAt = settings.getString(ScheduledService.ALARM_SET_AT, "");
+        if(alarmSetAt.isEmpty()) {
+            // first time of running, so check the server and set an alarm
+            startService(new Intent(this, ScheduledService.class));
+            ifd("no alarm prefs found, assuming first time run, setting alarm");
+            requireAlarm = true;
+        } else {
+            Date d = DateFormatHelper.parseSQLiteDateString(alarmSetAt);
+            long diffMs = today.getTime() - d.getTime();
+            long threeHours = 1000 * 60 * 60 * 3;
+            if (diffMs > threeHours) {
+                ifd("alarm was set more than 3 hours ago, and so requires a reset");
+                requireAlarm = true;
+            }
+        }
+
+        if(!requireAlarm) {
+            ifd("no need to set an alarm from StrikeListActivity");
+            return;
+        }
+
+        Intent intent = new Intent(this, ScheduledService.class);
+        pi = PendingIntent.getService(this, 0, intent, 0);
+
+        am = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE));
+        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HOUR,
+                AlarmManager.INTERVAL_HOUR,
+                pi);
+
+        ifd("set alarm");
+
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(ScheduledService.ALARM_SET_AT, DateFormatHelper.dateToSQLite(today));
+        editor.commit();
+        ifd("updated ALARM_SET_AT shared preference");
+    }
 
     /* from MainActivity
     @Override
@@ -189,6 +247,10 @@ public class StrikeListActivity extends BaseActivity
             case R.id.action_settings:
                 ifd("clicked on settings");
                 break;
+            case R.id.temp_action_test:
+                ifd("clicked on temp action test");
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }

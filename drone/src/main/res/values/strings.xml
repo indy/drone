@@ -25,5 +25,6 @@
     <string name="Fragment3">This is ActionBarSherlock Fragment 3</string>
 
     <string name="filler">This is placeholder text</string>
+    <string name="temp_action_test">Test request</string>
 
 </resources>

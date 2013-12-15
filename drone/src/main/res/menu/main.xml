@@ -1,7 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:drone="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        drone:showAsAction="never" />
+          android:title="@string/action_settings"
+          android:orderInCategory="100"
+          drone:showAsAction="never" />
+
+    <item android:id="@+id/temp_action_test"
+          android:title="@string/temp_action_test"
+          drone:showAsAction="never" />
 </menu>

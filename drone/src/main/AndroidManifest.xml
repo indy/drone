@@ -40,6 +40,9 @@
                     android:value=".StrikeListActivity" />
         </activity>
 
+        <service android:name=".service.ScheduledService">
+        </service>
+
         <meta-data
                 android:name="com.google.android.maps.v2.API_KEY"
                 android:value="@string/map_key"/>

@@ -532,8 +532,6 @@ public class Strike {
                 names.getString(i);
                 strike.setNames(names.getString(i));
             }
-            
-            strike.buildDroneSummary();
 
             return strike;
 

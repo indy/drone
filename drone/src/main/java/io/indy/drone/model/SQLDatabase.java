@@ -129,6 +129,30 @@ public class SQLDatabase {
         return strike;
     }
 
+    public int getNumStrikes() {
+
+        SQLiteDatabase db = mModelHelper.getReadableDatabase();
+        try {
+            String sql = "select max(" + Strike.NUMBER + ") from " + ModelHelper.STRIKE_TABLE;
+            Cursor cursor = db.rawQuery(sql, null);
+
+            cursor.moveToNext();
+            int largestNumber = cursor.getInt(0);
+            cursor.close();
+
+            return largestNumber;
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    public void addStrike(Strike strike) {
+        mModelHelper.addStrike(strike);
+    }
+
     public Strike getStrike(String strikeId) {
         String[] result_columns = new String[]{
                 KEY_ID, Strike.HAPPENED, Strike.COUNTRY, Strike.TOWN,
