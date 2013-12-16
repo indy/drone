@@ -211,7 +211,6 @@ public class StrikeListActivity extends ActionBarActivity
     @Override
     public void onItemSelected(String id) {
 
-
         if (mTwoPane) {
             Strike strike = mDatabase.getStrike(id);
 
@@ -219,10 +218,11 @@ public class StrikeListActivity extends ActionBarActivity
             // adding or replacing the detail fragment using a
             // fragment transaction.
 
-            Bundle arguments = strikeIntoBundle(strike);
+            Bundle bundle = new Bundle();
+            bundle.putString(SQLDatabase.KEY_ID, id);
 
             StrikeDetailFragment fragment = new StrikeDetailFragment();
-            fragment.setArguments(arguments);
+            fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.strike_detail_container, fragment)
                     .commit();
@@ -238,20 +238,6 @@ public class StrikeListActivity extends ActionBarActivity
             detailIntent.putExtra(SQLDatabase.KEY_ID, id);
             startActivity(detailIntent);
         }
-    }
-
-    protected Bundle strikeIntoBundle(Strike strike) {
-        Bundle bundle = new Bundle();
-
-        bundle.putString(Strike.BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
-
-        ifd(strike.getInformationUrl());
-
-        if(strike.getInformationUrl() != null) {
-            bundle.putString(Strike.INFORMATION_URL, strike.getInformationUrl());
-        }
-
-        return bundle;
     }
 
     @Override

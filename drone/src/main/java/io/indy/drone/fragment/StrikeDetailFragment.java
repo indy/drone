@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import io.indy.drone.Flags;
 import io.indy.drone.R;
+import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 
 /**
@@ -46,8 +47,9 @@ public class StrikeDetailFragment extends Fragment {
         if (Flags.DEBUG && D) Log.d(TAG, message);
     }
 
-    private String mSummary;
-    private String mUrl;
+    private SQLDatabase mDatabase;
+
+    private Strike mStrike;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -60,9 +62,7 @@ public class StrikeDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(Strike.BIJ_SUMMARY_SHORT)) {
-            mSummary = getArguments().getString(Strike.BIJ_SUMMARY_SHORT);
-        }
+        mDatabase = new SQLDatabase(getActivity());
     }
 
     @Override
@@ -70,29 +70,23 @@ public class StrikeDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_strike_detail, container, false);
 
-        if (getArguments().containsKey(Strike.BIJ_SUMMARY_SHORT)) {
-            String s = getArguments().getString(Strike.BIJ_SUMMARY_SHORT);
-            ifd("bij summary: " + s);
-        }
+        String strikeId = getArguments().getString(SQLDatabase.KEY_ID);
+        mStrike = mDatabase.getStrike(strikeId);
 
-        if (getArguments().containsKey(Strike.INFORMATION_URL)) {
-            mUrl = getArguments().getString(Strike.INFORMATION_URL);
-            ifd("information url: " + mUrl);
-        }
-
-        final Button b = (Button) rootView.findViewById(R.id.btn_info_link);
-        b.setOnClickListener(new View.OnClickListener() {
+        final Button button = (Button) rootView.findViewById(R.id.btn_info_link);
+        button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
-                ifd("clicked a button for : " + mUrl);
-                if(!mUrl.isEmpty()) {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUrl));
+                String url = mStrike.getInformationUrl();
+                ifd("clicked a button for : " + url);
+                if(!url.isEmpty()) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(browserIntent);
                 }
             }
         });
 
-        ((TextView) rootView.findViewById(R.id.strike_detail)).setText(mSummary);
+        ((TextView) rootView.findViewById(R.id.strike_detail)).setText(mStrike.getBijSummaryShort());
 
         return rootView;
     }

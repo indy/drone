@@ -80,8 +80,11 @@ public class StrikeDetailActivity extends ActionBarActivity {
             // using a fragment transaction.
 
             StrikeDetailFragment fragment = new StrikeDetailFragment();
-            Bundle arguments = strikeIntoBundle(strike);
-            fragment.setArguments(arguments);
+
+            Bundle bundle = new Bundle();
+            bundle.putString(SQLDatabase.KEY_ID, mStrikeId);
+            fragment.setArguments(bundle);
+
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.strike_detail_container, fragment)
@@ -90,24 +93,8 @@ public class StrikeDetailActivity extends ActionBarActivity {
             mStrikeMapHelper = new StrikeMapHelper();
             Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
             mStrikeMapHelper.showStrikeOnMap((SupportMapFragment)mapFragment, strike);
-            //showStrikeOnMap(strike);
         }
     }
-
-    protected Bundle strikeIntoBundle(Strike strike) {
-        Bundle bundle = new Bundle();
-
-        bundle.putString(Strike.BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
-
-        ifd(strike.getInformationUrl());
-
-        if(strike.getInformationUrl() != null) {
-            bundle.putString(Strike.INFORMATION_URL, strike.getInformationUrl());
-        }
-
-        return bundle;
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
