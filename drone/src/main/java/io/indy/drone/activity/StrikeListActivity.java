@@ -18,7 +18,6 @@ package io.indy.drone.activity;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -141,7 +140,7 @@ public class StrikeListActivity extends ActionBarActivity
 
         SharedPreferences settings = getSharedPreferences(ScheduledService.PREFS_FILENAME, 0);
         String alarmSetAt = settings.getString(ScheduledService.ALARM_SET_AT, "");
-        if(alarmSetAt.isEmpty()) {
+        if (alarmSetAt.isEmpty()) {
             // first time of running, so check the server and set an alarm
             startService(new Intent(this, ScheduledService.class));
             ifd("no alarm prefs found, assuming first time run, setting alarm");
@@ -156,7 +155,7 @@ public class StrikeListActivity extends ActionBarActivity
             }
         }
 
-        if(!requireAlarm) {
+        if (!requireAlarm) {
             ifd("no need to set an alarm from StrikeListActivity");
             return;
         }
@@ -164,7 +163,7 @@ public class StrikeListActivity extends ActionBarActivity
         Intent intent = new Intent(this, ScheduledService.class);
         pi = PendingIntent.getService(this, 0, intent, 0);
 
-        am = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE));
+        am = (AlarmManager) (this.getSystemService(Context.ALARM_SERVICE));
         am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HOUR,
                 AlarmManager.INTERVAL_HOUR,
@@ -228,7 +227,7 @@ public class StrikeListActivity extends ActionBarActivity
                     .commit();
 
             Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
-            mStrikeMapHelper.showStrikeOnMap((SupportMapFragment)mapFragment, strike);
+            mStrikeMapHelper.showStrikeOnMap((SupportMapFragment) mapFragment, strike);
             // showStrikeOnMap(strike);
 
         } else {

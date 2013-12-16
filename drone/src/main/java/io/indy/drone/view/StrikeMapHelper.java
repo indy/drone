@@ -28,7 +28,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import io.indy.drone.Flags;
-import io.indy.drone.R;
 import io.indy.drone.model.Strike;
 
 public class StrikeMapHelper {
@@ -46,7 +45,7 @@ public class StrikeMapHelper {
 
     public boolean showStrikeOnMap(SupportMapFragment supportMapFragment, Strike strike) {
 
-        mStrikeLocation= new LatLng(strike.getLat(), strike.getLon());
+        mStrikeLocation = new LatLng(strike.getLat(), strike.getLon());
 
         if (!configureMap(supportMapFragment)) {
             return false;
@@ -114,7 +113,7 @@ public class StrikeMapHelper {
 
         ifd(strike.getInformationUrl());
 
-        if(strike.getInformationUrl() != null) {
+        if (strike.getInformationUrl() != null) {
             bundle.putString(Strike.INFORMATION_URL, strike.getInformationUrl());
         }
 

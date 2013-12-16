@@ -79,7 +79,7 @@ public class StrikeDetailFragment extends Fragment {
                 // Perform action on click
                 String url = mStrike.getInformationUrl();
                 ifd("clicked a button for : " + url);
-                if(!url.isEmpty()) {
+                if (!url.isEmpty()) {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(browserIntent);
                 }

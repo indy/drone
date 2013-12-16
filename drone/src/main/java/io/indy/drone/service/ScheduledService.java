@@ -113,10 +113,10 @@ public class ScheduledService extends IntentService {
     }
 
     private String httpGet(String path) throws IOException {
-        BufferedReader reader=null;
+        BufferedReader reader = null;
         try {
             URL url = new URL(path);
-            HttpURLConnection c = (HttpURLConnection)url.openConnection();
+            HttpURLConnection c = (HttpURLConnection) url.openConnection();
 
             c.setRequestMethod("GET");
             c.setReadTimeout(15000);
@@ -142,13 +142,13 @@ public class ScheduledService extends IntentService {
     private int fetchStrikesCount() throws Exception {
         try {
             String data = httpGet(SERVER_URL + "/strikes-count.json");
-            return Integer.parseInt(data.replaceAll("\\s+","")); // strip whitespace
+            return Integer.parseInt(data.replaceAll("\\s+", "")); // strip whitespace
         } catch (IOException e) {
             e.printStackTrace();
-            throw(e);
+            throw (e);
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            throw(e);
+            throw (e);
         }
     }
 

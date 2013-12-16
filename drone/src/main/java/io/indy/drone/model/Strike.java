@@ -381,7 +381,9 @@ public class Strike {
         return this;
     }
 
-    public String getInformationUrl() { return mInformationUrl; }
+    public String getInformationUrl() {
+        return mInformationUrl;
+    }
 
     public Strike setInformationUrl(String url) {
         mInformationUrl = url;
@@ -476,7 +478,7 @@ public class Strike {
 
             strike.setDroneSummary(jsonObject.getString(D_DRONE_APP_SUMMARY));
 
-            if(jsonObject.getString(D_INFORMATION_URL).equals("null")) {
+            if (jsonObject.getString(D_INFORMATION_URL).equals("null")) {
                 strike.setInformationUrl("");
             } else {
                 strike.setInformationUrl(jsonObject.getString(D_INFORMATION_URL));

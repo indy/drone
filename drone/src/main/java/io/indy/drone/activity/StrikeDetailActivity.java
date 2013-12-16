@@ -92,7 +92,7 @@ public class StrikeDetailActivity extends ActionBarActivity {
 
             mStrikeMapHelper = new StrikeMapHelper();
             Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
-            mStrikeMapHelper.showStrikeOnMap((SupportMapFragment)mapFragment, strike);
+            mStrikeMapHelper.showStrikeOnMap((SupportMapFragment) mapFragment, strike);
         }
     }
 
