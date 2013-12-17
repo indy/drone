@@ -7,7 +7,9 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
 
-    <string name="btn_info_link_text">More Information...</string>
+    <string name="btn_label_information">More Information...</string>
+    <string name="btn_label_previous_strike">Prev</string>
+    <string name="btn_label_next_strike">Next</string>
 
     <string-array name="locations_array">
         <item>Worldwide</item>
@@ -26,5 +28,6 @@
 
     <string name="filler">This is placeholder text</string>
     <string name="temp_action_test">Test request</string>
+
 
 </resources>

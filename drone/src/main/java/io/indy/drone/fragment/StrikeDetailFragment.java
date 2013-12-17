@@ -17,6 +17,7 @@
 package io.indy.drone.fragment;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,8 +28,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import de.greenrobot.event.EventBus;
 import io.indy.drone.Flags;
 import io.indy.drone.R;
+import io.indy.drone.event.StrikeMoveEvent;
+import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 
@@ -48,8 +52,13 @@ public class StrikeDetailFragment extends Fragment {
     }
 
     private SQLDatabase mDatabase;
+    private Cursor mCursor; // cursor to all strikes in a particular region
+    private String mStrikeId;
 
     private Strike mStrike;
+
+    private View mRootView;
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -65,15 +74,93 @@ public class StrikeDetailFragment extends Fragment {
         mDatabase = new SQLDatabase(getActivity());
     }
 
+    // cursor has just been returned by the database, so set it to the current
+    private boolean setupCursor(String region, String strikeId) {
+        // get the strikes for this region
+        mCursor = mDatabase.getStrikeCursor(region);
+
+        // position the cursor at the current strikeId
+        int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
+        while(mCursor.moveToNext()) {
+            String id = mCursor.getString(index);
+            if(id.equals(strikeId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String moveToPreviousStrike() {
+        int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
+        if(mCursor.moveToPrevious()) {
+            return mCursor.getString(index);
+        } else {
+            // moved before start of results, so position cursor at start
+            mCursor.moveToFirst();
+        }
+        return "";
+    }
+
+    private String moveToNextStrike() {
+
+        int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
+        if(mCursor.moveToNext()) {
+            return mCursor.getString(index);
+        } else {
+            // moved past the end of results, so position cursor at end
+            mCursor.moveToLast();
+        }
+
+        return "";
+    }
+
+    private void changeStrikeClicked(String newId) {
+        if(!newId.equals("")) {
+            mStrikeId = newId;
+            mStrike = mDatabase.getStrike(mStrikeId);
+            EventBus.getDefault().post(new StrikeMoveEvent(mStrike));
+            updateUI(mRootView);
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_strike_detail, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_strike_detail, container, false);
 
-        String strikeId = getArguments().getString(SQLDatabase.KEY_ID);
-        mStrike = mDatabase.getStrike(strikeId);
+        String region = getArguments().getString(SQLDatabase.REGION);
+        mStrikeId = getArguments().getString(SQLDatabase.KEY_ID);
+        mStrike = mDatabase.getStrike(mStrikeId);
 
-        final Button button = (Button) rootView.findViewById(R.id.btn_info_link);
+        setupCursor(region, mStrikeId);
+
+        final Button prevButton = (Button) mRootView.findViewById(R.id.btn_previous_strike);
+        prevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // get a strike object that represents the previous strike to view
+                changeStrikeClicked(moveToPreviousStrike());
+            }
+        });
+
+        final Button nextButton = (Button) mRootView.findViewById(R.id.btn_next_strike);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // get a strike object that represents the next strike to view
+                changeStrikeClicked(moveToNextStrike());
+            }
+        });
+
+        updateUI(mRootView);
+
+        return mRootView;
+    }
+
+    private void updateUI(View rootView) {
+        ((TextView) rootView.findViewById(R.id.strike_detail)).setText(mStrike.getBijSummaryShort());
+
+        final Button button = (Button) mRootView.findViewById(R.id.btn_info_link);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
@@ -85,9 +172,5 @@ public class StrikeDetailFragment extends Fragment {
                 }
             }
         });
-
-        ((TextView) rootView.findViewById(R.id.strike_detail)).setText(mStrike.getBijSummaryShort());
-
-        return rootView;
     }
 }

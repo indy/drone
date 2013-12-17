@@ -28,8 +28,11 @@ import android.view.MenuItem;
 
 import com.google.android.gms.maps.SupportMapFragment;
 
+import de.greenrobot.event.EventBus;
 import io.indy.drone.Flags;
 import io.indy.drone.R;
+import io.indy.drone.event.StrikeMoveEvent;
+import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.fragment.StrikeDetailFragment;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
@@ -73,6 +76,7 @@ public class StrikeDetailActivity extends ActionBarActivity {
         //
         if (savedInstanceState == null) {
 
+            String region = getIntent().getStringExtra(SQLDatabase.REGION);
             mStrikeId = getIntent().getStringExtra(SQLDatabase.KEY_ID);
             Strike strike = mDatabase.getStrike(mStrikeId);
 
@@ -83,6 +87,7 @@ public class StrikeDetailActivity extends ActionBarActivity {
 
             Bundle bundle = new Bundle();
             bundle.putString(SQLDatabase.KEY_ID, mStrikeId);
+            bundle.putString(SQLDatabase.REGION, region);
             fragment.setArguments(bundle);
 
             getSupportFragmentManager()
@@ -91,9 +96,33 @@ public class StrikeDetailActivity extends ActionBarActivity {
                     .commit();
 
             mStrikeMapHelper = new StrikeMapHelper();
-            Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
-            mStrikeMapHelper.showStrikeOnMap((SupportMapFragment) mapFragment, strike);
+            showStrikeOnMap(strike);
         }
+    }
+
+    private void showStrikeOnMap(Strike strike) {
+        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
+        mStrikeMapHelper.showStrikeOnMap((SupportMapFragment) mapFragment, strike);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ifd("onStart");
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ifd("onStop");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public void onEvent(StrikeMoveEvent event) {
+        ifd("received StrikeMoveEvent");
+        showStrikeOnMap(event.getStrike());
     }
 
     @Override

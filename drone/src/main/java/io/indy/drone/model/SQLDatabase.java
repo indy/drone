@@ -30,7 +30,8 @@ import io.indy.drone.utils.DateFormatHelper;
 
 public class SQLDatabase {
 
-    public static final String[] LOCATIONS = {"worldwide", "Pakistan", "Yemen", "Somalia"};
+    public static final String REGION = "region";
+    public static final String[] REGIONS = {"worldwide", "Pakistan", "Yemen", "Somalia"};
 
     // The index (key) column name for use in where clauses.
     public static final String KEY_ID = "_id";
@@ -192,11 +193,11 @@ public class SQLDatabase {
         return strike;
     }
 
-    public Cursor getStrikeCursor(String country) {
-        if (country.equals(LOCATIONS[0])) { // worldwide
+    public Cursor getStrikeCursor(String region) {
+        if (region.equals(REGIONS[0])) { // worldwide
             return getStrikeCursor(null, null);
         }
-        return getStrikeCursor(Strike.COUNTRY + "=?", new String[]{country});
+        return getStrikeCursor(Strike.COUNTRY + "=?", new String[]{region});
     }
 
     private Cursor getStrikeCursor(String where, String[] whereArgs) {

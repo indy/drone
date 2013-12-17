@@ -6,9 +6,9 @@
               android:layout_height="match_parent">
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
         <TextView android:id="@+id/strike_detail"
                   style="?android:attr/textAppearanceLarge"
@@ -26,11 +26,20 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-        <Button android:id="@+id/btn_info_link"
-                android:text="@string/btn_info_link_text"
+        <Button android:id="@+id/btn_previous_strike"
+                android:text="@string/btn_label_previous_strike"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
+                android:layout_height="wrap_content"/>
+
+        <Button android:id="@+id/btn_info_link"
+                android:text="@string/btn_label_information"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        <Button android:id="@+id/btn_next_strike"
+                android:text="@string/btn_label_next_strike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

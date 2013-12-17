@@ -96,7 +96,7 @@ public class StrikeListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLocation = SQLDatabase.LOCATIONS[0]; // worldwide
+        mLocation = SQLDatabase.REGIONS[0]; // worldwide
     }
 
     @Override
@@ -187,14 +187,8 @@ public class StrikeListFragment extends ListFragment {
         }
     }
 
-    public void onRegionClicked(int position) {
-
-        String[] locations = SQLDatabase.LOCATIONS;
-        if (position >= locations.length) {
-            return;
-        }
-        mLocation = locations[position];
-
+    public void onRegionClicked(String region) {
+        mLocation = region;
         updateStrikeCursor();
     }
 

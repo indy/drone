@@ -41,8 +41,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import java.util.Date;
 
+import de.greenrobot.event.EventBus;
 import io.indy.drone.Flags;
 import io.indy.drone.R;
+import io.indy.drone.event.StrikeMoveEvent;
 import io.indy.drone.fragment.StrikeDetailFragment;
 import io.indy.drone.fragment.StrikeListFragment;
 import io.indy.drone.model.SQLDatabase;
@@ -87,6 +89,7 @@ public class StrikeListActivity extends ActionBarActivity
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
 
+    private String mRegionSelected;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
@@ -200,9 +203,13 @@ public class StrikeListActivity extends ActionBarActivity
         mDrawerList.setItemChecked(position, true);
         setTitle(mDrawerTitles[position]);
 
-        ((StrikeListFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.strike_list))
-                .onRegionClicked(position);
+        if (position < SQLDatabase.REGIONS.length) {
+            mRegionSelected = SQLDatabase.REGIONS[position];
+
+            ((StrikeListFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.strike_list))
+                    .onRegionClicked(mRegionSelected);
+        }
 
         mDrawerLayout.closeDrawer(mDrawerList);
     }
@@ -224,6 +231,7 @@ public class StrikeListActivity extends ActionBarActivity
 
             Bundle bundle = new Bundle();
             bundle.putString(SQLDatabase.KEY_ID, id);
+            bundle.putString(SQLDatabase.REGION, mRegionSelected);
 
             StrikeDetailFragment fragment = new StrikeDetailFragment();
             fragment.setArguments(bundle);
@@ -231,15 +239,16 @@ public class StrikeListActivity extends ActionBarActivity
                     .replace(R.id.strike_detail_container, fragment)
                     .commit();
 
-            Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
-            mStrikeMapHelper.showStrikeOnMap((SupportMapFragment) mapFragment, strike);
-            // showStrikeOnMap(strike);
+            showStrikeOnMap(strike);
+            // Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
+            // mStrikeMapHelper.showStrikeOnMap((SupportMapFragment) mapFragment, strike);
 
         } else {
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, StrikeDetailActivity.class);
             detailIntent.putExtra(SQLDatabase.KEY_ID, id);
+            detailIntent.putExtra(SQLDatabase.REGION, mRegionSelected);
             startActivity(detailIntent);
         }
     }
@@ -276,6 +285,9 @@ public class StrikeListActivity extends ActionBarActivity
     }
 
     protected void setupNavigationDrawer() {
+
+        mRegionSelected = SQLDatabase.REGIONS[0];
+
         mTitle = mDrawerTitle = getTitle();
         mDrawerTitles = getResources().getStringArray(R.array.locations_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -317,6 +329,32 @@ public class StrikeListActivity extends ActionBarActivity
             onDrawerItemClicked(position);
         }
     }
+
+    private void showStrikeOnMap(Strike strike) {
+        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
+        mStrikeMapHelper.showStrikeOnMap((SupportMapFragment) mapFragment, strike);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ifd("onStart");
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ifd("onStop");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public void onEvent(StrikeMoveEvent event) {
+        ifd("received StrikeMoveEvent");
+        showStrikeOnMap(event.getStrike());
+    }
+
 
     @Override
     public void setTitle(CharSequence title) {
