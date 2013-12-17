@@ -141,8 +141,13 @@ public class StrikeListActivity extends ActionBarActivity
         SharedPreferences settings = getSharedPreferences(ScheduledService.PREFS_FILENAME, 0);
         String alarmSetAt = settings.getString(ScheduledService.ALARM_SET_AT, "");
         if (alarmSetAt.isEmpty()) {
-            // first time of running, so check the server and set an alarm
-            startService(new Intent(this, ScheduledService.class));
+            // first time of running
+
+            // don't check the server straight away since the db
+            // might still be populating from the local json file
+            //
+            // startService(new Intent(this, ScheduledService.class));
+
             ifd("no alarm prefs found, assuming first time run, setting alarm");
             requireAlarm = true;
         } else {
