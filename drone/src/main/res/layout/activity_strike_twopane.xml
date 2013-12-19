@@ -6,65 +6,74 @@
         android:layout_height="match_parent"
         tools:context=".StrikeListActivity">
 
-<LinearLayout android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    android:baselineAligned="false"
-    android:divider="?android:attr/dividerHorizontal"
-    android:orientation="horizontal"
-    android:showDividers="middle">
-
-    <!--
-    This layout is a two-pane layout for the Strikes
-    master/detail flow. See res/values-large/refs.xml and
-    res/values-sw600dp/refs.xml for an example of layout aliases
-    that replace the single-pane version of the layout with
-    this two-pane version.
-
-    For more on layout aliases, see:
-    http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
-    -->
-
-    <fragment
-        android:id="@+id/strike_list"
-        android:name="io.indy.drone.fragment.StrikeListFragment"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="2"
-        tools:layout="@android:layout/list_content" />
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:tools="http://schemas.android.com/tools"
-                  android:layout_width="0dp"
+    <LinearLayout android:layout_width="match_parent"
                   android:layout_height="match_parent"
-                  android:layout_weight="3"
-                  android:orientation="vertical">
+                  android:layout_marginLeft="0dp"
+                  android:layout_marginRight="0dp"
+                  android:baselineAligned="false"
+                  android:divider="?android:attr/dividerHorizontal"
+                  android:orientation="horizontal"
+                  android:showDividers="middle">
 
-        <fragment android:id="@+id/map"
-                  android:layout_width="match_parent"
-                  android:layout_height="0dp"
-                  android:layout_weight="1"
-                  android:name="com.google.android.gms.maps.SupportMapFragment"/>
+        <!--
+        This layout is a two-pane layout for the Strikes
+        master/detail flow. See res/values-large/refs.xml and
+        res/values-sw600dp/refs.xml for an example of layout aliases
+        that replace the single-pane version of the layout with
+        this two-pane version.
 
-        <FrameLayout android:id="@+id/strike_detail_container"
-                     android:layout_width="match_parent"
-                     android:layout_height="0dp"
-                     android:layout_weight="1"
-                     tools:context=".StrikeDetailActivity"
-                     tools:ignore="MergeRootFrame" />
+        For more on layout aliases, see:
+        http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
+        -->
+
+        <fragment
+                android:id="@+id/strike_list"
+                android:name="io.indy.drone.fragment.StrikeListFragment"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                tools:layout="@android:layout/list_content" />
+
+
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                      xmlns:tools="http://schemas.android.com/tools"
+                      android:layout_width="0dp"
+                      android:layout_height="match_parent"
+                      android:layout_weight="3"
+                      android:orientation="vertical">
+
+
+            <fragment android:id="@+id/map"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:name="com.google.android.gms.maps.SupportMapFragment"/>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:orientation="vertical">
+
+                <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.5">
+                </FrameLayout>
+                <FrameLayout android:id="@+id/strike_detail_container"
+                             android:layout_width="match_parent"
+                             android:layout_height="0dp"
+                             android:layout_weight="0.5"
+                             android:background="@color/strikecard_map_info_background"
+                             tools:context=".StrikeDetailActivity"
+                             tools:ignore="MergeRootFrame" />
+            </LinearLayout>
+        </FrameLayout>
+
+
     </LinearLayout>
-
-
-<!--
-    <FrameLayout
-        android:id="@+id/strike_detail_container"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="3" />
--->
-
-</LinearLayout>
 
 
     <ListView

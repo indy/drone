@@ -26,7 +26,9 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,6 +37,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.google.android.gms.maps.SupportMapFragment;
 
 import java.util.Date;
 
@@ -46,6 +50,7 @@ import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 import io.indy.drone.service.ScheduledService;
 import io.indy.drone.utils.DateFormatHelper;
+import io.indy.drone.view.StrikeMapHelper;
 
 
 /**
@@ -64,7 +69,7 @@ import io.indy.drone.utils.DateFormatHelper;
  * {@link io.indy.drone.fragment.StrikeListFragment.Callbacks} interface
  * to listen for item selections.
  */
-public class StrikeListActivity extends BaseActivity
+public class StrikeListActivity extends ActionBarActivity
         implements StrikeListFragment.Callbacks {
 
     static private final boolean D = true;
@@ -74,10 +79,10 @@ public class StrikeListActivity extends BaseActivity
         if (Flags.DEBUG && D) Log.d(TAG, message);
     }
 
-    PendingIntent pi;
-    BroadcastReceiver br;
-    AlarmManager am;
+    private StrikeMapHelper mStrikeMapHelper;
 
+    PendingIntent pi;
+    AlarmManager am;
 
     private String[] mDrawerTitles;
     private DrawerLayout mDrawerLayout;
@@ -101,6 +106,7 @@ public class StrikeListActivity extends BaseActivity
         setContentView(R.layout.activity_strike_list);
 
         mDatabase = new SQLDatabase(this);
+        mStrikeMapHelper = new StrikeMapHelper();
 
         setupNavigationDrawer();
         setupAlarm();
@@ -221,7 +227,9 @@ public class StrikeListActivity extends BaseActivity
                     .replace(R.id.strike_detail_container, fragment)
                     .commit();
 
-            setUpMapIfNeeded(strike);
+            Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
+            mStrikeMapHelper.showStrikeOnMap((SupportMapFragment)mapFragment, strike);
+            // showStrikeOnMap(strike);
 
         } else {
             // In single-pane mode, simply start the detail activity
@@ -230,6 +238,20 @@ public class StrikeListActivity extends BaseActivity
             detailIntent.putExtra(SQLDatabase.KEY_ID, id);
             startActivity(detailIntent);
         }
+    }
+
+    protected Bundle strikeIntoBundle(Strike strike) {
+        Bundle bundle = new Bundle();
+
+        bundle.putString(Strike.BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
+
+        ifd(strike.getInformationUrl());
+
+        if(strike.getInformationUrl() != null) {
+            bundle.putString(Strike.INFORMATION_URL, strike.getInformationUrl());
+        }
+
+        return bundle;
     }
 
     @Override

@@ -18,17 +18,22 @@ package io.indy.drone.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+
+import com.google.android.gms.maps.SupportMapFragment;
 
 import io.indy.drone.Flags;
 import io.indy.drone.R;
 import io.indy.drone.fragment.StrikeDetailFragment;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
+import io.indy.drone.view.StrikeMapHelper;
 
 /**
  * An activity representing a single Strike detail screen. This
@@ -39,7 +44,9 @@ import io.indy.drone.model.Strike;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link io.indy.drone.fragment.StrikeDetailFragment}.
  */
-public class StrikeDetailActivity extends BaseActivity {
+public class StrikeDetailActivity extends ActionBarActivity {
+
+    private StrikeMapHelper mStrikeMapHelper;
 
     private SQLDatabase mDatabase;
 
@@ -80,9 +87,27 @@ public class StrikeDetailActivity extends BaseActivity {
                     .add(R.id.strike_detail_container, fragment)
                     .commit();
 
-            setUpMapIfNeeded(strike);
+            mStrikeMapHelper = new StrikeMapHelper();
+            Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
+            mStrikeMapHelper.showStrikeOnMap((SupportMapFragment)mapFragment, strike);
+            //showStrikeOnMap(strike);
         }
     }
+
+    protected Bundle strikeIntoBundle(Strike strike) {
+        Bundle bundle = new Bundle();
+
+        bundle.putString(Strike.BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
+
+        ifd(strike.getInformationUrl());
+
+        if(strike.getInformationUrl() != null) {
+            bundle.putString(Strike.INFORMATION_URL, strike.getInformationUrl());
+        }
+
+        return bundle;
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
