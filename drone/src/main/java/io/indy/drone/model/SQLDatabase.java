@@ -193,12 +193,45 @@ public class SQLDatabase {
         return strike;
     }
 
+    public Cursor getStrikeLocationsInRegion(String region) {
+        if (region.equals(REGIONS[0])) { // worldwide
+            return getSurroundingStrikesCursor(null, null);
+        }
+        return getSurroundingStrikesCursor(Strike.COUNTRY + "=?", new String[]{region});
+    }
+
     public Cursor getStrikeCursor(String region) {
         if (region.equals(REGIONS[0])) { // worldwide
             return getStrikeCursor(null, null);
         }
         return getStrikeCursor(Strike.COUNTRY + "=?", new String[]{region});
     }
+
+    private Cursor getSurroundingStrikesCursor(String where, String[] whereArgs) {
+        // Specify the result column projection. Return the minimum set
+        // of columns required to satisfy your requirements.
+        String[] result_columns = new String[]{
+                KEY_ID,
+                Strike.LAT,
+                Strike.LON
+        };
+
+        String groupBy = null;
+        String having = null;
+        String order = Strike.HAPPENED + " desc";
+
+        SQLiteDatabase db = mModelHelper.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns, where, whereArgs, groupBy,
+                    having, order);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        return cursor;
+    }
+
 
     private Cursor getStrikeCursor(String where, String[] whereArgs) {
         // Specify the result column projection. Return the minimum set

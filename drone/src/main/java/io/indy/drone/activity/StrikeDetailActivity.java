@@ -17,6 +17,7 @@
 package io.indy.drone.activity;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -27,12 +28,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import de.greenrobot.event.EventBus;
 import io.indy.drone.Flags;
 import io.indy.drone.R;
 import io.indy.drone.event.StrikeMoveEvent;
-import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.fragment.StrikeDetailFragment;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
@@ -55,6 +56,9 @@ public class StrikeDetailActivity extends ActionBarActivity {
 
     private String mStrikeId;
 
+    private String mRegion;
+    private Cursor mStrikeLocations;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,9 +80,11 @@ public class StrikeDetailActivity extends ActionBarActivity {
         //
         if (savedInstanceState == null) {
 
-            String region = getIntent().getStringExtra(SQLDatabase.REGION);
+            mRegion = getIntent().getStringExtra(SQLDatabase.REGION);
             mStrikeId = getIntent().getStringExtra(SQLDatabase.KEY_ID);
-            Strike strike = mDatabase.getStrike(mStrikeId);
+
+            mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegion);
+
 
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
@@ -87,7 +93,7 @@ public class StrikeDetailActivity extends ActionBarActivity {
 
             Bundle bundle = new Bundle();
             bundle.putString(SQLDatabase.KEY_ID, mStrikeId);
-            bundle.putString(SQLDatabase.REGION, region);
+            bundle.putString(SQLDatabase.REGION, mRegion);
             fragment.setArguments(bundle);
 
             getSupportFragmentManager()
@@ -96,13 +102,22 @@ public class StrikeDetailActivity extends ActionBarActivity {
                     .commit();
 
             mStrikeMapHelper = new StrikeMapHelper();
-            showStrikeOnMap(strike);
+            showStrikeOnMap(mStrikeId);
         }
     }
 
-    private void showStrikeOnMap(Strike strike) {
+    private void showStrikeOnMap(String strikeId) {
+
         Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
-        mStrikeMapHelper.showStrikeOnMap((SupportMapFragment) mapFragment, strike);
+
+        Strike strike = mDatabase.getStrike(strikeId);
+        LatLng strikeLocation = new LatLng(strike.getLat(), strike.getLon());
+
+        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation)) {
+            mStrikeMapHelper.clearMap()
+                            .showMainMarker(strike)
+                            .showSurroundingMarkers(mStrikeLocations);
+        }
     }
 
     @Override
@@ -122,7 +137,7 @@ public class StrikeDetailActivity extends ActionBarActivity {
     @SuppressWarnings({"UnusedDeclaration"})
     public void onEvent(StrikeMoveEvent event) {
         ifd("received StrikeMoveEvent");
-        showStrikeOnMap(event.getStrike());
+        showStrikeOnMap(event.getStrikeId());
     }
 
     @Override

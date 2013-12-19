@@ -30,13 +30,16 @@ public class StrikeMoveEvent {
         if (Flags.DEBUG && D) Log.d(TAG, message);
     }
 
-    private Strike mStrike;
+    private String mStrikeId;
+    private String mRegion;
 
-    public StrikeMoveEvent(Strike strike) {
-        mStrike = strike;
+    public StrikeMoveEvent(String strikeId, String region) {
+        mStrikeId = strikeId;
+        mRegion = region;
     }
 
-    public Strike getStrike() {
-        return mStrike;
+    public String getStrikeId() { return mStrikeId; }
+    public String getRegion() {
+        return mRegion;
     }
 }

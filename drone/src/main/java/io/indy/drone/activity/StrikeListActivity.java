@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -38,6 +39,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
 
@@ -93,6 +95,8 @@ public class StrikeListActivity extends ActionBarActivity
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
+
+    private Cursor mStrikeLocations;
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -205,6 +209,7 @@ public class StrikeListActivity extends ActionBarActivity
 
         if (position < SQLDatabase.REGIONS.length) {
             mRegionSelected = SQLDatabase.REGIONS[position];
+            mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegionSelected);
 
             ((StrikeListFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.strike_list))
@@ -223,8 +228,6 @@ public class StrikeListActivity extends ActionBarActivity
     public void onItemSelected(String id) {
 
         if (mTwoPane) {
-            Strike strike = mDatabase.getStrike(id);
-
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
@@ -239,7 +242,7 @@ public class StrikeListActivity extends ActionBarActivity
                     .replace(R.id.strike_detail_container, fragment)
                     .commit();
 
-            showStrikeOnMap(strike);
+            showStrikeOnMap(id);
             // Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
             // mStrikeMapHelper.showStrikeOnMap((SupportMapFragment) mapFragment, strike);
 
@@ -287,6 +290,8 @@ public class StrikeListActivity extends ActionBarActivity
     protected void setupNavigationDrawer() {
 
         mRegionSelected = SQLDatabase.REGIONS[0];
+        mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegionSelected);
+
 
         mTitle = mDrawerTitle = getTitle();
         mDrawerTitles = getResources().getStringArray(R.array.locations_array);
@@ -330,9 +335,18 @@ public class StrikeListActivity extends ActionBarActivity
         }
     }
 
-    private void showStrikeOnMap(Strike strike) {
+    private void showStrikeOnMap(String strikeId) {
+
         Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
-        mStrikeMapHelper.showStrikeOnMap((SupportMapFragment) mapFragment, strike);
+
+        Strike strike = mDatabase.getStrike(strikeId);
+        LatLng strikeLocation = new LatLng(strike.getLat(), strike.getLon());
+
+        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation)) {
+            mStrikeMapHelper.clearMap()
+                    .showMainMarker(strike)
+                    .showSurroundingMarkers(mStrikeLocations);
+        }
     }
 
     @Override
@@ -352,7 +366,7 @@ public class StrikeListActivity extends ActionBarActivity
     @SuppressWarnings({"UnusedDeclaration"})
     public void onEvent(StrikeMoveEvent event) {
         ifd("received StrikeMoveEvent");
-        showStrikeOnMap(event.getStrike());
+        showStrikeOnMap(event.getStrikeId());
     }
 
 

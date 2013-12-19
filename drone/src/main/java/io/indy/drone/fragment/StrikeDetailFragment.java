@@ -54,6 +54,7 @@ public class StrikeDetailFragment extends Fragment {
     private SQLDatabase mDatabase;
     private Cursor mCursor; // cursor to all strikes in a particular region
     private String mStrikeId;
+    private String mRegion;
 
     private Strike mStrike;
 
@@ -117,8 +118,8 @@ public class StrikeDetailFragment extends Fragment {
     private void changeStrikeClicked(String newId) {
         if(!newId.equals("")) {
             mStrikeId = newId;
+            EventBus.getDefault().post(new StrikeMoveEvent(mStrikeId, mRegion));
             mStrike = mDatabase.getStrike(mStrikeId);
-            EventBus.getDefault().post(new StrikeMoveEvent(mStrike));
             updateUI(mRootView);
         }
     }
@@ -128,11 +129,11 @@ public class StrikeDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_strike_detail, container, false);
 
-        String region = getArguments().getString(SQLDatabase.REGION);
+        mRegion = getArguments().getString(SQLDatabase.REGION);
         mStrikeId = getArguments().getString(SQLDatabase.KEY_ID);
         mStrike = mDatabase.getStrike(mStrikeId);
 
-        setupCursor(region, mStrikeId);
+        setupCursor(mRegion, mStrikeId);
 
         final Button prevButton = (Button) mRootView.findViewById(R.id.btn_previous_strike);
         prevButton.setOnClickListener(new View.OnClickListener() {

@@ -16,6 +16,7 @@
 
 package io.indy.drone.view;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,10 +25,14 @@ import android.view.ViewTreeObserver;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import io.indy.drone.Flags;
+import io.indy.drone.R;
+import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 
 public class StrikeMapHelper {
@@ -43,37 +48,56 @@ public class StrikeMapHelper {
     protected View mMapView;
     protected LatLng mStrikeLocation;
 
-    public boolean showStrikeOnMap(SupportMapFragment supportMapFragment, Strike strike) {
-
-        mStrikeLocation = new LatLng(strike.getLat(), strike.getLon());
-
-        if (!configureMap(supportMapFragment)) {
-            return false;
-        }
-
-        showMarker(strike);
-        // todo: also show nearby markers
-
-        return true;
+    public StrikeMapHelper clearMap() {
+        mMap.clear();
+        return this;
     }
 
-    private boolean configureMap(SupportMapFragment supportMapFragment) {
+    public StrikeMapHelper showSurroundingMarkers(Cursor locations) {
+
+        int latIndex = locations.getColumnIndex(Strike.LAT);
+        int lonIndex = locations.getColumnIndex(Strike.LON);
+
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.aux_map_marker);
+
+        locations.moveToFirst();
+        do {
+            mMap.addMarker(new MarkerOptions()
+                    .icon(icon)
+                    .anchor(0.5f, 0.5f)
+                    .position(new LatLng(locations.getDouble(latIndex),
+                                         locations.getDouble(lonIndex)))
+                    .alpha(0.6f));
+
+        } while(locations.moveToNext());
+
+        return this;
+    }
+
+    public StrikeMapHelper showMainMarker(Strike strike) {
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(strike.getLat(), strike.getLon()))
+                .title(strike.getTown())
+                .snippet(strike.getLocation())
+                .alpha(0.8f)
+                .flat(false));
+        return this;
+    }
+
+    public boolean configureMap(SupportMapFragment supportMapFragment, LatLng location) {
+
+        mStrikeLocation = location;
+
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
 
-            // SupportMapFragment xf = (SupportMapFragment)(getSupportFragmentManager().findFragmentById(R.id.map));
-
             mMap = supportMapFragment.getMap();
-            //mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-
             // Check if we were successful in obtaining the map.
             if (mMap == null) {
                 return false;
             }
 
             mMapView = supportMapFragment.getView();
-            //mMapView = findViewById(R.id.map);
-            //mMapView = (getSupportFragmentManager().findFragmentById(R.id.map)).getView();
 
             ViewTreeObserver vto = mMapView.getViewTreeObserver();
             ViewTreeObserver.OnGlobalLayoutListener listener = new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -93,30 +117,5 @@ public class StrikeMapHelper {
             mMap.animateCamera(CameraUpdateFactory.newLatLng(mStrikeLocation), 3000, null);
         }
         return true;
-    }
-
-
-    private void showMarker(Strike strike) {
-        mMap.clear();
-        mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(strike.getLat(), strike.getLon()))
-                .title(strike.getTown())
-                .snippet(strike.getLocation())
-                .alpha(0.8f)
-                .flat(false));
-    }
-
-    public Bundle strikeIntoBundle(Strike strike) {
-        Bundle bundle = new Bundle();
-
-        bundle.putString(Strike.BIJ_SUMMARY_SHORT, strike.getBijSummaryShort());
-
-        ifd(strike.getInformationUrl());
-
-        if (strike.getInformationUrl() != null) {
-            bundle.putString(Strike.INFORMATION_URL, strike.getInformationUrl());
-        }
-
-        return bundle;
     }
 }
