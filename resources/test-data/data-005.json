@@ -1,0 +1,130 @@
+{
+  "status": "OK",
+  "strike": [
+    {
+      "_id": "51a65578e0932c0e1eb4199f",
+      "number": 1,
+      "country": "Yemen",
+      "date": "2002-11-03T00:00:00.000Z",
+      "town": "",
+      "location": "Marib Province",
+      "deaths": "6",
+      "deaths_min": "6",
+      "deaths_max": "6",
+      "civilians": "0",
+      "injuries": "",
+      "children": "",
+      "tweet_id": "278544689483890688",
+      "bureau_id": "YEM001",
+      "bij_summary_short": "In the first known US targeted assassination using a drone, a CIA Predator struck a car killing six al Qaeda suspects.",
+      "bij_link": "http://www.thebureauinvestigates.com/2012/03/29/yemen-reported-us-covert-actions-since-2001/",
+      "target": "",
+      "lat": "15.47467",
+      "lon": "45.322755",
+      "articles": [],
+      "names": [
+        "Qa’id Salim Sinan al-Harithi, Abu Ahmad al-Hijazi, Salih Hussain Ali al-Nunu, Awsan Ahmad al-Tarihi, Munir Ahmad Abdallah al-Sauda, Adil Nasir al-Sauda’"
+      ]
+    },
+    {
+      "_id": "51a65578e0932c0e1eb419a0",
+      "number": 2,
+      "country": "Pakistan",
+      "date": "2004-06-17T00:00:00.000Z",
+      "town": "Wana",
+      "location": "South Waziristan",
+      "deaths": "6-8",
+      "deaths_min": "6",
+      "deaths_max": "8",
+      "civilians": "2",
+      "injuries": "1",
+      "children": "2",
+      "tweet_id": "278544750867533824",
+      "bureau_id": "B1",
+      "bij_summary_short": "First known drone strike in Pakistan kills at least six, including infamous Taliban leader Nek Mohammad and two children. Wana, South Waziristan.",
+      "bij_link": "http://www.thebureauinvestigates.com/2011/08/10/the-bush-years-2004-2009/",
+      "target": "Nek Mohammed",
+      "lat": "32.305125653338",
+      "lon": "69.576244354248",
+      "articles": [],
+      "names": [
+        "Nek Mohammad, Fakhar Zaman, Azmat Khan, Marez Khan, Shahrukh Khan, Leetak, Sher Zaman Ashrafkhel"
+      ]
+    },
+    {
+      "_id": "51a65578e0932c0e1eb419a1",
+      "number": 3,
+      "country": "Pakistan",
+      "date": "2005-05-08T00:00:00.000Z",
+      "town": "Toorikhel",
+      "location": "North Waziristan",
+      "deaths": "2",
+      "deaths_min": "2",
+      "deaths_max": "2",
+      "civilians": "",
+      "injuries": "",
+      "children": "",
+      "tweet_id": "278544812255367168",
+      "bureau_id": "B2",
+      "bij_summary_short": "Two killed, including Haitham al-Yemeni an al Qaeda explosives expert, near Mir Ali, North Waziristan.",
+      "bij_link": "http://www.thebureauinvestigates.com/2011/08/10/the-bush-years-2004-2009/",
+      "target": "Haitham al-Yemeni",
+      "lat": "32.9867798933878",
+      "lon": "70.2608299255371",
+      "articles": [],
+      "names": [
+        "Haitham al-Yemeni, Samiullah Khan"
+      ]
+    },
+    {
+      "_id": "51a65578e0932c0e1eb419a2",
+      "number": 4,
+      "country": "Pakistan",
+      "date": "2005-11-05T00:00:00.000Z",
+      "town": "Mosaki",
+      "location": "North Waziristan",
+      "deaths": "8",
+      "deaths_min": "8",
+      "deaths_max": "8",
+      "civilians": "3-8",
+      "injuries": "1",
+      "children": "3",
+      "tweet_id": "278544854483628032",
+      "bureau_id": "B3",
+      "bij_summary_short": "Failed strike against Abu Hamza Rabia (\"al Qaeda’s Number 3\") kills eight including three children.",
+      "bij_link": "http://www.thebureauinvestigates.com/2011/08/10/the-bush-years-2004-2009/",
+      "target": "Abu Hamza Rabia",
+      "lat": "32.9998819118971",
+      "lon": "70.3408241271973",
+      "articles": [],
+      "names": [
+        ""
+      ]
+    },
+    {
+      "_id": "51a65578e0932c0e1eb419a3",
+      "number": 5,
+      "country": "Pakistan",
+      "date": "2005-12-01T00:00:00.000Z",
+      "town": "Haisori",
+      "location": "North Waziristan",
+      "deaths": "5",
+      "deaths_min": "5",
+      "deaths_max": "5",
+      "civilians": "2",
+      "injuries": "",
+      "children": "2",
+      "tweet_id": "278544895789133825",
+      "bureau_id": "B4",
+      "bij_summary_short": "Syrian Abu Hamza Rabia, the senior al Qaeda operative targeted in B3, was killed with two other foreign militants and two boys, aged eight and 17.",
+      "bij_link": "http://www.thebureauinvestigates.com/2011/08/10/the-bush-years-2004-2009/",
+      "target": "Abu Hamza Rabia",
+      "lat": "33.0086634945756",
+      "lon": "70.0419616699219",
+      "articles": [],
+      "names": [
+        "Abu Hamza Rabia, Suleiman al-Moghrabi, Amer Azizi, Noor Aziz, Abdul Wasit"
+      ]
+    }
+  ]
+}
