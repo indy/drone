@@ -42,12 +42,12 @@ proguard/
 .idea/
 
 # clojure backend
-/target
-/lib
-/classes
-/checkouts
-/cache/strikes*
-.nrepl-port
+/server/target
+/server/lib
+/server/classes
+/server/checkouts
+/server/cache/strikes*
+/server.nrepl-port
 pom.xml
 pom.xml.asc
 *.jar
