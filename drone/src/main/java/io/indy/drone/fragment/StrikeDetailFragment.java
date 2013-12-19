@@ -221,6 +221,8 @@ public class StrikeDetailFragment extends Fragment {
         ((TextView) rootView.findViewById(R.id.drone_summary)).setText(mStrike.getDroneSummary());
 
         final Button button = (Button) mRootView.findViewById(R.id.btn_info_link);
+
+        button.setEnabled(!mStrike.getInformationUrl().isEmpty());
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
