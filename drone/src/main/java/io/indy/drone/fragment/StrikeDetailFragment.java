@@ -61,7 +61,6 @@ public class StrikeDetailFragment extends Fragment {
 
     private View mRootView;
 
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -79,7 +78,7 @@ public class StrikeDetailFragment extends Fragment {
     // cursor has just been returned by the database, so set it to the current
     private boolean setupCursor(String region, String strikeId) {
         // get the strikes for this region
-        mCursor = mDatabase.getStrikeCursor(region);
+        mCursor = mDatabase.getStrikeCursor(region, false);
 
         // position the cursor at the current strikeId
         int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
@@ -92,10 +91,7 @@ public class StrikeDetailFragment extends Fragment {
         return false;
     }
 
-    private String moveToNextStrike() {
-        // the cursor returns strikes in newest first order, so calling cursor::moveToPrevious
-        // will place the cursor on a more recent strike
-        //
+    private String moveToPreviousStrike() {
         int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
         if(mCursor.moveToPrevious()) {
             return mCursor.getString(index);
@@ -106,9 +102,7 @@ public class StrikeDetailFragment extends Fragment {
         return "";
     }
 
-    private String moveToPreviousStrike() {
-        // see comment in moveToNextStrike
-        //
+    private String moveToNextStrike() {
         int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
         if(mCursor.moveToNext()) {
             return mCursor.getString(index);

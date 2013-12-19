@@ -200,13 +200,6 @@ public class SQLDatabase {
         return getSurroundingStrikesCursor(Strike.COUNTRY + "=?", new String[]{region});
     }
 
-    public Cursor getStrikeCursor(String region) {
-        if (region.equals(REGIONS[0])) { // worldwide
-            return getStrikeCursor(null, null);
-        }
-        return getStrikeCursor(Strike.COUNTRY + "=?", new String[]{region});
-    }
-
     private Cursor getSurroundingStrikesCursor(String where, String[] whereArgs) {
         // Specify the result column projection. Return the minimum set
         // of columns required to satisfy your requirements.
@@ -232,8 +225,17 @@ public class SQLDatabase {
         return cursor;
     }
 
+    public Cursor getStrikeCursor(String region, boolean mostRecentFirst) {
 
-    private Cursor getStrikeCursor(String where, String[] whereArgs) {
+        // worldwide by default
+        String where = null;
+        String[] whereArgs = null;
+
+        if (!region.equals(REGIONS[0])) { // not worldwide
+            where = Strike.COUNTRY + "=?";
+            whereArgs = new String[]{region};
+        }
+
         // Specify the result column projection. Return the minimum set
         // of columns required to satisfy your requirements.
         String[] result_columns = new String[]{
@@ -249,7 +251,7 @@ public class SQLDatabase {
 
         String groupBy = null;
         String having = null;
-        String order = Strike.HAPPENED + " desc";
+        String order = Strike.HAPPENED + (mostRecentFirst ? " desc" : " asc");
 
         SQLiteDatabase db = mModelHelper.getReadableDatabase();
         Cursor cursor = null;

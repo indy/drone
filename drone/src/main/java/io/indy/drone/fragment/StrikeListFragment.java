@@ -105,7 +105,7 @@ public class StrikeListFragment extends ListFragment {
 
         mDatabase = new SQLDatabase(getActivity());
 
-        Cursor c = mDatabase.getStrikeCursor(mLocation);
+        Cursor c = mDatabase.getStrikeCursor(mLocation, true);
 
         mStrikeCursorAdapter = new StrikeCursorAdapter(getActivity(), c, 0);
 
@@ -193,7 +193,7 @@ public class StrikeListFragment extends ListFragment {
     }
 
     private void updateStrikeCursor() {
-        Cursor cursor = mDatabase.getStrikeCursor(mLocation);
+        Cursor cursor = mDatabase.getStrikeCursor(mLocation, true);
         mStrikeCursorAdapter.changeCursor(cursor);
         mStrikeCursorAdapter.notifyDataSetChanged();
     }
