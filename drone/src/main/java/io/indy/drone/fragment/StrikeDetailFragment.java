@@ -35,6 +35,7 @@ import io.indy.drone.event.StrikeMoveEvent;
 import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
+import io.indy.drone.utils.DateFormatHelper;
 
 /**
  * A fragment representing a single Strike detail screen.
@@ -91,7 +92,10 @@ public class StrikeDetailFragment extends Fragment {
         return false;
     }
 
-    private String moveToPreviousStrike() {
+    private String moveToNextStrike() {
+        // the cursor returns strikes in newest first order, so calling cursor::moveToPrevious
+        // will place the cursor on a more recent strike
+        //
         int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
         if(mCursor.moveToPrevious()) {
             return mCursor.getString(index);
@@ -102,8 +106,9 @@ public class StrikeDetailFragment extends Fragment {
         return "";
     }
 
-    private String moveToNextStrike() {
-
+    private String moveToPreviousStrike() {
+        // see comment in moveToNextStrike
+        //
         int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
         if(mCursor.moveToNext()) {
             return mCursor.getString(index);
@@ -160,6 +165,13 @@ public class StrikeDetailFragment extends Fragment {
 
     private void updateUI(View rootView) {
         ((TextView) rootView.findViewById(R.id.strike_detail)).setText(mStrike.getBijSummaryShort());
+
+        ((TextView) rootView.findViewById(R.id.location)).setText(mStrike.getLocation());
+
+        String displayDate = DateFormatHelper.dateToDisplay(mStrike.getHappened());
+        ((TextView) rootView.findViewById(R.id.happened)).setText(displayDate);
+
+        ((TextView) rootView.findViewById(R.id.drone_summary)).setText(mStrike.getDroneSummary());
 
         final Button button = (Button) mRootView.findViewById(R.id.btn_info_link);
         button.setOnClickListener(new View.OnClickListener() {
