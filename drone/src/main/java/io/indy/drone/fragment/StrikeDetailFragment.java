@@ -61,6 +61,9 @@ public class StrikeDetailFragment extends Fragment {
 
     private View mRootView;
 
+    private boolean mAtEnd;
+    private boolean mAtStart;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -80,13 +83,27 @@ public class StrikeDetailFragment extends Fragment {
         // get the strikes for this region
         mCursor = mDatabase.getStrikeCursor(region, false);
 
+        mAtStart = true;
+        mAtEnd = false;
+
         // position the cursor at the current strikeId
         int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
         while(mCursor.moveToNext()) {
             String id = mCursor.getString(index);
             if(id.equals(strikeId)) {
+
+                // are we at the end of the cursor?
+                if(mCursor.moveToNext()) {
+                    // no
+                    mCursor.moveToPrevious();
+                } else {
+                    // yes
+                    mAtEnd = true;
+                    mCursor.moveToLast();
+                }
                 return true;
             }
+            mAtStart = false;
         }
         return false;
     }
@@ -94,9 +111,23 @@ public class StrikeDetailFragment extends Fragment {
     private String moveToPreviousStrike() {
         int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
         if(mCursor.moveToPrevious()) {
+            mAtEnd = false;
+
+            // could be at the start of the cursor
+            if(mCursor.moveToPrevious()) {
+                // no
+                mAtStart = false;
+                mCursor.moveToNext();
+            } else {
+                // yes
+                mAtStart = true;
+                mCursor.moveToFirst();
+            }
+
             return mCursor.getString(index);
         } else {
             // moved before start of results, so position cursor at start
+            mAtStart = true;
             mCursor.moveToFirst();
         }
         return "";
@@ -105,9 +136,23 @@ public class StrikeDetailFragment extends Fragment {
     private String moveToNextStrike() {
         int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
         if(mCursor.moveToNext()) {
+            mAtStart = false;
+
+            // could be at the end of the cursor
+            if(mCursor.moveToNext()) {
+                // no
+                mAtEnd = false;
+                mCursor.moveToPrevious();
+            } else {
+                // yes
+                mAtEnd = true;
+                mCursor.moveToLast();
+            }
+
             return mCursor.getString(index);
         } else {
             // moved past the end of results, so position cursor at end
+            mAtEnd = true;
             mCursor.moveToLast();
         }
 
@@ -135,20 +180,28 @@ public class StrikeDetailFragment extends Fragment {
         setupCursor(mRegion, mStrikeId);
 
         final Button prevButton = (Button) mRootView.findViewById(R.id.btn_previous_strike);
+        final Button nextButton = (Button) mRootView.findViewById(R.id.btn_next_strike);
+
+        prevButton.setEnabled(!mAtStart);
+        nextButton.setEnabled(!mAtEnd);
+
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // get a strike object that represents the previous strike to view
                 changeStrikeClicked(moveToPreviousStrike());
+                prevButton.setEnabled(!mAtStart);
+                nextButton.setEnabled(!mAtEnd);
             }
         });
 
-        final Button nextButton = (Button) mRootView.findViewById(R.id.btn_next_strike);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // get a strike object that represents the next strike to view
                 changeStrikeClicked(moveToNextStrike());
+                prevButton.setEnabled(!mAtStart);
+                nextButton.setEnabled(!mAtEnd);
             }
         });
 
