@@ -1,54 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="io.indy.drone"
-          android:versionCode="1"
-          android:versionName="1.0" >
+    package="io.indy.drone"
+    android:versionCode="1"
+    android:versionName="1.0" >
 
     <uses-sdk
-            android:minSdkVersion="14"
-            android:targetSdkVersion="18" />
+        android:minSdkVersion="14"
+        android:targetSdkVersion="18" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
-    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
-            android:allowBackup="true"
-            android:icon="@drawable/ic_launcher"
-            android:label="@string/app_name"
-            android:logo="@drawable/ic_logo"
-            android:theme="@style/Theme.Drone" >
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:logo="@drawable/ic_logo"
+        android:theme="@style/Theme.Drone" >
 
         <activity
-                android:name=".activity.StrikeListActivity"
-                android:label="@string/app_name" >
+            android:name="io.indy.drone.activity.StrikeListActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
-                android:name=".activity.StrikeDetailActivity"
-                android:label="@string/title_strike_detail"
-                android:parentActivityName=".StrikeListActivity" >
+            android:name="io.indy.drone.activity.StrikeDetailActivity"
+            android:label="@string/title_strike_detail"
+            android:parentActivityName=".StrikeListActivity" >
             <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".StrikeListActivity" />
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".StrikeListActivity" />
         </activity>
 
-        <service android:name=".service.ScheduledService">
+        <activity
+                android:name="io.indy.drone.activity.AboutActivity"
+                android:label="@string/title_activity_about" >
+        </activity>
+
+        <service android:name="io.indy.drone.service.ScheduledService" >
         </service>
 
         <meta-data
-                android:name="com.google.android.maps.v2.API_KEY"
-                android:value="@string/map_key"/>
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/map_key" />
         <meta-data
-                android:name="com.google.android.gms.version"
-                android:value="@integer/google_play_services_version" />
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
     </application>
 

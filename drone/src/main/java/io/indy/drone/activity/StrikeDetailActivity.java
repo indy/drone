@@ -149,6 +149,10 @@ public class StrikeDetailActivity extends ActionBarActivity {
             case R.id.action_settings:
                 ifd("clicked on settings");
                 break;
+            case R.id.action_about:
+                Intent intent = new Intent(this, AboutActivity.class);
+                startActivity(intent);
+                break;
             case android.R.id.home:
                 // This ID represents the Home or Up button. In the case of this
                 // activity, the Up button is shown. Use NavUtils to allow users
