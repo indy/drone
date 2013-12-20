@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.Date;
 
-import io.indy.drone.Flags;
+import io.indy.drone.AppConfig;
 import io.indy.drone.R;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
@@ -105,6 +105,6 @@ public class StrikeCursorAdapter extends CursorAdapter {
     private static final boolean D = true;
 
     static void ifd(final String message) {
-        if (Flags.DEBUG && D) Log.d(TAG, message);
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 }

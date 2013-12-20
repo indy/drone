@@ -35,7 +35,7 @@ import java.net.URL;
 import java.util.Date;
 
 import de.greenrobot.event.EventBus;
-import io.indy.drone.Flags;
+import io.indy.drone.AppConfig;
 import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
@@ -47,7 +47,7 @@ public class ScheduledService extends IntentService {
     private static final boolean D = true;
 
     static void ifd(final String message) {
-        if (Flags.DEBUG && D) Log.d(TAG, message);
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 
     public static final String PREFS_FILENAME = "MyPrefsFile";

@@ -25,7 +25,7 @@ import android.view.View;
 import android.widget.ListView;
 
 import de.greenrobot.event.EventBus;
-import io.indy.drone.Flags;
+import io.indy.drone.AppConfig;
 import io.indy.drone.adapter.StrikeCursorAdapter;
 import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
@@ -233,6 +233,6 @@ public class StrikeListFragment extends ListFragment {
     static private final String TAG = "StrikeListFragment";
 
     static void ifd(final String message) {
-        if (Flags.DEBUG && D) Log.d(TAG, message);
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 }

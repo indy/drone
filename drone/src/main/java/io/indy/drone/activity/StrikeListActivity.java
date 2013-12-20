@@ -44,7 +44,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.Date;
 
 import de.greenrobot.event.EventBus;
-import io.indy.drone.Flags;
+import io.indy.drone.AppConfig;
 import io.indy.drone.R;
 import io.indy.drone.event.StrikeMoveEvent;
 import io.indy.drone.fragment.StrikeDetailFragment;
@@ -79,7 +79,7 @@ public class StrikeListActivity extends ActionBarActivity
     static private final String TAG = StrikeListActivity.class.getSimpleName();
 
     static void ifd(final String message) {
-        if (Flags.DEBUG && D) Log.d(TAG, message);
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 
     private StrikeMapHelper mStrikeMapHelper;
@@ -270,6 +270,10 @@ public class StrikeListActivity extends ActionBarActivity
         switch (item.getItemId()) {
             case R.id.action_settings:
                 ifd("clicked on settings");
+                break;
+            case R.id.action_about:
+                Intent intent = new Intent(this, AboutActivity.class);
+                startActivity(intent);
                 break;
             case R.id.temp_action_test:
                 ifd("clicked on temp action test");

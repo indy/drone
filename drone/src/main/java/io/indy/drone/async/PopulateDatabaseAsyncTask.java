@@ -29,7 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import de.greenrobot.event.EventBus;
-import io.indy.drone.Flags;
+import io.indy.drone.AppConfig;
 import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
@@ -119,6 +119,6 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Integer, Void> {
     private static final boolean D = true;
 
     static void ifd(final String message) {
-        if (Flags.DEBUG && D) Log.d(TAG, message);
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 }

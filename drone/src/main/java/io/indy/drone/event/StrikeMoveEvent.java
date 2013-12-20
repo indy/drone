@@ -18,8 +18,7 @@ package io.indy.drone.event;
 
 import android.util.Log;
 
-import io.indy.drone.Flags;
-import io.indy.drone.model.Strike;
+import io.indy.drone.AppConfig;
 
 public class StrikeMoveEvent {
 
@@ -27,7 +26,7 @@ public class StrikeMoveEvent {
     private static final boolean D = true;
 
     static void ifd(final String message) {
-        if (Flags.DEBUG && D) Log.d(TAG, message);
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 
     private String mStrikeId;

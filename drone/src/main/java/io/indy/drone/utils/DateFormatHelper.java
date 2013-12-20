@@ -22,7 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import io.indy.drone.Flags;
+import io.indy.drone.AppConfig;
 
 public class DateFormatHelper {
 
@@ -64,6 +64,6 @@ public class DateFormatHelper {
     static private final String TAG = "DateFormatHelper";
 
     static void ifd(final String message) {
-        if (Flags.DEBUG && D) Log.d(TAG, message);
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 }

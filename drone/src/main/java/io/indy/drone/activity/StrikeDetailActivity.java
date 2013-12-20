@@ -31,7 +31,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import de.greenrobot.event.EventBus;
-import io.indy.drone.Flags;
+import io.indy.drone.AppConfig;
 import io.indy.drone.R;
 import io.indy.drone.event.StrikeMoveEvent;
 import io.indy.drone.fragment.StrikeDetailFragment;
@@ -175,6 +175,6 @@ public class StrikeDetailActivity extends ActionBarActivity {
     static private final String TAG = StrikeDetailActivity.class.getSimpleName();
 
     static void ifd(final String message) {
-        if (Flags.DEBUG && D) Log.d(TAG, message);
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 }

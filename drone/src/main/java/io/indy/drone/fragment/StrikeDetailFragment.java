@@ -29,10 +29,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import de.greenrobot.event.EventBus;
-import io.indy.drone.Flags;
+import io.indy.drone.AppConfig;
 import io.indy.drone.R;
 import io.indy.drone.event.StrikeMoveEvent;
-import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 import io.indy.drone.utils.DateFormatHelper;
@@ -49,7 +48,7 @@ public class StrikeDetailFragment extends Fragment {
     static private final String TAG = "StrikeDetailFragment";
 
     static void ifd(final String message) {
-        if (Flags.DEBUG && D) Log.d(TAG, message);
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 
     private SQLDatabase mDatabase;

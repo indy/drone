@@ -16,8 +16,11 @@
 
 package io.indy.drone;
 
-public final class Flags {
+public final class AppConfig {
 
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = BuildConfig.DEBUG;
+
+    public static final String VERSION = BuildConfig.VERSION;
+    public static final String BUILD_CODE = BuildConfig.BUILD_TIME + "-" + BuildConfig.GIT_SHA;
 
 }

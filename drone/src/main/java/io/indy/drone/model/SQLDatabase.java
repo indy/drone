@@ -24,7 +24,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import io.indy.drone.Flags;
+import io.indy.drone.AppConfig;
 import io.indy.drone.async.PopulateDatabaseAsyncTask;
 import io.indy.drone.utils.DateFormatHelper;
 
@@ -373,6 +373,6 @@ public class SQLDatabase {
     private static final boolean D = true;
 
     static void ifd(final String message) {
-        if (Flags.DEBUG && D) Log.d(TAG, message);
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 }
