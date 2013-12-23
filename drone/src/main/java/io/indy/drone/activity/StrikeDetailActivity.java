@@ -18,11 +18,13 @@ package io.indy.drone.activity;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -59,6 +61,20 @@ public class StrikeDetailActivity extends ActionBarActivity {
     private String mRegion;
     private Cursor mStrikeLocations;
 
+    /**
+     * large screen devices in portrait mode will always have enough room to show all
+     * the information in a StrikeDetailFragment without having to use the
+     * fragment_strike_detail_half.xml layout
+     */
+    private boolean shouldAlwaysUseFlexLayout() {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        return width > 900;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +110,7 @@ public class StrikeDetailActivity extends ActionBarActivity {
             Bundle bundle = new Bundle();
             bundle.putString(SQLDatabase.KEY_ID, mStrikeId);
             bundle.putString(SQLDatabase.REGION, mRegion);
+            bundle.putBoolean(StrikeDetailFragment.ALWAYS_FLEX_VIEW, shouldAlwaysUseFlexLayout());
             fragment.setArguments(bundle);
 
             getSupportFragmentManager()

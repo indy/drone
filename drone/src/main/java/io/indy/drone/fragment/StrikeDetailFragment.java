@@ -48,6 +48,9 @@ public class StrikeDetailFragment extends Fragment {
     static private final boolean D = true;
     static private final String TAG = "StrikeDetailFragment";
 
+    // on larger screen devices
+    public static final String ALWAYS_FLEX_VIEW = "always_flex_view";
+
     static void ifd(final String message) {
         if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
@@ -70,6 +73,8 @@ public class StrikeDetailFragment extends Fragment {
 
     private boolean mAtEnd;
     private boolean mAtStart;
+
+    private boolean mAlwaysUseFlex;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -186,6 +191,8 @@ public class StrikeDetailFragment extends Fragment {
         mStrikeId = getArguments().getString(SQLDatabase.KEY_ID);
         mStrike = mDatabase.getStrike(mStrikeId);
 
+        mAlwaysUseFlex = getArguments().getBoolean(ALWAYS_FLEX_VIEW, false);
+
         // rootView should be a layout (linearLayout) - can then add/remove child views
         mRootView = (LinearLayout)inflater.inflate(R.layout.fragment_strike_detail, container, false);
 
@@ -227,12 +234,13 @@ public class StrikeDetailFragment extends Fragment {
 
         String summary = mStrike.getBijSummaryShort();
         ifd("length " + summary.length());
-        if(summary.length() > 280) {
-            rootView.addView(mHalfLayout);
-            ifd("half view " + summary.length());
-        } else {
+
+        if(summary.length() < 280 || mAlwaysUseFlex) {
             rootView.addView(mFlexLayout);
             ifd("full view " + summary.length());
+        } else {
+            rootView.addView(mHalfLayout);
+            ifd("half view " + summary.length());
         }
     }
 
