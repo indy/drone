@@ -31,14 +31,17 @@ public class StrikeMoveEvent {
 
     private String mStrikeId;
     private String mRegion;
+    private int mDetailsHeight;
 
-    public StrikeMoveEvent(String strikeId, String region) {
+    public StrikeMoveEvent(String strikeId, String region, int detailsHeight) {
         mStrikeId = strikeId;
         mRegion = region;
+        mDetailsHeight = detailsHeight;
     }
 
     public String getStrikeId() { return mStrikeId; }
     public String getRegion() {
         return mRegion;
     }
+    public int getDetailsHeight() { return mDetailsHeight; }
 }

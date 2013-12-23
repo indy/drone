@@ -48,28 +48,12 @@
                       android:layout_height="match_parent"
                       android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="vertical">
+            <FrameLayout android:id="@+id/strike_detail_container"
+                         android:layout_width="match_parent"
+                         android:layout_height="match_parent"
+                         tools:context=".StrikeDetailActivity"
+                         tools:ignore="MergeRootFrame" />
 
-                <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="0.5">
-                </FrameLayout>
-                <FrameLayout android:id="@+id/strike_detail_container"
-                             android:layout_width="match_parent"
-                             android:layout_height="0dp"
-                             android:layout_weight="0.5"
-                             android:background="@color/strikecard_map_info_background"
-                             tools:context=".StrikeDetailActivity"
-                             tools:ignore="MergeRootFrame" />
-            </LinearLayout>
         </FrameLayout>
 
 

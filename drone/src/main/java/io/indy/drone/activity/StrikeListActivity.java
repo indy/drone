@@ -242,7 +242,7 @@ public class StrikeListActivity extends ActionBarActivity
                     .replace(R.id.strike_detail_container, fragment)
                     .commit();
 
-            showStrikeOnMap(id);
+            showStrikeOnMap(id, 400);
             // Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
             // mStrikeMapHelper.showStrikeOnMap((SupportMapFragment) mapFragment, strike);
 
@@ -339,14 +339,14 @@ public class StrikeListActivity extends ActionBarActivity
         }
     }
 
-    private void showStrikeOnMap(String strikeId) {
+    private void showStrikeOnMap(String strikeId, int detailsHeight) {
 
         Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
 
         Strike strike = mDatabase.getStrike(strikeId);
         LatLng strikeLocation = new LatLng(strike.getLat(), strike.getLon());
 
-        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation)) {
+        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation, detailsHeight)) {
             mStrikeMapHelper.clearMap()
                     .showMainMarker(strike)
                     .showSurroundingMarkers(mStrikeLocations);
@@ -370,7 +370,7 @@ public class StrikeListActivity extends ActionBarActivity
     @SuppressWarnings({"UnusedDeclaration"})
     public void onEvent(StrikeMoveEvent event) {
         ifd("received StrikeMoveEvent");
-        showStrikeOnMap(event.getStrikeId());
+        showStrikeOnMap(event.getStrikeId(), event.getDetailsHeight());
     }
 
 

@@ -102,18 +102,20 @@ public class StrikeDetailActivity extends ActionBarActivity {
                     .commit();
 
             mStrikeMapHelper = new StrikeMapHelper();
-            showStrikeOnMap(mStrikeId);
+            showStrikeOnMap(mStrikeId, 400);
         }
     }
 
-    private void showStrikeOnMap(String strikeId) {
+    private void showStrikeOnMap(String strikeId, int detailsHeight) {
+
+        ifd("showStrikeOnMap " + strikeId + " " + detailsHeight);
 
         Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
 
         Strike strike = mDatabase.getStrike(strikeId);
         LatLng strikeLocation = new LatLng(strike.getLat(), strike.getLon());
 
-        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation)) {
+        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation, detailsHeight)) {
             mStrikeMapHelper.clearMap()
                             .showMainMarker(strike)
                             .showSurroundingMarkers(mStrikeLocations);
@@ -137,7 +139,7 @@ public class StrikeDetailActivity extends ActionBarActivity {
     @SuppressWarnings({"UnusedDeclaration"})
     public void onEvent(StrikeMoveEvent event) {
         ifd("received StrikeMoveEvent");
-        showStrikeOnMap(event.getStrikeId());
+        showStrikeOnMap(event.getStrikeId(), event.getDetailsHeight());
     }
 
     @Override

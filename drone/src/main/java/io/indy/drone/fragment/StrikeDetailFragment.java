@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import de.greenrobot.event.EventBus;
@@ -58,7 +59,14 @@ public class StrikeDetailFragment extends Fragment {
 
     private Strike mStrike;
 
-    private View mRootView;
+    private LinearLayout mRootView;
+
+    private View mHalfLayout;
+    private View mFlexLayout;
+
+    private Button mPrevButton;
+    private Button mNextButton;
+    private Button mInfoButton;
 
     private boolean mAtEnd;
     private boolean mAtStart;
@@ -161,55 +169,45 @@ public class StrikeDetailFragment extends Fragment {
     private void changeStrikeClicked(String newId) {
         if(!newId.equals("")) {
             mStrikeId = newId;
-            EventBus.getDefault().post(new StrikeMoveEvent(mStrikeId, mRegion));
             mStrike = mDatabase.getStrike(mStrikeId);
             updateUI(mRootView);
+
+            View detailsView = mRootView.findViewById(R.id.details);
+            ifd("height " + detailsView.getHeight());
+
+            EventBus.getDefault().post(new StrikeMoveEvent(mStrikeId, mRegion, detailsView.getHeight()));
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_strike_detail, container, false);
-
         mRegion = getArguments().getString(SQLDatabase.REGION);
         mStrikeId = getArguments().getString(SQLDatabase.KEY_ID);
         mStrike = mDatabase.getStrike(mStrikeId);
 
+        // rootView should be a layout (linearLayout) - can then add/remove child views
+        mRootView = (LinearLayout)inflater.inflate(R.layout.fragment_strike_detail, container, false);
+
+        mHalfLayout = inflater.inflate(R.layout.fragment_strike_detail_half, mRootView, false);
+        mFlexLayout = inflater.inflate(R.layout.fragment_strike_detail_flex, mRootView, false);
+
         setupCursor(mRegion, mStrikeId);
 
-        final Button prevButton = (Button) mRootView.findViewById(R.id.btn_previous_strike);
-        final Button nextButton = (Button) mRootView.findViewById(R.id.btn_next_strike);
-
-        prevButton.setEnabled(!mAtStart);
-        nextButton.setEnabled(!mAtEnd);
-
-        prevButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // get a strike object that represents the previous strike to view
-                changeStrikeClicked(moveToPreviousStrike());
-                prevButton.setEnabled(!mAtStart);
-                nextButton.setEnabled(!mAtEnd);
-            }
-        });
-
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // get a strike object that represents the next strike to view
-                changeStrikeClicked(moveToNextStrike());
-                prevButton.setEnabled(!mAtStart);
-                nextButton.setEnabled(!mAtEnd);
-            }
-        });
-
         updateUI(mRootView);
+
+        // todo: too early, the dimensions haven't been calculated and StrikeDetailActivity may not be initialised
+//        View detailsView = mRootView.findViewById(R.id.details);
+//        ifd("initial height " + detailsView.getHeight());
+//        EventBus.getDefault().post(new StrikeMoveEvent(mStrikeId, mRegion, detailsView.getHeight()));
 
         return mRootView;
     }
 
-    private void updateUI(View rootView) {
+    private void updateUI(LinearLayout rootView) {
+
+        attachAppropriateView(rootView);
+
         ((TextView) rootView.findViewById(R.id.strike_detail)).setText(mStrike.getBijSummaryShort());
 
         ((TextView) rootView.findViewById(R.id.location)).setText(mStrike.getLocation());
@@ -219,10 +217,59 @@ public class StrikeDetailFragment extends Fragment {
 
         ((TextView) rootView.findViewById(R.id.drone_summary)).setText(mStrike.getDroneSummary());
 
-        final Button button = (Button) mRootView.findViewById(R.id.btn_info_link);
+        configureButtons();
+    }
 
-        button.setEnabled(!mStrike.getInformationUrl().isEmpty());
-        button.setOnClickListener(new View.OnClickListener() {
+    private void attachAppropriateView(LinearLayout rootView) {
+        rootView.removeAllViews();
+
+        // choose layout based on amount of text in strike
+
+        String summary = mStrike.getBijSummaryShort();
+        ifd("length " + summary.length());
+        if(summary.length() > 280) {
+            rootView.addView(mHalfLayout);
+            ifd("half view " + summary.length());
+        } else {
+            rootView.addView(mFlexLayout);
+            ifd("full view " + summary.length());
+        }
+    }
+
+
+    private void configureButtons() {
+        mPrevButton = (Button) mRootView.findViewById(R.id.btn_previous_strike);
+        mNextButton = (Button) mRootView.findViewById(R.id.btn_next_strike);
+
+        mPrevButton.setEnabled(!mAtStart);
+        mNextButton.setEnabled(!mAtEnd);
+
+        mPrevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // get a strike object that represents the previous strike to view
+                ifd("clicked prev");
+                changeStrikeClicked(moveToPreviousStrike());
+                mPrevButton.setEnabled(!mAtStart);
+                mNextButton.setEnabled(!mAtEnd);
+            }
+        });
+
+        mNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // get a strike object that represents the next strike to view
+                ifd("clicked next");
+                changeStrikeClicked(moveToNextStrike());
+                mPrevButton.setEnabled(!mAtStart);
+                mNextButton.setEnabled(!mAtEnd);
+            }
+        });
+
+
+        mInfoButton = (Button) mRootView.findViewById(R.id.btn_info_link);
+        mInfoButton.setEnabled(!mStrike.getInformationUrl().isEmpty());
+        mInfoButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
                 String url = mStrike.getInformationUrl();
