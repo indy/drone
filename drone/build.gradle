@@ -2,17 +2,17 @@ apply plugin: 'android'
 apply plugin: 'android-test'
 
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:18.0.+'
-    compile 'de.greenrobot:eventbus:2.0.2'
-    compile 'com.google.android.gms:play-services:4.0.30'
+  compile 'com.android.support:appcompat-v7:18.0.+'
+  compile 'de.greenrobot:eventbus:2.0.2'
+  compile 'com.google.android.gms:play-services:4.0.30'
 
-    testCompile 'junit:junit:4.10'
-    testCompile 'org.robolectric:robolectric:2.1.+'
-    testCompile 'com.squareup:fest-android:1.0.+'
+  testCompile 'junit:junit:4.10'
+  testCompile 'org.robolectric:robolectric:2.1.+'
+  testCompile 'com.squareup:fest-android:1.0.+'
 }
 
 // version/git/buildtime information from Jake Wharton's post:
@@ -35,21 +35,26 @@ def buildTime() {
 }
 
 android {
-    compileSdkVersion 18
-    buildToolsVersion "18.0.1"
+  compileSdkVersion 18
+  buildToolsVersion "18.0.1"
 
-    defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 18
+  defaultConfig {
+    minSdkVersion 14
+    targetSdkVersion 18
 
-        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+    versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+    versionName "${versionMajor}.${versionMinor}.${versionPatch}"
 
-        buildConfig """\
-          public static final String GIT_SHA = "${gitSha()}";
-          public static final String BUILD_TIME = "${buildTime()}";
-          public static final String VERSION = "${versionMajor}.${versionMinor}.${versionPatch}";
-        """
-    }
+    buildConfigField "String", "GIT_SHA", "\"${gitSha()}\""
+    buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
+  }
+
+  // enable the diamond operator, multi-catch, 
+  // strings in switches, try with resources, etc
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_7
+    targetCompatibility JavaVersion.VERSION_1_7
+  }
+
 }
 

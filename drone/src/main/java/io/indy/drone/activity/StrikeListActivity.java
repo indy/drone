@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -30,6 +31,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -218,7 +220,6 @@ public class StrikeListActivity extends ActionBarActivity
 
         mDrawerLayout.closeDrawer(mDrawerList);
     }
-
 
     /**
      * Callback method from {@link StrikeListFragment.Callbacks}
