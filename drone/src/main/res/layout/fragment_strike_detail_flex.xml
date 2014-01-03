@@ -34,7 +34,7 @@
             android:layout_weight="1.0">
     </FrameLayout>
 
-    <FrameLayout android:id="@+id/details"
+    <io.indy.drone.view.FrameLayoutDetails android:id="@+id/details"
                  android:layout_width="match_parent"
                  android:layout_height="wrap_content"
                  android:layout_gravity="bottom"
@@ -148,7 +148,7 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </FrameLayout>
+    </io.indy.drone.view.FrameLayoutDetails>
 </LinearLayout>
 
 

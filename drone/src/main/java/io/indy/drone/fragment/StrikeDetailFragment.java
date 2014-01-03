@@ -36,6 +36,7 @@ import io.indy.drone.event.StrikeMoveEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 import io.indy.drone.utils.DateFormatHelper;
+import io.indy.drone.view.FrameLayoutDetails;
 
 /**
  * A fragment representing a single Strike detail screen.
@@ -43,9 +44,10 @@ import io.indy.drone.utils.DateFormatHelper;
  * in two-pane mode (on tablets) or a {@link io.indy.drone.activity.StrikeDetailActivity}
  * on handsets.
  */
-public class StrikeDetailFragment extends Fragment {
+public class StrikeDetailFragment extends Fragment
+        implements FrameLayoutDetails.OnSizeChangeListener {
 
-    static private final boolean D = true;
+    static private final boolean D = false;
     static private final String TAG = "StrikeDetailFragment";
 
     // on larger screen devices
@@ -75,6 +77,8 @@ public class StrikeDetailFragment extends Fragment {
     private boolean mAtStart;
 
     private boolean mAlwaysUseFlex;
+
+    private boolean mShouldFireMoveEvent;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -175,14 +179,22 @@ public class StrikeDetailFragment extends Fragment {
         if(!newId.equals("")) {
             mStrikeId = newId;
             mStrike = mDatabase.getStrike(mStrikeId);
+            mShouldFireMoveEvent = true;
             updateUI(mRootView);
-
-            View detailsView = mRootView.findViewById(R.id.details);
-            ifd("height " + detailsView.getHeight());
-
-            EventBus.getDefault().post(new StrikeMoveEvent(mStrikeId, mRegion, detailsView.getHeight()));
         }
     }
+
+    public void onSizeChanged(int w, int h) {
+        ifd("onSizeChanged " + w + "  " + h);
+        postMoveEvent(h);
+    }
+
+    private void postMoveEvent(int height) {
+        if(mShouldFireMoveEvent) {
+            EventBus.getDefault().post(new StrikeMoveEvent(mStrikeId, mRegion, height));
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -190,6 +202,8 @@ public class StrikeDetailFragment extends Fragment {
         mRegion = getArguments().getString(SQLDatabase.REGION);
         mStrikeId = getArguments().getString(SQLDatabase.KEY_ID);
         mStrike = mDatabase.getStrike(mStrikeId);
+
+        mShouldFireMoveEvent = false;
 
         mAlwaysUseFlex = getArguments().getBoolean(ALWAYS_FLEX_VIEW, false);
 
@@ -199,14 +213,15 @@ public class StrikeDetailFragment extends Fragment {
         mHalfLayout = inflater.inflate(R.layout.fragment_strike_detail_half, mRootView, false);
         mFlexLayout = inflater.inflate(R.layout.fragment_strike_detail_flex, mRootView, false);
 
+
+        FrameLayoutDetails fld = (FrameLayoutDetails)(mHalfLayout.findViewById(R.id.details));
+        fld.setOnSizeChangeListener(this);
+        fld = (FrameLayoutDetails)(mFlexLayout.findViewById(R.id.details));
+        fld.setOnSizeChangeListener(this);
+
         setupCursor(mRegion, mStrikeId);
 
         updateUI(mRootView);
-
-        // todo: too early, the dimensions haven't been calculated and StrikeDetailActivity may not be initialised
-//        View detailsView = mRootView.findViewById(R.id.details);
-//        ifd("initial height " + detailsView.getHeight());
-//        EventBus.getDefault().post(new StrikeMoveEvent(mStrikeId, mRegion, detailsView.getHeight()));
 
         return mRootView;
     }
@@ -233,15 +248,19 @@ public class StrikeDetailFragment extends Fragment {
         // choose layout based on amount of text in strike
 
         String summary = mStrike.getBijSummaryShort();
-        ifd("length " + summary.length());
 
         if(summary.length() < 280 || mAlwaysUseFlex) {
-            rootView.addView(mFlexLayout);
             ifd("full view " + summary.length());
+            rootView.addView(mFlexLayout);
         } else {
-            rootView.addView(mHalfLayout);
             ifd("half view " + summary.length());
+            rootView.addView(mHalfLayout);
         }
+
+        // fire off a change size event
+        ifd("'attaching' move event");
+        View detailsView = mRootView.findViewById(R.id.details);
+        postMoveEvent(detailsView.getHeight());
     }
 
 
