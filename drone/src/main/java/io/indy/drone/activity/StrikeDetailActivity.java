@@ -16,6 +16,7 @@
 
 package io.indy.drone.activity;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Point;
@@ -28,6 +29,8 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.SpinnerAdapter;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -61,6 +64,9 @@ public class StrikeDetailActivity extends ActionBarActivity {
     private String mRegion;
     private Cursor mStrikeLocations;
 
+    private SpinnerAdapter mSpinnerAdapter;
+    private ActionBar.OnNavigationListener mOnNavigationListener;
+
     /**
      * large screen devices in portrait mode will always have enough room to show all
      * the information in a StrikeDetailFragment without having to use the
@@ -82,8 +88,7 @@ public class StrikeDetailActivity extends ActionBarActivity {
 
         mDatabase = new SQLDatabase(this);
 
-        // Show the Up button in the action bar.
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        configureActionBar();
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -121,6 +126,25 @@ public class StrikeDetailActivity extends ActionBarActivity {
             mStrikeMapHelper = new StrikeMapHelper();
             showStrikeOnMap(mStrikeId, 400);
         }
+    }
+
+    private void configureActionBar() {
+        // Show the Up button in the action bar.
+        ActionBar actionBar = getActionBar();
+
+        mSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.locations_array,
+                android.R.layout.simple_spinner_dropdown_item);
+
+        mOnNavigationListener = new ActionBar.OnNavigationListener() {
+            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                return true;
+            }
+        };
+
+        actionBar.setTitle("");
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        actionBar.setListNavigationCallbacks(mSpinnerAdapter, mOnNavigationListener);
     }
 
     private void showStrikeOnMap(String strikeId, int detailsHeight) {
@@ -189,7 +213,7 @@ public class StrikeDetailActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.strike_detail, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
