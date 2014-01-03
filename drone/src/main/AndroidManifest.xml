@@ -18,6 +18,7 @@
         android:required="true" />
 
     <application
+            android:name="io.indy.drone.DroneApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -37,10 +38,10 @@
         <activity
             android:name="io.indy.drone.activity.StrikeDetailActivity"
             android:label="@string/title_strike_detail"
-            android:parentActivityName=".StrikeListActivity" >
+            android:parentActivityName="io.indy.drone.activity.StrikeListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".StrikeListActivity" />
+                android:value="io.indy.drone.activity.StrikeListActivity" />
         </activity>
 
         <activity
