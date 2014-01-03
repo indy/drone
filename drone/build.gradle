@@ -48,13 +48,5 @@ android {
     buildConfigField "String", "GIT_SHA", "\"${gitSha()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
   }
-
-  // enable the diamond operator, multi-catch, 
-  // strings in switches, try with resources, etc
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_7
-    targetCompatibility JavaVersion.VERSION_1_7
-  }
-
 }
 
