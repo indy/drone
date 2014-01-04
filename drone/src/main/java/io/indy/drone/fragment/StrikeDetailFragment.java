@@ -48,12 +48,12 @@ public class StrikeDetailFragment extends Fragment
     static private final boolean D = false;
     static private final String TAG = "StrikeDetailFragment";
 
-    // on larger screen devices
-    public static final String ALWAYS_FLEX_VIEW = "always_flex_view";
-
     static void ifd(final String message) {
         if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
+
+    // on larger screen devices
+    public static final String ALWAYS_FLEX_VIEW = "always_flex_view";
 
     private SQLDatabase mDatabase;
     private Cursor mCursor; // cursor to all strikes in a particular region
@@ -102,12 +102,12 @@ public class StrikeDetailFragment extends Fragment
 
         // position the cursor at the current strikeId
         int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
-        while(mCursor.moveToNext()) {
+        while (mCursor.moveToNext()) {
             String id = mCursor.getString(index);
-            if(id.equals(strikeId)) {
+            if (id.equals(strikeId)) {
 
                 // are we at the end of the cursor?
-                if(mCursor.moveToNext()) {
+                if (mCursor.moveToNext()) {
                     // no
                     mCursor.moveToPrevious();
                 } else {
@@ -124,11 +124,11 @@ public class StrikeDetailFragment extends Fragment
 
     private String moveToPreviousStrike() {
         int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
-        if(mCursor.moveToPrevious()) {
+        if (mCursor.moveToPrevious()) {
             mAtEnd = false;
 
             // could be at the start of the cursor
-            if(mCursor.moveToPrevious()) {
+            if (mCursor.moveToPrevious()) {
                 // no
                 mAtStart = false;
                 mCursor.moveToNext();
@@ -149,11 +149,11 @@ public class StrikeDetailFragment extends Fragment
 
     private String moveToNextStrike() {
         int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
-        if(mCursor.moveToNext()) {
+        if (mCursor.moveToNext()) {
             mAtStart = false;
 
             // could be at the end of the cursor
-            if(mCursor.moveToNext()) {
+            if (mCursor.moveToNext()) {
                 // no
                 mAtEnd = false;
                 mCursor.moveToPrevious();
@@ -174,7 +174,7 @@ public class StrikeDetailFragment extends Fragment
     }
 
     private void changeStrikeClicked(String newId) {
-        if(!newId.equals("")) {
+        if (!newId.equals("")) {
             mStrikeId = newId;
             mStrike = mDatabase.getStrike(mStrikeId);
             mShouldFireMoveEvent = true;
@@ -187,7 +187,7 @@ public class StrikeDetailFragment extends Fragment
     }
 
     private void onStrikeInfoNavigated() {
-        if(mShouldFireMoveEvent) {
+        if (mShouldFireMoveEvent) {
             mOnStrikeInfoListener.onStrikeInfoNavigated(mStrikeId);
         }
     }
@@ -196,6 +196,7 @@ public class StrikeDetailFragment extends Fragment
 
     public interface OnStrikeInfoListener {
         public abstract void onStrikeInfoNavigated(String strikeId);
+
         public abstract void onStrikeInfoResized(int height);
     }
 
@@ -212,15 +213,15 @@ public class StrikeDetailFragment extends Fragment
         mAlwaysUseFlex = getArguments().getBoolean(ALWAYS_FLEX_VIEW, false);
 
         // rootView should be a layout (linearLayout) - can then add/remove child views
-        mRootView = (LinearLayout)inflater.inflate(R.layout.fragment_strike_detail, container, false);
+        mRootView = (LinearLayout) inflater.inflate(R.layout.fragment_strike_detail, container, false);
 
         mHalfLayout = inflater.inflate(R.layout.fragment_strike_detail_half, mRootView, false);
         mFlexLayout = inflater.inflate(R.layout.fragment_strike_detail_flex, mRootView, false);
 
 
-        FrameLayoutDetails fld = (FrameLayoutDetails)(mHalfLayout.findViewById(R.id.details));
+        FrameLayoutDetails fld = (FrameLayoutDetails) (mHalfLayout.findViewById(R.id.details));
         fld.setOnSizeChangeListener(this);
-        fld = (FrameLayoutDetails)(mFlexLayout.findViewById(R.id.details));
+        fld = (FrameLayoutDetails) (mFlexLayout.findViewById(R.id.details));
         fld.setOnSizeChangeListener(this);
 
         String region = getArguments().getString(SQLDatabase.REGION);
@@ -254,7 +255,7 @@ public class StrikeDetailFragment extends Fragment
 
         String summary = mStrike.getBijSummaryShort();
 
-        if(summary.length() < 280 || mAlwaysUseFlex) {
+        if (summary.length() < 280 || mAlwaysUseFlex) {
             ifd("full view " + summary.length());
             rootView.addView(mFlexLayout);
         } else {

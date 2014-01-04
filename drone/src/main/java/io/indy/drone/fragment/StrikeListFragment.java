@@ -41,6 +41,13 @@ import io.indy.drone.model.SQLDatabase;
  */
 public class StrikeListFragment extends ListFragment {
 
+    static private final boolean D = true;
+    static private final String TAG = "StrikeListFragment";
+
+    static void ifd(final String message) {
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
+    }
+
     private SQLDatabase mDatabase;
 
     private StrikeCursorAdapter mStrikeCursorAdapter;
@@ -232,12 +239,5 @@ public class StrikeListFragment extends ListFragment {
 
         mDatabase.closeDatabase();
         super.onDestroy();
-    }
-
-    static private final boolean D = true;
-    static private final String TAG = "StrikeListFragment";
-
-    static void ifd(final String message) {
-        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 }

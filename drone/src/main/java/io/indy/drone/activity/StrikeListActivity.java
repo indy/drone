@@ -43,7 +43,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
 
-import de.greenrobot.event.EventBus;
 import io.indy.drone.AppConfig;
 import io.indy.drone.R;
 import io.indy.drone.fragment.StrikeDetailFragment;

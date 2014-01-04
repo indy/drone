@@ -35,7 +35,6 @@ import android.widget.SpinnerAdapter;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-import de.greenrobot.event.EventBus;
 import io.indy.drone.AppConfig;
 import io.indy.drone.R;
 import io.indy.drone.fragment.StrikeDetailFragment;
