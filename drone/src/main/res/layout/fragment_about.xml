@@ -27,134 +27,159 @@
         tools:context="io.indy.drone.activity.AboutActivity.AboutFragment"
         >
 
-    <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
+    <LinearLayout android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical" >
 
 
-        <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal">
 
-            <TextView
-                    android:text="@string/app_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="32sp"
-                    android:paddingRight="16dp"
-                    android:fontFamily="sans-serif"/>
+            <TextView android:text="@string/app_name"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:textSize="32sp"
+                      android:paddingRight="16dp"
+                      android:fontFamily="sans-serif"/>
 
-            <TextView
-                    android:id="@+id/version"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:padding="0dp"
-                    android:fontFamily="sans-serif"
-                    tools:text="v1.2.3"/>
-
+            <TextView android:id="@+id/version"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:textSize="16sp"
+                      android:padding="0dp"
+                      android:fontFamily="sans-serif"
+                      tools:text="v1.2.3"/>
         </LinearLayout>
 
-        <TextView
-                android:text="@string/app_description"
-                android:layout_width="wrap_content"
+        <TextView android:text="@string/app_description"
+                  style="@style/AboutBody"/>
+
+        <TextView style="@style/AboutHeading"
+                  android:text="@string/about_label_thanks"/>
+
+        <View   style="@style/AboutSeparator"/>
+
+        <TextView android:text="@string/app_thanks"
+                  style="@style/AboutBody"/>
+
+        <TextView style="@style/AboutHeading"
+                  android:text="@string/about_label_license"/>
+
+        <View   style="@style/AboutSeparator"/>
+
+        <TextView android:text="@string/app_copyright"
+                  style="@style/AboutBody" />
+
+        <TextView android:id="@+id/source_link"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textSize="16sp"
+                  android:fontFamily="sans-serif"
+                  tools:text="http://github.com/indy/drone"/>
+
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/app_license"/>
+
+        <TextView style="@style/AboutHeading"
+                  android:text="@string/about_label_third_party_libraries"/>
+
+        <View   style="@style/AboutSeparator"/>
+
+        <TextView android:id="@+id/acknowledgements"
+                  style="@style/AboutBody" />
+
+        <TextView style="@style/AboutHeading"
+                  android:text="@string/about_label_contact"/>
+
+        <View   style="@style/AboutSeparator"/>
+
+        <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:paddingTop="8dp"
-                android:fontFamily="sans-serif"/>
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="24dp"
-                android:textSize="24dp"
-                android:text="@string/about_thanks"/>
-
-        <View   android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
-
-
-        <TextView
-                android:text="@string/app_thanks"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:paddingTop="8dp"
-                android:fontFamily="sans-serif"/>
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="24dp"
-                android:textSize="24dp"
-                android:text="@string/about_license"/>
-
-        <View   android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
+                >
+            <TextView
+                    android:id="@+id/textLabelEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/about_label_email"
+                    android:paddingTop="6dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginLeft="32dp"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif"
+                    />
 
 
-        <TextView
-                android:text="@string/app_copyright"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:paddingTop="8dp"
-                android:fontFamily="sans-serif"/>
+            <TextView
+                    android:id="@+id/textViewEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="drone@indy.io"
+                    android:layout_alignBaseline="@+id/textLabelEmail"
+                    android:layout_toRightOf="@+id/textLabelEmail"
+                    android:layout_marginLeft="28dp"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif"
+                    />
 
-        <TextView
-                android:id="@+id/source_link"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:fontFamily="sans-serif"
-                tools:text="http://github.com/indy/drone"/>
+            <TextView
+                    android:id="@+id/textLabelGooglePlus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="6dp"
+                    android:text="@string/about_label_google_plus"
+                    android:layout_below="@+id/textLabelEmail"
+                    android:layout_alignRight="@+id/textLabelEmail"
+                    android:layout_alignEnd="@+id/textLabelEmail"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif"
+                    />
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_license"/>
+            <TextView
+                    android:id="@+id/textViewGooglePlus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/textLabelGooglePlus"
+                    android:layout_below="@+id/textViewEmail"
+                    android:layout_alignLeft="@+id/textViewEmail"
+                    android:layout_alignStart="@+id/textViewEmail"
+                    tools:text="google.com/+InderjitGill"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif"
+                    />
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="24dp"
-                android:textSize="24dp"
-                android:text="@string/about_third_party_libraries"/>
+            <TextView
+                    android:id="@+id/textLabelTwitter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="6dp"
+                    android:layout_below="@+id/textLabelGooglePlus"
+                    android:layout_alignRight="@+id/textLabelGooglePlus"
+                    android:layout_alignEnd="@+id/textLabelGooglePlus"
+                    android:text="@string/about_label_twitter"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif"
+                    />
 
-        <View   android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
+            <TextView
+                    android:id="@+id/textViewTwitter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/textLabelTwitter"
+                    android:layout_below="@+id/textViewGooglePlus"
+                    android:layout_alignLeft="@+id/textViewGooglePlus"
+                    android:layout_alignStart="@+id/textViewGooglePlus"
+                    tools:text="@InderjitGill"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif"
+                    />
 
-        <TextView
-                android:id="@+id/acknowledgements"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:paddingTop="8dp"
-                android:fontFamily="sans-serif" />
+        </RelativeLayout>
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="24dp"
-                android:textSize="24dp"
-                android:text="@string/about_contact"/>
-
-        <View   android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
-
-        <TextView
-                android:id="@+id/contact"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:paddingTop="8dp"
-                android:fontFamily="sans-serif" />
 
     </LinearLayout>
 

@@ -110,22 +110,22 @@ public class AboutActivity extends ActionBarActivity {
             ackView.setText(res);
             ackView.setMovementMethod(LinkMovementMethod.getInstance());
 
-
-            res = "";
-            Contact[] contacts = {
-                    new Contact("Email", "mailto://drone@indy.io", "drone@indy.io"),
-                    new Contact("Google+", "https://google.com/+InderjitGill", "google.com/+InderjitGill"),
-                    new Contact("Twitter", "https://twitter.com/InderjitGill", "twitter.com/InderjitGill")
-            };
-            for (Contact c : contacts) {
-                res = TextUtils.concat(res, TextUtils.concat(c.asFormatted(), "\n", "\n"));
-            }
-
-            TextView contactView = ((TextView)rootView.findViewById(R.id.contact));
-            contactView.setText(res);
-            contactView.setMovementMethod(LinkMovementMethod.getInstance());
+            TextView email = (TextView)rootView.findViewById(R.id.textViewEmail);
+            asLink(email, "mailto://drone@indy.io", "drone@indy.io");
+            TextView google = (TextView)rootView.findViewById(R.id.textViewGooglePlus);
+            asLink(google, "https://google.com/+InderjitGill", "google.com/+InderjitGill");
+            TextView twitter = (TextView)rootView.findViewById(R.id.textViewTwitter);
+            asLink(twitter, "https://twitter.com/InderjitGill", "@InderjitGill");
 
             return rootView;
+        }
+
+        private void asLink(TextView source, String url, String urlText) {
+            SpannableString ssURL = new SpannableString(urlText);
+            ssURL.setSpan(new URLSpan(url), 0, urlText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            source.setText(ssURL, TextView.BufferType.SPANNABLE);
+            source.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
         private void asLink(TextView source, String url) {
