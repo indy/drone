@@ -35,6 +35,8 @@ import android.widget.SpinnerAdapter;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.sql.SQLData;
+
 import de.greenrobot.event.EventBus;
 import io.indy.drone.AppConfig;
 import io.indy.drone.R;
@@ -88,7 +90,6 @@ public class StrikeDetailActivity extends ActionBarActivity {
 
         mDatabase = new SQLDatabase(this);
 
-        configureActionBar();
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -105,7 +106,6 @@ public class StrikeDetailActivity extends ActionBarActivity {
             mStrikeId = getIntent().getStringExtra(SQLDatabase.KEY_ID);
 
             mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegion);
-
 
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
@@ -126,6 +126,64 @@ public class StrikeDetailActivity extends ActionBarActivity {
             mStrikeMapHelper = new StrikeMapHelper();
             showStrikeOnMap(mStrikeId, 400);
         }
+        configureActionBar();
+    }
+
+    private void onRegionSelected(int itemPosition) {
+
+        ifd("onRegionSelected");
+
+        try {
+            // new region == old region -> do nothing
+            if(itemPosition == SQLDatabase.indexFromRegion(mRegion)) {
+                return;
+            }
+            mRegion = SQLDatabase.regionFromIndex(itemPosition);
+
+            // is mStrikeId also in the new region?
+            // true if we're switching to worldwide view (itemPosition == 0)
+            // or if we're going from worldwide to a region that the current strike is from
+            Strike strike = mDatabase.getStrike(mStrikeId);
+            boolean isCurrentStrikeInNewRegion = itemPosition == 0 || strike.getCountry().equals(mRegion);
+
+            // show markers for the new region
+            mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegion);
+
+            if(!isCurrentStrikeInNewRegion) {
+                // set strikeId to the most recent strike in the new region
+                ifd("getting most recent strike in " + mRegion);
+                mStrikeId = mDatabase.getRecentStrikeIdInRegion(mRegion);
+            } else {
+                ifd("existing strike already took place in the new region: " + mRegion);
+            }
+
+            ifd("mRegion: " + mRegion);
+            ifd("mStrikeId: " + mStrikeId);
+            ifd("strike jsonid: " + strike.getJsonId());
+
+
+            // create a new StrikeDetailFragment and StrikeMapHelper
+            StrikeDetailFragment fragment = new StrikeDetailFragment();
+
+            Bundle bundle = new Bundle();
+            bundle.putString(SQLDatabase.KEY_ID, mStrikeId);
+            bundle.putString(SQLDatabase.REGION, mRegion);
+            bundle.putBoolean(StrikeDetailFragment.ALWAYS_FLEX_VIEW, shouldAlwaysUseFlexLayout());
+            fragment.setArguments(bundle);
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.strike_detail_container, fragment)
+                    .commit();
+
+            mStrikeMapHelper = new StrikeMapHelper();
+            showStrikeOnMap(mStrikeId, 400);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     private void configureActionBar() {
@@ -137,6 +195,7 @@ public class StrikeDetailActivity extends ActionBarActivity {
 
         mOnNavigationListener = new ActionBar.OnNavigationListener() {
             public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                onRegionSelected(itemPosition);
                 return true;
             }
         };
@@ -145,11 +204,19 @@ public class StrikeDetailActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         actionBar.setListNavigationCallbacks(mSpinnerAdapter, mOnNavigationListener);
+
+        try {
+            actionBar.setSelectedNavigationItem(SQLDatabase.indexFromRegion(mRegion));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void showStrikeOnMap(String strikeId, int detailsHeight) {
 
         ifd("showStrikeOnMap " + strikeId + " " + detailsHeight);
+
+        mStrikeId = strikeId;
 
         Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
 

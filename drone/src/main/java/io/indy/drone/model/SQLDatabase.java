@@ -242,6 +242,39 @@ public class SQLDatabase {
         return cursor;
     }
 
+    public String getRecentStrikeIdInRegion(String region) {
+
+        String where = null;
+        String[] whereArgs = null;
+        if (!region.equals(REGIONS[0])) { // not worldwide
+            where = Strike.COUNTRY + "=?";
+            whereArgs = new String[]{region};
+        }
+        String[] result_columns = new String[]{
+                KEY_ID,
+        };
+
+        String groupBy = null;
+        String having = null;
+        String order = Strike.HAPPENED + " desc";
+
+        SQLiteDatabase db = mModelHelper.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns, where, whereArgs, groupBy,
+                    having, order);
+
+            cursor.moveToNext();
+            String strikeId = cursor.getString(0);
+            cursor.close();
+
+            return strikeId;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
     public Cursor getStrikeCursor(String region, boolean mostRecentFirst) {
 
         // worldwide by default
