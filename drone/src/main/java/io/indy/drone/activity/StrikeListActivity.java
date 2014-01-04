@@ -209,13 +209,16 @@ public class StrikeListActivity extends ActionBarActivity
         mDrawerList.setItemChecked(position, true);
         setTitle(mDrawerTitles[position]);
 
-        if (position < SQLDatabase.REGIONS.length) {
-            mRegionSelected = SQLDatabase.REGIONS[position];
+        try {
+            mRegionSelected = SQLDatabase.regionFromIndex(position);
             mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegionSelected);
 
             ((StrikeListFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.strike_list))
                     .onRegionClicked(mRegionSelected);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            throw e;
         }
 
         mDrawerLayout.closeDrawer(mDrawerList);
@@ -294,7 +297,13 @@ public class StrikeListActivity extends ActionBarActivity
 
     protected void setupNavigationDrawer() {
 
-        mRegionSelected = SQLDatabase.REGIONS[0];
+        try {
+            mRegionSelected = SQLDatabase.regionFromIndex(0); // worldwide
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+
+
         mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegionSelected);
 
 

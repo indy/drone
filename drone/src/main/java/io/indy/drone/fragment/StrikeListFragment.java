@@ -96,7 +96,12 @@ public class StrikeListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLocation = SQLDatabase.REGIONS[0]; // worldwide
+
+        try {
+            mLocation = SQLDatabase.regionFromIndex(0); // worldwide
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

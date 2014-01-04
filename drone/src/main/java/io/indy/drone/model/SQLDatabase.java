@@ -31,7 +31,7 @@ import io.indy.drone.utils.DateFormatHelper;
 public class SQLDatabase {
 
     public static final String REGION = "region";
-    public static final String[] REGIONS = {"worldwide", "Pakistan", "Yemen", "Somalia"};
+    private static final String[] REGIONS = {"worldwide", "Pakistan", "Yemen", "Somalia"};
 
     // The index (key) column name for use in where clauses.
     public static final String KEY_ID = "_id";
@@ -46,6 +46,23 @@ public class SQLDatabase {
                 ModelHelper.DATABASE_NAME,
                 null,
                 ModelHelper.DATABASE_VERSION);
+    }
+
+
+    public static String regionFromIndex(int index) throws IndexOutOfBoundsException {
+        if(index >= REGIONS.length) {
+            throw new IndexOutOfBoundsException("REGIONS cannot access index " + index);
+        }
+        return REGIONS[index];
+    }
+
+    public static int indexFromRegion(String region) throws Exception {
+        for(int i=0;i<REGIONS.length;i++) {
+            if(REGIONS[i].equals(region)) {
+                return i;
+            }
+        }
+        throw new Exception("unable to get index of region: " + region);
     }
 
     // Called when you no longer need access to the database.
