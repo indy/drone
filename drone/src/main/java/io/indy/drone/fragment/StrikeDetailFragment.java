@@ -58,7 +58,6 @@ public class StrikeDetailFragment extends Fragment
     private SQLDatabase mDatabase;
     private Cursor mCursor; // cursor to all strikes in a particular region
     private String mStrikeId;
-    private String mRegion;
 
     private Strike mStrike;
 
@@ -204,7 +203,7 @@ public class StrikeDetailFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mRegion = getArguments().getString(SQLDatabase.REGION);
+
         mStrikeId = getArguments().getString(SQLDatabase.KEY_ID);
         mStrike = mDatabase.getStrike(mStrikeId);
 
@@ -224,7 +223,8 @@ public class StrikeDetailFragment extends Fragment
         fld = (FrameLayoutDetails)(mFlexLayout.findViewById(R.id.details));
         fld.setOnSizeChangeListener(this);
 
-        setupCursor(mRegion, mStrikeId);
+        String region = getArguments().getString(SQLDatabase.REGION);
+        setupCursor(region, mStrikeId);
 
         updateUI(mRootView);
 
