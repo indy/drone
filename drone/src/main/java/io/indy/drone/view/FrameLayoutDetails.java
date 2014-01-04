@@ -54,11 +54,11 @@ public class FrameLayoutDetails extends FrameLayout {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         if(mOnSizeChangeListener != null) {
-            mOnSizeChangeListener.onSizeChanged(w, h);
+            mOnSizeChangeListener.onHeightChanged(h);
         }
     }
 
     public interface OnSizeChangeListener {
-        public abstract void onSizeChanged(int w, int h);
+        public abstract void onHeightChanged(int h);
     }
 }

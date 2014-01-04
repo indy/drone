@@ -82,8 +82,8 @@ public class StrikeDetailFragment extends Fragment
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public StrikeDetailFragment(OnNewStrikeDetailListener onNewStrikeDetailListener) {
-        mOnNewStrikeDetailListener = onNewStrikeDetailListener;
+    public StrikeDetailFragment(OnStrikeInfoListener onStrikeInfoListener) {
+        mOnStrikeInfoListener = onStrikeInfoListener;
     }
 
     @Override
@@ -183,23 +183,21 @@ public class StrikeDetailFragment extends Fragment
         }
     }
 
-    public void onSizeChanged(int w, int h) {
-        ifd("onSizeChanged " + w + "  " + h);
-        postMoveEvent(h);
+    public void onHeightChanged(int h) {
+        mOnStrikeInfoListener.onStrikeInfoResized(h);
     }
 
-    private void postMoveEvent(int height) {
+    private void onStrikeInfoNavigated() {
         if(mShouldFireMoveEvent) {
-            if(mOnNewStrikeDetailListener != null) {
-                mOnNewStrikeDetailListener.onMoved(mStrikeId, mRegion, height);
-            }
+            mOnStrikeInfoListener.onStrikeInfoNavigated(mStrikeId);
         }
     }
 
-    private OnNewStrikeDetailListener mOnNewStrikeDetailListener;
+    private OnStrikeInfoListener mOnStrikeInfoListener;
 
-    public interface OnNewStrikeDetailListener {
-        public abstract void onMoved(String strikeId, String region, int height);
+    public interface OnStrikeInfoListener {
+        public abstract void onStrikeInfoNavigated(String strikeId);
+        public abstract void onStrikeInfoResized(int height);
     }
 
 
@@ -265,9 +263,10 @@ public class StrikeDetailFragment extends Fragment
         }
 
         // fire off a change size event
-        ifd("'attaching' move event");
         View detailsView = mRootView.findViewById(R.id.details);
-        postMoveEvent(detailsView.getHeight());
+
+        onHeightChanged(detailsView.getHeight());
+        onStrikeInfoNavigated();
     }
 
 

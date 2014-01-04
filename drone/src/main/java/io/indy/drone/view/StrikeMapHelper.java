@@ -85,9 +85,65 @@ public class StrikeMapHelper {
         return this;
     }
 
-    public boolean configureMap(SupportMapFragment supportMapFragment, LatLng location, int detailsHeight) {
+    public void setMapPadding(SupportMapFragment supportMapFragment, int detailsHeight) {
 
         mDetailsHeight = detailsHeight;
+
+        // Do a null check to confirm that we have not already instantiated the map.
+        if (mMap == null) {
+
+            mMap = supportMapFragment.getMap();
+            // Check if we were successful in obtaining the map.
+            if (mMap == null) {
+                return;
+            }
+
+            UiSettings uiSettings = mMap.getUiSettings();
+            uiSettings.setZoomControlsEnabled(false);
+
+            mMapView = supportMapFragment.getView();
+
+            ViewTreeObserver vto = mMapView.getViewTreeObserver();
+            ViewTreeObserver.OnGlobalLayoutListener listener = new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    // bottom half of map will have an information overlay
+                    //
+                    mMap.setPadding(0, 0, 0, mDetailsHeight);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mStrikeLocation, 8));
+
+
+                    ViewTreeObserver vto = mMapView.getViewTreeObserver();
+                    vto.removeGlobalOnLayoutListener(this);
+                }
+            };
+            vto.addOnGlobalLayoutListener(listener);
+        } else {
+            mMap.setPadding(0, 0, 0, mDetailsHeight);
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(mStrikeLocation), 3000, null);
+
+
+            /*
+            ViewTreeObserver vto = mMapView.getViewTreeObserver();
+            ViewTreeObserver.OnGlobalLayoutListener listener = new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    ifd("-------");
+                    ifd("mapView.getHeight() = " + mMapView.getHeight());
+                    ifd("mDetailsHeight = " + mDetailsHeight);
+
+                    mMap.setPadding(0, 0, 0, mMapView.getHeight() - mDetailsHeight);
+                    ViewTreeObserver vto = mMapView.getViewTreeObserver();
+                    vto.removeGlobalOnLayoutListener(this);
+                }
+            };
+            vto.addOnGlobalLayoutListener(listener);
+            */
+        }
+    }
+
+    public boolean configureMap(SupportMapFragment supportMapFragment, LatLng location) {
+
         mStrikeLocation = location;
 
         // Do a null check to confirm that we have not already instantiated the map.
@@ -110,7 +166,6 @@ public class StrikeMapHelper {
                 public void onGlobalLayout() {
                     // bottom half of map will have an information overlay
                     //
-                    mMap.setPadding(0, 0, 0, mDetailsHeight);
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mStrikeLocation, 8));
 
                     ViewTreeObserver vto = mMapView.getViewTreeObserver();
@@ -119,13 +174,6 @@ public class StrikeMapHelper {
             };
             vto.addOnGlobalLayoutListener(listener);
         } else {
-            ifd("-------");
-            ifd("mapView.getHeight() = " + mMapView.getHeight());
-            ifd("mDetailsHeight = " + mDetailsHeight);
-
-            // mMap.setPadding(0, 0, 0, mMapView.getHeight() - mDetailsHeight);
-            mMap.setPadding(0, 0, 0, mDetailsHeight);
-
             mMap.animateCamera(CameraUpdateFactory.newLatLng(mStrikeLocation), 3000, null);
             /*
             ViewTreeObserver vto = mMapView.getViewTreeObserver();

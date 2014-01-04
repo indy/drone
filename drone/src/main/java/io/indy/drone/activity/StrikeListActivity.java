@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -31,7 +30,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -75,7 +73,7 @@ import io.indy.drone.view.StrikeMapHelper;
  */
 public class StrikeListActivity extends ActionBarActivity implements
         StrikeListFragment.Callbacks,
-        StrikeDetailFragment.OnNewStrikeDetailListener {
+        StrikeDetailFragment.OnStrikeInfoListener {
 
     static private final boolean D = true;
     static private final String TAG = StrikeListActivity.class.getSimpleName();
@@ -102,10 +100,15 @@ public class StrikeListActivity extends ActionBarActivity implements
 
 
 
-    // for interface OnNewStrikeDetailListener
-    public void onMoved(String strikeId, String region, int height) {
-        showStrikeOnMap(strikeId, height);
+    // for interface OnStrikeInfoListener
+    public void onStrikeInfoNavigated(String strikeId) {
+        showStrikeOnMap(strikeId);
     }
+    public void onStrikeInfoResized(int height) {
+        ifd("height");
+        changeMapPadding(height);
+    }
+
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -253,7 +256,7 @@ public class StrikeListActivity extends ActionBarActivity implements
                     .replace(R.id.strike_detail_container, fragment)
                     .commit();
 
-            showStrikeOnMap(id, 400);
+            showStrikeOnMap(id);
             // Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
             // mStrikeMapHelper.showStrikeOnMap((SupportMapFragment) mapFragment, strike);
 
@@ -356,32 +359,37 @@ public class StrikeListActivity extends ActionBarActivity implements
         }
     }
 
-    private void showStrikeOnMap(String strikeId, int detailsHeight) {
+    private void showStrikeOnMap(String strikeId) {
 
         Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
 
         Strike strike = mDatabase.getStrike(strikeId);
         LatLng strikeLocation = new LatLng(strike.getLat(), strike.getLon());
 
-        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation, detailsHeight)) {
+        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation)) {
             mStrikeMapHelper.clearMap()
                     .showMainMarker(strike)
                     .showSurroundingMarkers(mStrikeLocations);
         }
     }
 
+    private void changeMapPadding(int padding) {
+        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
+        mStrikeMapHelper.setMapPadding((SupportMapFragment) mapFragment, padding);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
         ifd("onStart");
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         ifd("onStop");
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
     @Override

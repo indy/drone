@@ -35,8 +35,6 @@ import android.widget.SpinnerAdapter;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.sql.SQLData;
-
 import de.greenrobot.event.EventBus;
 import io.indy.drone.AppConfig;
 import io.indy.drone.R;
@@ -55,7 +53,7 @@ import io.indy.drone.view.StrikeMapHelper;
  * more than a {@link io.indy.drone.fragment.StrikeDetailFragment}.
  */
 public class StrikeDetailActivity extends ActionBarActivity implements
-    StrikeDetailFragment.OnNewStrikeDetailListener {
+        StrikeDetailFragment.OnStrikeInfoListener {
 
     private StrikeMapHelper mStrikeMapHelper;
 
@@ -69,10 +67,37 @@ public class StrikeDetailActivity extends ActionBarActivity implements
     private SpinnerAdapter mSpinnerAdapter;
     private ActionBar.OnNavigationListener mOnNavigationListener;
 
-    // for interface OnNewStrikeDetailListener
-    public void onMoved(String strikeId, String region, int height) {
-        showStrikeOnMap(strikeId, height);
+    // for interface OnStrikeInfoListener
+    public void onStrikeInfoNavigated(String strikeId) {
+        ifd("onStrikeInfoNavigated: strikeId: " + strikeId);
+        showStrikeOnMap(strikeId);
     }
+    public void onStrikeInfoResized(int height) {
+        ifd("onStrikeInfoResized: height: " + height);
+        changeMapPadding(height);
+    }
+
+    private void showStrikeOnMap(String strikeId) {
+
+        mStrikeId = strikeId;
+
+        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
+
+        Strike strike = mDatabase.getStrike(strikeId);
+        LatLng strikeLocation = new LatLng(strike.getLat(), strike.getLon());
+
+        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation)) {
+            mStrikeMapHelper.clearMap()
+                    .showMainMarker(strike)
+                    .showSurroundingMarkers(mStrikeLocations);
+        }
+    }
+
+    private void changeMapPadding(int padding) {
+        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
+        mStrikeMapHelper.setMapPadding((SupportMapFragment) mapFragment, padding);
+    }
+
 
     /**
      * large screen devices in portrait mode will always have enough room to show all
@@ -129,7 +154,8 @@ public class StrikeDetailActivity extends ActionBarActivity implements
                     .commit();
 
             mStrikeMapHelper = new StrikeMapHelper();
-            showStrikeOnMap(mStrikeId, 400);
+
+            showStrikeOnMap(mStrikeId);
         }
         configureActionBar();
     }
@@ -177,7 +203,8 @@ public class StrikeDetailActivity extends ActionBarActivity implements
                     .commit();
 
             mStrikeMapHelper = new StrikeMapHelper();
-            showStrikeOnMap(mStrikeId, 400);
+
+            showStrikeOnMap(mStrikeId);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -212,36 +239,18 @@ public class StrikeDetailActivity extends ActionBarActivity implements
         }
     }
 
-    private void showStrikeOnMap(String strikeId, int detailsHeight) {
-
-        ifd("showStrikeOnMap " + strikeId + " " + detailsHeight);
-
-        mStrikeId = strikeId;
-
-        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
-
-        Strike strike = mDatabase.getStrike(strikeId);
-        LatLng strikeLocation = new LatLng(strike.getLat(), strike.getLon());
-
-        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation, detailsHeight)) {
-            mStrikeMapHelper.clearMap()
-                            .showMainMarker(strike)
-                            .showSurroundingMarkers(mStrikeLocations);
-        }
-    }
-
     @Override
     public void onStart() {
         super.onStart();
         ifd("onStart");
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         ifd("onStop");
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
     @Override
