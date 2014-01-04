@@ -40,7 +40,6 @@ import java.sql.SQLData;
 import de.greenrobot.event.EventBus;
 import io.indy.drone.AppConfig;
 import io.indy.drone.R;
-import io.indy.drone.event.StrikeMoveEvent;
 import io.indy.drone.fragment.StrikeDetailFragment;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
@@ -55,7 +54,8 @@ import io.indy.drone.view.StrikeMapHelper;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link io.indy.drone.fragment.StrikeDetailFragment}.
  */
-public class StrikeDetailActivity extends ActionBarActivity {
+public class StrikeDetailActivity extends ActionBarActivity implements
+    StrikeDetailFragment.OnNewStrikeDetailListener {
 
     private StrikeMapHelper mStrikeMapHelper;
 
@@ -68,6 +68,11 @@ public class StrikeDetailActivity extends ActionBarActivity {
 
     private SpinnerAdapter mSpinnerAdapter;
     private ActionBar.OnNavigationListener mOnNavigationListener;
+
+    // for interface OnNewStrikeDetailListener
+    public void onMoved(String strikeId, String region, int height) {
+        showStrikeOnMap(strikeId, height);
+    }
 
     /**
      * large screen devices in portrait mode will always have enough room to show all
@@ -110,7 +115,7 @@ public class StrikeDetailActivity extends ActionBarActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
 
-            StrikeDetailFragment fragment = new StrikeDetailFragment();
+            StrikeDetailFragment fragment = new StrikeDetailFragment(this);
 
             Bundle bundle = new Bundle();
             bundle.putString(SQLDatabase.KEY_ID, mStrikeId);
@@ -157,13 +162,8 @@ public class StrikeDetailActivity extends ActionBarActivity {
                 ifd("existing strike already took place in the new region: " + mRegion);
             }
 
-            ifd("mRegion: " + mRegion);
-            ifd("mStrikeId: " + mStrikeId);
-            ifd("strike jsonid: " + strike.getJsonId());
-
-
             // create a new StrikeDetailFragment and StrikeMapHelper
-            StrikeDetailFragment fragment = new StrikeDetailFragment();
+            StrikeDetailFragment fragment = new StrikeDetailFragment(this);
 
             Bundle bundle = new Bundle();
             bundle.putString(SQLDatabase.KEY_ID, mStrikeId);
@@ -242,12 +242,6 @@ public class StrikeDetailActivity extends ActionBarActivity {
         super.onStop();
         ifd("onStop");
         EventBus.getDefault().unregister(this);
-    }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    public void onEvent(StrikeMoveEvent event) {
-        ifd("received StrikeMoveEvent");
-        showStrikeOnMap(event.getStrikeId(), event.getDetailsHeight());
     }
 
     @Override

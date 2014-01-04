@@ -48,7 +48,6 @@ import java.util.Date;
 import de.greenrobot.event.EventBus;
 import io.indy.drone.AppConfig;
 import io.indy.drone.R;
-import io.indy.drone.event.StrikeMoveEvent;
 import io.indy.drone.fragment.StrikeDetailFragment;
 import io.indy.drone.fragment.StrikeListFragment;
 import io.indy.drone.model.SQLDatabase;
@@ -74,8 +73,9 @@ import io.indy.drone.view.StrikeMapHelper;
  * {@link io.indy.drone.fragment.StrikeListFragment.Callbacks} interface
  * to listen for item selections.
  */
-public class StrikeListActivity extends ActionBarActivity
-        implements StrikeListFragment.Callbacks {
+public class StrikeListActivity extends ActionBarActivity implements
+        StrikeListFragment.Callbacks,
+        StrikeDetailFragment.OnNewStrikeDetailListener {
 
     static private final boolean D = true;
     static private final String TAG = StrikeListActivity.class.getSimpleName();
@@ -99,6 +99,13 @@ public class StrikeListActivity extends ActionBarActivity
     private CharSequence mTitle;
 
     private Cursor mStrikeLocations;
+
+
+
+    // for interface OnNewStrikeDetailListener
+    public void onMoved(String strikeId, String region, int height) {
+        showStrikeOnMap(strikeId, height);
+    }
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -240,7 +247,7 @@ public class StrikeListActivity extends ActionBarActivity
             bundle.putString(SQLDatabase.KEY_ID, id);
             bundle.putString(SQLDatabase.REGION, mRegionSelected);
 
-            StrikeDetailFragment fragment = new StrikeDetailFragment();
+            StrikeDetailFragment fragment = new StrikeDetailFragment(this);
             fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.strike_detail_container, fragment)
@@ -376,13 +383,6 @@ public class StrikeListActivity extends ActionBarActivity
         ifd("onStop");
         EventBus.getDefault().unregister(this);
     }
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    public void onEvent(StrikeMoveEvent event) {
-        ifd("received StrikeMoveEvent");
-        showStrikeOnMap(event.getStrikeId(), event.getDetailsHeight());
-    }
-
 
     @Override
     public void setTitle(CharSequence title) {

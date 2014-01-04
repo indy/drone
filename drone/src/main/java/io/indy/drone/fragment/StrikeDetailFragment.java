@@ -29,10 +29,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import de.greenrobot.event.EventBus;
 import io.indy.drone.AppConfig;
 import io.indy.drone.R;
-import io.indy.drone.event.StrikeMoveEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 import io.indy.drone.utils.DateFormatHelper;
@@ -84,7 +82,8 @@ public class StrikeDetailFragment extends Fragment
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public StrikeDetailFragment() {
+    public StrikeDetailFragment(OnNewStrikeDetailListener onNewStrikeDetailListener) {
+        mOnNewStrikeDetailListener = onNewStrikeDetailListener;
     }
 
     @Override
@@ -191,8 +190,16 @@ public class StrikeDetailFragment extends Fragment
 
     private void postMoveEvent(int height) {
         if(mShouldFireMoveEvent) {
-            EventBus.getDefault().post(new StrikeMoveEvent(mStrikeId, mRegion, height));
+            if(mOnNewStrikeDetailListener != null) {
+                mOnNewStrikeDetailListener.onMoved(mStrikeId, mRegion, height);
+            }
         }
+    }
+
+    private OnNewStrikeDetailListener mOnNewStrikeDetailListener;
+
+    public interface OnNewStrikeDetailListener {
+        public abstract void onMoved(String strikeId, String region, int height);
     }
 
 
