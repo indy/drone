@@ -16,6 +16,7 @@
 
 package io.indy.drone.activity;
 
+import android.app.ActivityOptions;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -23,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -265,7 +267,18 @@ public class StrikeListActivity extends ActionBarActivity implements
             Intent detailIntent = new Intent(this, StrikeDetailActivity.class);
             detailIntent.putExtra(SQLDatabase.KEY_ID, id);
             detailIntent.putExtra(SQLDatabase.REGION, mRegionSelected);
-            startActivity(detailIntent);
+
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                startActivity(detailIntent);
+            } else {
+                // The enter/exit animations for the two activities are specified by xml resources
+                Bundle translateBundle = ActivityOptions.makeCustomAnimation(
+                        StrikeListActivity.this,
+                        R.anim.slide_in_left, R.anim.slide_out_left).toBundle();
+
+                startActivity(detailIntent, translateBundle);
+            }
+
         }
     }
 

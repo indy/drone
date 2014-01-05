@@ -17,9 +17,11 @@
 package io.indy.drone.activity;
 
 import android.app.ActionBar;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -253,6 +255,15 @@ public class StrikeDetailActivity extends ActionBarActivity implements
     }
 
     @Override
+    public void finish() {
+        super.finish();
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         ifd("clicked " + item);
@@ -273,7 +284,20 @@ public class StrikeDetailActivity extends ActionBarActivity implements
                 //
                 // http://developer.android.com/design/patterns/navigation.html#up-vs-back
                 //
-                NavUtils.navigateUpTo(this, new Intent(this, StrikeListActivity.class));
+
+                Intent upIntent = new Intent(this, StrikeListActivity.class);
+                upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    startActivity(upIntent);
+                } else {
+                    Bundle translateBundle = ActivityOptions.makeCustomAnimation(
+                            StrikeDetailActivity.this,
+                            R.anim.slide_in_right, R.anim.slide_out_right).toBundle();
+                    startActivity(upIntent, translateBundle);
+                }
+
+                finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
