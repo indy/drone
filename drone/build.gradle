@@ -24,8 +24,8 @@ def versionMinor = 1
 def versionPatch = 1
 def versionBuild = 0 // bump for dogfood builds, public betas, etc.
 
-def gitSha() {
-  return 'git rev-parse --short HEAD'.execute().text.trim()
+def gitSha() { 
+  return "git --git-dir=${projectDir}/../.git --work-tree=${projectDir}/.. rev-parse --short HEAD".execute().text.trim()
 }
 
 def buildTime() {
@@ -48,5 +48,10 @@ android {
     buildConfigField "String", "GIT_SHA", "\"${gitSha()}\""
     buildConfigField "String", "BUILD_TIME", "\"${buildTime()}\""
   }
+
+  lintOptions {
+    abortOnError false
+  }
+
 }
 
