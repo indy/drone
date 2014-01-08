@@ -43,7 +43,6 @@ import de.greenrobot.event.EventBus;
 import io.indy.drone.AppConfig;
 import io.indy.drone.R;
 import io.indy.drone.activity.StrikeDetailActivity;
-import io.indy.drone.activity.StrikeListActivity;
 import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
