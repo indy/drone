@@ -171,6 +171,7 @@ public class StrikeListActivity extends ActionBarActivity implements
             ifd("no alarm prefs found, assuming first time run, setting alarm");
             requireAlarm = true;
         } else {
+            ifd("alarmSetAt = " + alarmSetAt);
             Date d = DateFormatHelper.parseSQLiteDateString(alarmSetAt);
             long diffMs = today.getTime() - d.getTime();
             long threeHours = 1000 * 60 * 60 * 3;
@@ -282,6 +283,8 @@ public class StrikeListActivity extends ActionBarActivity implements
         }
     }
 
+    private final int mDebugMenuItemId = 0;
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -301,11 +304,11 @@ public class StrikeListActivity extends ActionBarActivity implements
                 Intent intent = new Intent(this, AboutActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.temp_action_test:
-                ifd("clicked on temp action test");
+            case mDebugMenuItemId:
+                ifd("clicked on debug menu item");
                 break;
-
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -313,6 +316,10 @@ public class StrikeListActivity extends ActionBarActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
+
+        if(AppConfig.DEBUG) {
+            menu.add(Menu.NONE, mDebugMenuItemId, Menu.NONE, getString(R.string.temp_action_test));
+        }
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -325,9 +332,7 @@ public class StrikeListActivity extends ActionBarActivity implements
             e.printStackTrace();
         }
 
-
         mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegionSelected);
-
 
         mTitle = mDrawerTitle = getTitle();
         mDrawerTitles = getResources().getStringArray(R.array.locations_array);

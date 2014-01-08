@@ -15,6 +15,7 @@
     <string name="about_label_google_plus">Google+</string>
     <string name="about_label_twitter">Twitter</string>
 
+    <string name="notification_preface">Drone strike in</string>
 
 
     <string name="title_strike_detail">Strike Detail</string>
@@ -42,7 +43,7 @@
     <string name="Fragment2">This is ActionBarSherlock Fragment 2</string>
     <string name="Fragment3">This is ActionBarSherlock Fragment 3</string>
     <string name="filler">This is placeholder text</string>
-    <string name="temp_action_test">Test request</string>
+    <string name="temp_action_test">Test notification</string>
     <string name="title_activity_about">AboutActivity</string>
 
 </resources>

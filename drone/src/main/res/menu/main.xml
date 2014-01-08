@@ -1,10 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:drone="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/temp_action_test"
-          android:title="@string/temp_action_test"
-          drone:showAsAction="never" />
-
     <item android:id="@+id/action_about"
           android:title="@string/action_about"
           drone:showAsAction="never" />
