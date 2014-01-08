@@ -17,10 +17,15 @@
 package io.indy.drone.service;
 
 import android.app.IntentService;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -36,6 +41,9 @@ import java.util.Date;
 
 import de.greenrobot.event.EventBus;
 import io.indy.drone.AppConfig;
+import io.indy.drone.R;
+import io.indy.drone.activity.StrikeDetailActivity;
+import io.indy.drone.activity.StrikeListActivity;
 import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
@@ -94,6 +102,9 @@ public class ScheduledService extends IntentService {
 
                 // event to inform list that new strike data is in the db
                 EventBus.getDefault().post(new UpdatedDatabaseEvent());
+
+                // create a notification
+                createNotification();
 
             } else {
                 ifd("serverCount (" + serverCount + ") not greater than localCount (" + localCount + ")");
@@ -185,5 +196,55 @@ public class ScheduledService extends IntentService {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void createNotification() {
+        // get the id of the latest strike
+        String region = SQLDatabase.regionFromIndex(0); // worldwide
+        String id = mDatabase.getRecentStrikeIdInRegion(region);
+        Strike strike = mDatabase.getStrike(id);
+
+        String title =  getString(R.string.notification_preface) + " " + strike.getCountry();
+        String droneSummary = strike.getDroneSummary();
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setContentTitle(title)
+                        .setContentText(droneSummary)
+                        .setAutoCancel(true);
+
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, StrikeDetailActivity.class);
+        resultIntent.putExtra(SQLDatabase.KEY_ID, id);
+        resultIntent.putExtra(SQLDatabase.REGION, region);
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(StrikeDetailActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
+            bigTextStyle.setBigContentTitle(title);
+            bigTextStyle.bigText(strike.getBijSummaryShort());
+            bigTextStyle.setSummaryText(droneSummary);
+
+            // Moves the big view style object into the notification object.
+            mBuilder.setStyle(bigTextStyle);
+        }
+
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(33, mBuilder.build());
     }
 }
