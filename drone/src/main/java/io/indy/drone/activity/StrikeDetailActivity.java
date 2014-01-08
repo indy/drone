@@ -24,7 +24,6 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Display;
@@ -244,14 +243,12 @@ public class StrikeDetailActivity extends ActionBarActivity implements
     public void onStart() {
         super.onStart();
         ifd("onStart");
-//        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         ifd("onStop");
-//        EventBus.getDefault().unregister(this);
     }
 
     @Override
