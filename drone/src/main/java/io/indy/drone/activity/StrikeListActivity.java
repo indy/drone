@@ -252,7 +252,7 @@ public class StrikeListActivity extends ActionBarActivity implements
             bundle.putString(SQLDatabase.KEY_ID, id);
             bundle.putString(SQLDatabase.REGION, mRegionSelected);
 
-            StrikeDetailFragment fragment = new StrikeDetailFragment(this);
+            StrikeDetailFragment fragment = new StrikeDetailFragment();
             fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.strike_detail_container, fragment)

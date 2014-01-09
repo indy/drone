@@ -16,6 +16,7 @@
 
 package io.indy.drone.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -45,7 +46,7 @@ import io.indy.drone.view.FrameLayoutDetails;
 public class StrikeDetailFragment extends Fragment
         implements FrameLayoutDetails.OnSizeChangeListener {
 
-    static private final boolean D = false;
+    static private final boolean D = true;
     static private final String TAG = "StrikeDetailFragment";
 
     static void ifd(final String message) {
@@ -58,6 +59,7 @@ public class StrikeDetailFragment extends Fragment
     private SQLDatabase mDatabase;
     private Cursor mCursor; // cursor to all strikes in a particular region
     private String mStrikeId;
+    private String mRegion;
 
     private Strike mStrike;
 
@@ -77,19 +79,144 @@ public class StrikeDetailFragment extends Fragment
 
     private boolean mShouldFireMoveEvent;
 
+
+    private OnStrikeInfoListener mOnStrikeInfoListener;
+
+    public interface OnStrikeInfoListener {
+        public abstract void onStrikeInfoNavigated(String strikeId);
+
+        public abstract void onStrikeInfoResized(int height);
+    }
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public StrikeDetailFragment(OnStrikeInfoListener onStrikeInfoListener) {
-        mOnStrikeInfoListener = onStrikeInfoListener;
+    public StrikeDetailFragment() {
+        super();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        ifd("onAttach");
+        super.onAttach(activity);
+        try {
+            mOnStrikeInfoListener = (OnStrikeInfoListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnStrikeInfoListener");
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        ifd("onCreate");
+
         super.onCreate(savedInstanceState);
+    }
+
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        ifd("onSaveInstanceState");
+
+        super.onSaveInstanceState(outState);
+        outState.putString(SQLDatabase.KEY_ID, mStrikeId);
+        outState.putString(SQLDatabase.REGION, mRegion);
+        outState.putBoolean(ALWAYS_FLEX_VIEW, mAlwaysUseFlex);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        ifd("onCreateView");
 
         mDatabase = new SQLDatabase(getActivity());
+
+
+        if(savedInstanceState == null) {
+            ifd("savedInstanceState is null");
+            mStrikeId = getArguments().getString(SQLDatabase.KEY_ID);
+            mRegion = getArguments().getString(SQLDatabase.REGION);
+            mAlwaysUseFlex = getArguments().getBoolean(ALWAYS_FLEX_VIEW, false);
+        } else {
+            ifd("savedInstanceState is not null");
+            mStrikeId = savedInstanceState.getString(SQLDatabase.KEY_ID);
+            mRegion = savedInstanceState.getString(SQLDatabase.REGION);
+            mAlwaysUseFlex = savedInstanceState.getBoolean(ALWAYS_FLEX_VIEW);
+        }
+
+
+        mStrike = mDatabase.getStrike(mStrikeId);
+
+        mShouldFireMoveEvent = false;
+
+
+        // rootView should be a layout (linearLayout) - can then add/remove child views
+        mRootView = (LinearLayout) inflater.inflate(R.layout.fragment_strike_detail, container, false);
+
+        mHalfLayout = inflater.inflate(R.layout.fragment_strike_detail_half, mRootView, false);
+        mFlexLayout = inflater.inflate(R.layout.fragment_strike_detail_flex, mRootView, false);
+
+
+        FrameLayoutDetails fld = (FrameLayoutDetails) (mHalfLayout.findViewById(R.id.details));
+        fld.setOnSizeChangeListener(this);
+        fld = (FrameLayoutDetails) (mFlexLayout.findViewById(R.id.details));
+        fld.setOnSizeChangeListener(this);
+
+        setupCursor(mRegion, mStrikeId);
+
+        updateUI(mRootView);
+
+        return mRootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        ifd("onActivityCreated");
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        ifd("onStart");
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        ifd("onResume");
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        ifd("onPause");
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        ifd("onStop");
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        ifd("onDestroyView");
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        ifd("onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        ifd("onDetach");
+        super.onDetach();
     }
 
     // cursor has just been returned by the database, so set it to the current
@@ -190,46 +317,6 @@ public class StrikeDetailFragment extends Fragment
         if (mShouldFireMoveEvent) {
             mOnStrikeInfoListener.onStrikeInfoNavigated(mStrikeId);
         }
-    }
-
-    private OnStrikeInfoListener mOnStrikeInfoListener;
-
-    public interface OnStrikeInfoListener {
-        public abstract void onStrikeInfoNavigated(String strikeId);
-
-        public abstract void onStrikeInfoResized(int height);
-    }
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        mStrikeId = getArguments().getString(SQLDatabase.KEY_ID);
-        mStrike = mDatabase.getStrike(mStrikeId);
-
-        mShouldFireMoveEvent = false;
-
-        mAlwaysUseFlex = getArguments().getBoolean(ALWAYS_FLEX_VIEW, false);
-
-        // rootView should be a layout (linearLayout) - can then add/remove child views
-        mRootView = (LinearLayout) inflater.inflate(R.layout.fragment_strike_detail, container, false);
-
-        mHalfLayout = inflater.inflate(R.layout.fragment_strike_detail_half, mRootView, false);
-        mFlexLayout = inflater.inflate(R.layout.fragment_strike_detail_flex, mRootView, false);
-
-
-        FrameLayoutDetails fld = (FrameLayoutDetails) (mHalfLayout.findViewById(R.id.details));
-        fld.setOnSizeChangeListener(this);
-        fld = (FrameLayoutDetails) (mFlexLayout.findViewById(R.id.details));
-        fld.setOnSizeChangeListener(this);
-
-        String region = getArguments().getString(SQLDatabase.REGION);
-        setupCursor(region, mStrikeId);
-
-        updateUI(mRootView);
-
-        return mRootView;
     }
 
     private void updateUI(LinearLayout rootView) {

@@ -55,6 +55,13 @@ import io.indy.drone.view.StrikeMapHelper;
 public class StrikeDetailActivity extends ActionBarActivity implements
         StrikeDetailFragment.OnStrikeInfoListener {
 
+    static private final boolean D = true;
+    static private final String TAG = StrikeDetailActivity.class.getSimpleName();
+
+    static void ifd(final String message) {
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
+    }
+
     private StrikeMapHelper mStrikeMapHelper;
 
     private SQLDatabase mDatabase;
@@ -67,54 +74,11 @@ public class StrikeDetailActivity extends ActionBarActivity implements
     private SpinnerAdapter mSpinnerAdapter;
     private ActionBar.OnNavigationListener mOnNavigationListener;
 
-    // for interface OnStrikeInfoListener
-    public void onStrikeInfoNavigated(String strikeId) {
-        ifd("onStrikeInfoNavigated: strikeId: " + strikeId);
-        showStrikeOnMap(strikeId);
-    }
-    public void onStrikeInfoResized(int height) {
-        ifd("onStrikeInfoResized: height: " + height);
-        changeMapPadding(height);
-    }
-
-    private void showStrikeOnMap(String strikeId) {
-
-        mStrikeId = strikeId;
-
-        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
-
-        Strike strike = mDatabase.getStrike(strikeId);
-        LatLng strikeLocation = new LatLng(strike.getLat(), strike.getLon());
-
-        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation)) {
-            mStrikeMapHelper.clearMap()
-                    .showMainMarker(strike)
-                    .showSurroundingMarkers(mStrikeLocations);
-        }
-    }
-
-    private void changeMapPadding(int padding) {
-        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
-        mStrikeMapHelper.setMapPadding((SupportMapFragment) mapFragment, padding);
-    }
-
-
-    /**
-     * large screen devices in portrait mode will always have enough room to show all
-     * the information in a StrikeDetailFragment without having to use the
-     * fragment_strike_detail_half.xml layout
-     */
-    private boolean shouldAlwaysUseFlexLayout() {
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        return width > 900;
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ifd("onCreate");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_strike_detail);
 
@@ -131,16 +95,16 @@ public class StrikeDetailActivity extends ActionBarActivity implements
         // http://developer.android.com/guide/components/fragments.html
         //
         if (savedInstanceState == null) {
+            ifd("savedInstanceState is null");
 
             mRegion = getIntent().getStringExtra(SQLDatabase.REGION);
             mStrikeId = getIntent().getStringExtra(SQLDatabase.KEY_ID);
 
-            mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegion);
 
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
 
-            StrikeDetailFragment fragment = new StrikeDetailFragment(this);
+            StrikeDetailFragment fragment = new StrikeDetailFragment();
 
             Bundle bundle = new Bundle();
             bundle.putString(SQLDatabase.KEY_ID, mStrikeId);
@@ -153,13 +117,69 @@ public class StrikeDetailActivity extends ActionBarActivity implements
                     .add(R.id.strike_detail_container, fragment)
                     .commit();
 
-            mStrikeMapHelper = new StrikeMapHelper();
-
-            showStrikeOnMap(mStrikeId);
+        } else {
+            ifd("savedInstanceState is not null");
+            mStrikeId = savedInstanceState.getString(SQLDatabase.KEY_ID);
+            mRegion = savedInstanceState.getString(SQLDatabase.REGION);
         }
+
+        mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegion);
+
+        mStrikeMapHelper = new StrikeMapHelper();
+        showStrikeOnMap(mStrikeId);
+
         configureActionBar();
     }
 
+    @Override
+    public void onStart() {
+        ifd("onStart");
+        super.onStart();
+    }
+
+    @Override
+    public void onRestart() {
+        ifd("onRestart");
+        super.onRestart();
+    }
+
+    @Override
+    public void onResume() {
+        ifd("onResume");
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        ifd("onPause");
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        ifd("onStop");
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        ifd("onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        ifd("onSaveInstanceState");
+
+        super.onSaveInstanceState(outState);
+        outState.putString(SQLDatabase.KEY_ID, mStrikeId);
+        outState.putString(SQLDatabase.REGION, mRegion);
+    }
+
+    /**
+     * user has selected a region from the spinner on the action bar
+     *
+     */
     private void onRegionSelected(int itemPosition) {
 
         ifd("onRegionSelected");
@@ -189,7 +209,7 @@ public class StrikeDetailActivity extends ActionBarActivity implements
             }
 
             // create a new StrikeDetailFragment and StrikeMapHelper
-            StrikeDetailFragment fragment = new StrikeDetailFragment(this);
+            StrikeDetailFragment fragment = new StrikeDetailFragment();
 
             Bundle bundle = new Bundle();
             bundle.putString(SQLDatabase.KEY_ID, mStrikeId);
@@ -237,18 +257,6 @@ public class StrikeDetailActivity extends ActionBarActivity implements
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        ifd("onStart");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        ifd("onStop");
     }
 
     @Override
@@ -300,6 +308,51 @@ public class StrikeDetailActivity extends ActionBarActivity implements
         return super.onOptionsItemSelected(item);
     }
 
+
+
+    private void showStrikeOnMap(String strikeId) {
+        ifd("showStrikeOnMap");
+
+        ifd("strikeId = " + strikeId);
+        mStrikeId = strikeId;
+
+        if(mStrikeLocations == null) {
+            ifd("null strikeLocations");
+        } else {
+            ifd("non null strikelocations");
+        }
+
+        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
+
+        Strike strike = mDatabase.getStrike(strikeId);
+        LatLng strikeLocation = new LatLng(strike.getLat(), strike.getLon());
+
+        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation)) {
+            mStrikeMapHelper.clearMap()
+                    .showMainMarker(strike)
+                    .showSurroundingMarkers(mStrikeLocations);
+        }
+    }
+
+    private void changeMapPadding(int padding) {
+        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
+        mStrikeMapHelper.setMapPadding((SupportMapFragment) mapFragment, padding);
+    }
+
+
+    /**
+     * large screen devices in portrait mode will always have enough room to show all
+     * the information in a StrikeDetailFragment without having to use the
+     * fragment_strike_detail_half.xml layout
+     */
+    private boolean shouldAlwaysUseFlexLayout() {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        return width > 900;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -308,10 +361,14 @@ public class StrikeDetailActivity extends ActionBarActivity implements
         return super.onCreateOptionsMenu(menu);
     }
 
-    static private final boolean D = true;
-    static private final String TAG = StrikeDetailActivity.class.getSimpleName();
-
-    static void ifd(final String message) {
-        if (AppConfig.DEBUG && D) Log.d(TAG, message);
+    // for interface OnStrikeInfoListener
+    public void onStrikeInfoNavigated(String strikeId) {
+        ifd("onStrikeInfoNavigated: strikeId: " + strikeId);
+        showStrikeOnMap(strikeId);
     }
+    public void onStrikeInfoResized(int height) {
+        ifd("onStrikeInfoResized: height: " + height);
+        changeMapPadding(height);
+    }
+
 }
