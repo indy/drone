@@ -83,6 +83,9 @@ public class StrikeListActivity extends ActionBarActivity implements
         if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 
+
+    private final int mDebugMenuItemId = 0;
+
     private StrikeMapHelper mStrikeMapHelper;
 
     PendingIntent pi;
@@ -98,18 +101,6 @@ public class StrikeListActivity extends ActionBarActivity implements
     private CharSequence mTitle;
 
     private Cursor mStrikeLocations;
-
-
-
-    // for interface OnStrikeInfoListener
-    public void onStrikeInfoNavigated(String strikeId) {
-        showStrikeOnMap(strikeId);
-    }
-    public void onStrikeInfoResized(int height) {
-        ifd("height");
-        changeMapPadding(height);
-    }
-
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -145,95 +136,6 @@ public class StrikeListActivity extends ActionBarActivity implements
         }
 
         // TODO: If exposing deep links into your app, handle intents here.
-    }
-
-    private void setupAlarm() {
-
-        // check a SharedPreferences variable to see if we've already setup an inexact alarm
-        // otherwise the time until the next alarm will reset every time StrikeListActivity
-        // is used.
-        // var: time that the alarm was last triggered
-        // if this was 2-3 hours ago the alarm was cancelled and requires a reset
-
-        boolean requireAlarm = false;
-        Date today = new Date();
-
-        SharedPreferences settings = getSharedPreferences(ScheduledService.PREFS_FILENAME, 0);
-        String alarmSetAt = settings.getString(ScheduledService.ALARM_SET_AT, "");
-        if (alarmSetAt.isEmpty()) {
-            // first time of running
-
-            // don't check the server straight away since the db
-            // might still be populating from the local json file
-            //
-            // startService(new Intent(this, ScheduledService.class));
-
-            ifd("no alarm prefs found, assuming first time run, setting alarm");
-            requireAlarm = true;
-        } else {
-            ifd("alarmSetAt = " + alarmSetAt);
-            Date d = DateFormatHelper.parseSQLiteDateString(alarmSetAt);
-            long diffMs = today.getTime() - d.getTime();
-            long threeHours = 1000 * 60 * 60 * 3;
-            if (diffMs > threeHours) {
-                ifd("alarm was set more than 3 hours ago, and so requires a reset");
-                requireAlarm = true;
-            }
-        }
-
-        if (!requireAlarm) {
-            ifd("no need to set an alarm from StrikeListActivity");
-            return;
-        }
-
-        Intent intent = new Intent(this, ScheduledService.class);
-        pi = PendingIntent.getService(this, 0, intent, 0);
-
-        am = (AlarmManager) (this.getSystemService(Context.ALARM_SERVICE));
-        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HOUR,
-                AlarmManager.INTERVAL_HOUR,
-                pi);
-
-        ifd("set alarm");
-
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(ScheduledService.ALARM_SET_AT, DateFormatHelper.dateToSQLite(today));
-        editor.commit();
-        ifd("updated ALARM_SET_AT shared preference");
-    }
-
-    /* from MainActivity
-    @Override
-    public void onDestroy() {
-        ifd("onDestroy");
-
-        CursorAdapter ca = (CursorAdapter)(mListView.getAdapter());
-        ca.getCursor().close();
-
-        mDatabase.closeDatabase();
-        super.onDestroy();
-    }
-    */
-
-    protected void onDrawerItemClicked(int position) {
-        // Highlight the selected item, update the title, and close the drawer
-        mDrawerList.setItemChecked(position, true);
-        setTitle(mDrawerTitles[position]);
-
-        try {
-            mRegionSelected = SQLDatabase.regionFromIndex(position);
-            mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegionSelected);
-
-            ((StrikeListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.strike_list))
-                    .onRegionClicked(mRegionSelected);
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
-            throw e;
-        }
-
-        mDrawerLayout.closeDrawer(mDrawerList);
     }
 
     /**
@@ -283,8 +185,6 @@ public class StrikeListActivity extends ActionBarActivity implements
         }
     }
 
-    private final int mDebugMenuItemId = 0;
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -322,6 +222,46 @@ public class StrikeListActivity extends ActionBarActivity implements
         }
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ifd("onStart");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ifd("onStop");
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getSupportActionBar().setTitle(mTitle);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    /* Called whenever we call invalidateOptionsMenu() */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the nav drawer is open, hide action items related to the content view
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        //menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     protected void setupNavigationDrawer() {
@@ -395,45 +335,89 @@ public class StrikeListActivity extends ActionBarActivity implements
         mStrikeMapHelper.setMapPadding((SupportMapFragment) mapFragment, padding);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        ifd("onStart");
-//        EventBus.getDefault().register(this);
+    // for interface OnStrikeInfoListener
+    public void onStrikeInfoNavigated(String strikeId) {
+        showStrikeOnMap(strikeId);
+    }
+    public void onStrikeInfoResized(int height) {
+        ifd("height");
+        changeMapPadding(height);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        ifd("onStop");
-//        EventBus.getDefault().unregister(this);
+    private void setupAlarm() {
+
+        // check a SharedPreferences variable to see if we've already setup an inexact alarm
+        // otherwise the time until the next alarm will reset every time StrikeListActivity
+        // is used.
+        // var: time that the alarm was last triggered
+        // if this was 2-3 hours ago the alarm was cancelled and requires a reset
+
+        boolean requireAlarm = false;
+        Date today = new Date();
+
+        SharedPreferences settings = getSharedPreferences(ScheduledService.PREFS_FILENAME, 0);
+        String alarmSetAt = settings.getString(ScheduledService.ALARM_SET_AT, "");
+        if (alarmSetAt.isEmpty()) {
+            // first time of running
+
+            // don't check the server straight away since the db
+            // might still be populating from the local json file
+            //
+            // startService(new Intent(this, ScheduledService.class));
+
+            ifd("no alarm prefs found, assuming first time run, setting alarm");
+            requireAlarm = true;
+        } else {
+            ifd("alarmSetAt = " + alarmSetAt);
+            Date d = DateFormatHelper.parseSQLiteDateString(alarmSetAt);
+            long diffMs = today.getTime() - d.getTime();
+            long threeHours = 1000 * 60 * 60 * 3;
+            if (diffMs > threeHours) {
+                ifd("alarm was set more than 3 hours ago, and so requires a reset");
+                requireAlarm = true;
+            }
+        }
+
+        if (!requireAlarm) {
+            ifd("no need to set an alarm from StrikeListActivity");
+            return;
+        }
+
+        Intent intent = new Intent(this, ScheduledService.class);
+        pi = PendingIntent.getService(this, 0, intent, 0);
+
+        am = (AlarmManager) (this.getSystemService(Context.ALARM_SERVICE));
+        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_HOUR,
+                AlarmManager.INTERVAL_HOUR,
+                pi);
+
+        ifd("set alarm");
+
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(ScheduledService.ALARM_SET_AT, DateFormatHelper.dateToSQLite(today));
+        editor.commit();
+        ifd("updated ALARM_SET_AT shared preference");
     }
 
-    @Override
-    public void setTitle(CharSequence title) {
-        mTitle = title;
-        getSupportActionBar().setTitle(mTitle);
+    protected void onDrawerItemClicked(int position) {
+        // Highlight the selected item, update the title, and close the drawer
+        mDrawerList.setItemChecked(position, true);
+        setTitle(mDrawerTitles[position]);
+
+        try {
+            mRegionSelected = SQLDatabase.regionFromIndex(position);
+            mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegionSelected);
+
+            ((StrikeListFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.strike_list))
+                    .onRegionClicked(mRegionSelected);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        mDrawerLayout.closeDrawer(mDrawerList);
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    /* Called whenever we call invalidateOptionsMenu() */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        //menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
-        return super.onPrepareOptionsMenu(menu);
-    }
 }

@@ -308,8 +308,6 @@ public class StrikeDetailActivity extends ActionBarActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-
-
     private void showStrikeOnMap(String strikeId) {
         ifd("showStrikeOnMap");
 

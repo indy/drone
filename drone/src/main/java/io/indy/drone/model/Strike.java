@@ -32,6 +32,13 @@ import io.indy.drone.utils.DateFormatHelper;
 
 public class Strike {
 
+    private static final String TAG = "Strike";
+    private static final boolean D = true;
+
+    static void ifd(final String message) {
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
+    }
+
     public static final String JSON_ID = "json_id";
     public static final String NUMBER = "number";
     public static final String COUNTRY = "country";
@@ -595,12 +602,5 @@ public class Strike {
         cv.put(INFORMATION_URL, getInformationUrl());
 
         return cv;
-    }
-
-    private static final String TAG = "Strike";
-    private static final boolean D = true;
-
-    static void ifd(final String message) {
-        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 }

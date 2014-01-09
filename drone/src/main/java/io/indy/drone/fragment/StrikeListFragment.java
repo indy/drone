@@ -175,6 +175,15 @@ public class StrikeListFragment extends ListFragment {
         EventBus.getDefault().unregister(this);
     }
 
+
+    @Override
+    public void onDestroy() {
+        ifd("onDestroy");
+
+        mDatabase.closeDatabase();
+        super.onDestroy();
+    }
+
     @SuppressWarnings({"UnusedDeclaration"})
     public void onEvent(UpdatedDatabaseEvent event) {
         ifd("received UpdatedDatabaseEvent");
@@ -233,11 +242,4 @@ public class StrikeListFragment extends ListFragment {
         mActivatedPosition = position;
     }
 
-    @Override
-    public void onDestroy() {
-        ifd("onDestroy");
-
-        mDatabase.closeDatabase();
-        super.onDestroy();
-    }
 }

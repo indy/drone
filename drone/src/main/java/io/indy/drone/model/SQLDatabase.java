@@ -30,6 +30,13 @@ import io.indy.drone.utils.DateFormatHelper;
 
 public class SQLDatabase {
 
+    private static final String TAG = "SQLDatabase";
+    private static final boolean D = true;
+
+    static void ifd(final String message) {
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
+    }
+
     public static final String REGION = "region";
     private static final String[] REGIONS = {"worldwide", "Pakistan", "Yemen", "Somalia"};
 
@@ -417,12 +424,5 @@ public class SQLDatabase {
             db.insert(STRIKE_TABLE, null, cv);
         }
 
-    }
-
-    private static final String TAG = "SQLDatabase";
-    private static final boolean D = true;
-
-    static void ifd(final String message) {
-        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 }

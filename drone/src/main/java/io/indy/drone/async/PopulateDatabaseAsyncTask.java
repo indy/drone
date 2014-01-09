@@ -35,6 +35,14 @@ import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 
 public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Integer, Void> {
+
+    private static final String TAG = "PopulateDatabaseAsyncTask";
+    private static final boolean D = true;
+
+    static void ifd(final String message) {
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
+    }
+
     private final String STRIKE = "strike";
 
     private Context mContext;
@@ -45,27 +53,6 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Integer, Void> {
         mContext = context;
         mModelHelper = modelHelper;
         mPath = path;
-    }
-
-    private JSONObject loadJsonFromFile(String path) {
-        try {
-            StringBuilder buf = new StringBuilder();
-            InputStream json = mContext.getAssets().open(path);
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(json));
-            String str;
-            while ((str = in.readLine()) != null) {
-                buf.append(str);
-            }
-            in.close();
-
-            return new JSONObject(buf.toString());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
     @Override
@@ -115,10 +102,24 @@ public class PopulateDatabaseAsyncTask extends AsyncTask<Void, Integer, Void> {
         EventBus.getDefault().post(new UpdatedDatabaseEvent());
     }
 
-    private static final String TAG = "PopulateDatabaseAsyncTask";
-    private static final boolean D = true;
+    private JSONObject loadJsonFromFile(String path) {
+        try {
+            StringBuilder buf = new StringBuilder();
+            InputStream json = mContext.getAssets().open(path);
 
-    static void ifd(final String message) {
-        if (AppConfig.DEBUG && D) Log.d(TAG, message);
+            BufferedReader in = new BufferedReader(new InputStreamReader(json));
+            String str;
+            while ((str = in.readLine()) != null) {
+                buf.append(str);
+            }
+            in.close();
+
+            return new JSONObject(buf.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

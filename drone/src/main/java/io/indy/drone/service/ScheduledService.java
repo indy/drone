@@ -64,7 +64,6 @@ public class ScheduledService extends IntentService {
 
     private SQLDatabase mDatabase;
 
-
     public ScheduledService() {
         super("ScheduledService");
     }

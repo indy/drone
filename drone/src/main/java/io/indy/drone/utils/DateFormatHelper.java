@@ -26,6 +26,13 @@ import io.indy.drone.AppConfig;
 
 public class DateFormatHelper {
 
+    static private final boolean D = true;
+    static private final String TAG = "DateFormatHelper";
+
+    static void ifd(final String message) {
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
+    }
+
     private static final SimpleDateFormat sDisplayFormat = new SimpleDateFormat("d MMMM yyyy");
     private static final SimpleDateFormat sSQLiteFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final SimpleDateFormat sJSONFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -58,12 +65,5 @@ public class DateFormatHelper {
 
     public static String dateToDisplay(Date date) {
         return sDisplayFormat.format(date);
-    }
-
-    static private final boolean D = true;
-    static private final String TAG = "DateFormatHelper";
-
-    static void ifd(final String message) {
-        if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 }

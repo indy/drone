@@ -84,7 +84,6 @@ public class StrikeDetailFragment extends Fragment
 
     public interface OnStrikeInfoListener {
         public abstract void onStrikeInfoNavigated(String strikeId);
-
         public abstract void onStrikeInfoResized(int height);
     }
 

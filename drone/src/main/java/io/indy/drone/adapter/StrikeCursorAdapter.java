@@ -19,6 +19,13 @@ import io.indy.drone.utils.DateFormatHelper;
 
 public class StrikeCursorAdapter extends CursorAdapter {
 
+    private static final String TAG = "StrikeCursorAdapter";
+    private static final boolean D = true;
+
+    static void ifd(final String message) {
+        if (AppConfig.DEBUG && D) Log.d(TAG, message);
+    }
+
     private LayoutInflater mLayoutInflater;
 
     private int mStrikeIDIndex;
@@ -32,22 +39,6 @@ public class StrikeCursorAdapter extends CursorAdapter {
     public StrikeCursorAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
         init(context);
-    }
-
-    private void init(Context context) {
-        mLayoutInflater = LayoutInflater.from(context);
-        updateColumnIndices();
-    }
-
-    private void updateColumnIndices() {
-        Cursor c = getCursor();
-        mStrikeIDIndex = c.getColumnIndex(SQLDatabase.KEY_ID);
-        mCountryIndex = c.getColumnIndex(Strike.COUNTRY);
-        mTownIndex = c.getColumnIndex(Strike.TOWN);
-        mLocationIndex = c.getColumnIndex(Strike.LOCATION);
-        mSummaryIndex = c.getColumnIndex(Strike.BIJ_SUMMARY_SHORT);
-        mHappenedIndex = c.getColumnIndex(Strike.HAPPENED);
-        mDroneSummaryIndex = c.getColumnIndex(Strike.DRONE_SUMMARY);
     }
 
     @Override
@@ -101,10 +92,19 @@ public class StrikeCursorAdapter extends CursorAdapter {
         return v;
     }
 
-    private static final String TAG = "StrikeCursorAdapter";
-    private static final boolean D = true;
+    private void init(Context context) {
+        mLayoutInflater = LayoutInflater.from(context);
+        updateColumnIndices();
+    }
 
-    static void ifd(final String message) {
-        if (AppConfig.DEBUG && D) Log.d(TAG, message);
+    private void updateColumnIndices() {
+        Cursor c = getCursor();
+        mStrikeIDIndex = c.getColumnIndex(SQLDatabase.KEY_ID);
+        mCountryIndex = c.getColumnIndex(Strike.COUNTRY);
+        mTownIndex = c.getColumnIndex(Strike.TOWN);
+        mLocationIndex = c.getColumnIndex(Strike.LOCATION);
+        mSummaryIndex = c.getColumnIndex(Strike.BIJ_SUMMARY_SHORT);
+        mHappenedIndex = c.getColumnIndex(Strike.HAPPENED);
+        mDroneSummaryIndex = c.getColumnIndex(Strike.DRONE_SUMMARY);
     }
 }
