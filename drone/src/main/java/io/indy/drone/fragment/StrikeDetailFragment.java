@@ -53,6 +53,13 @@ public class StrikeDetailFragment extends Fragment
         if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 
+
+    public interface OnStrikeInfoListener {
+        public abstract void onStrikeInfoNavigated(String strikeId);
+        public abstract void onStrikeInfoResized(int height);
+    }
+
+
     // on larger screen devices
     public static final String ALWAYS_FLEX_VIEW = "always_flex_view";
 
@@ -77,15 +84,9 @@ public class StrikeDetailFragment extends Fragment
 
     private boolean mAlwaysUseFlex;
 
-    private boolean mShouldFireMoveEvent;
-
-
     private OnStrikeInfoListener mOnStrikeInfoListener;
 
-    public interface OnStrikeInfoListener {
-        public abstract void onStrikeInfoNavigated(String strikeId);
-        public abstract void onStrikeInfoResized(int height);
-    }
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -147,9 +148,6 @@ public class StrikeDetailFragment extends Fragment
 
 
         mStrike = mDatabase.getStrike(mStrikeId);
-
-        mShouldFireMoveEvent = false;
-
 
         // rootView should be a layout (linearLayout) - can then add/remove child views
         mRootView = (LinearLayout) inflater.inflate(R.layout.fragment_strike_detail, container, false);
@@ -218,6 +216,12 @@ public class StrikeDetailFragment extends Fragment
         super.onDetach();
     }
 
+    // called by activity
+    public void showStrikeDetail(String strikeId) {
+        moveToStrike(strikeId); // update mCursor
+        showStrike(strikeId);
+    }
+
     // cursor has just been returned by the database, so set it to the current
     private boolean setupCursor(String region, String strikeId) {
         // get the strikes for this region
@@ -246,6 +250,29 @@ public class StrikeDetailFragment extends Fragment
             mAtStart = false;
         }
         return false;
+    }
+
+    private void moveToStrike(String strikeId) {
+        int index = mCursor.getColumnIndex(SQLDatabase.KEY_ID);
+        String id;
+
+        mAtStart = true;
+        mAtEnd = false;
+        mCursor.moveToFirst();
+        id = mCursor.getString(index);
+        if(id.equals(strikeId)) {
+            return;
+        }
+        while(mCursor.moveToNext()) {
+            mAtStart = false;
+            id = mCursor.getString(index);
+            if(id.equals(strikeId)) {
+                return;
+            }
+        }
+
+        mCursor.moveToLast();
+        mAtEnd = true;
     }
 
     private String moveToPreviousStrike() {
@@ -299,11 +326,10 @@ public class StrikeDetailFragment extends Fragment
         return "";
     }
 
-    private void changeStrikeClicked(String newId) {
+    private void showStrike(String newId) {
         if (!newId.equals("")) {
             mStrikeId = newId;
             mStrike = mDatabase.getStrike(mStrikeId);
-            mShouldFireMoveEvent = true;
             updateUI(mRootView);
         }
     }
@@ -312,15 +338,10 @@ public class StrikeDetailFragment extends Fragment
         mOnStrikeInfoListener.onStrikeInfoResized(h);
     }
 
-    private void onStrikeInfoNavigated() {
-        if (mShouldFireMoveEvent) {
-            mOnStrikeInfoListener.onStrikeInfoNavigated(mStrikeId);
-        }
-    }
-
     private void updateUI(LinearLayout rootView) {
 
         attachAppropriateView(rootView);
+
 
         ((TextView) rootView.findViewById(R.id.strike_detail)).setText(mStrike.getBijSummaryShort());
 
@@ -331,7 +352,12 @@ public class StrikeDetailFragment extends Fragment
 
         ((TextView) rootView.findViewById(R.id.drone_summary)).setText(mStrike.getDroneSummary());
 
+        // fire off a change size event
+        View detailsView = mRootView.findViewById(R.id.details);
+        onHeightChanged(detailsView.getHeight());
+
         configureButtons();
+
     }
 
     private void attachAppropriateView(LinearLayout rootView) {
@@ -349,11 +375,6 @@ public class StrikeDetailFragment extends Fragment
             rootView.addView(mHalfLayout);
         }
 
-        // fire off a change size event
-        View detailsView = mRootView.findViewById(R.id.details);
-
-        onHeightChanged(detailsView.getHeight());
-        onStrikeInfoNavigated();
     }
 
 
@@ -369,7 +390,11 @@ public class StrikeDetailFragment extends Fragment
             public void onClick(View view) {
                 // get a strike object that represents the previous strike to view
                 ifd("clicked prev");
-                changeStrikeClicked(moveToPreviousStrike());
+                showStrike(moveToPreviousStrike());
+
+                // move the map
+                mOnStrikeInfoListener.onStrikeInfoNavigated(mStrikeId);
+
                 mPrevButton.setEnabled(!mAtStart);
                 mNextButton.setEnabled(!mAtEnd);
             }
@@ -380,7 +405,11 @@ public class StrikeDetailFragment extends Fragment
             public void onClick(View view) {
                 // get a strike object that represents the next strike to view
                 ifd("clicked next");
-                changeStrikeClicked(moveToNextStrike());
+                showStrike(moveToNextStrike());
+
+                // move the map
+                mOnStrikeInfoListener.onStrikeInfoNavigated(mStrikeId);
+
                 mPrevButton.setEnabled(!mAtStart);
                 mNextButton.setEnabled(!mAtEnd);
             }

@@ -74,7 +74,8 @@ import io.indy.drone.view.StrikeMapHelper;
  */
 public class StrikeListActivity extends ActionBarActivity implements
         StrikeListFragment.Callbacks,
-        StrikeDetailFragment.OnStrikeInfoListener {
+        StrikeDetailFragment.OnStrikeInfoListener,
+        StrikeMapHelper.OnMarkerClickListener {
 
     static private final boolean D = true;
     static private final String TAG = StrikeListActivity.class.getSimpleName();
@@ -116,7 +117,7 @@ public class StrikeListActivity extends ActionBarActivity implements
         setContentView(R.layout.activity_strike_list);
 
         mDatabase = new SQLDatabase(this);
-        mStrikeMapHelper = new StrikeMapHelper();
+        mStrikeMapHelper = new StrikeMapHelper(this);
 
         setupNavigationDrawer();
         setupAlarm();
@@ -419,5 +420,12 @@ public class StrikeListActivity extends ActionBarActivity implements
 
         mDrawerLayout.closeDrawer(mDrawerList);
     }
+
+
+    // for interface OnMarkerClickListener
+    public void onMarkerClick(String strikeId) {
+        //mStrikeDetailFragment.showStrikeDetail(strikeId);
+    }
+
 
 }

@@ -53,7 +53,8 @@ import io.indy.drone.view.StrikeMapHelper;
  * more than a {@link io.indy.drone.fragment.StrikeDetailFragment}.
  */
 public class StrikeDetailActivity extends ActionBarActivity implements
-        StrikeDetailFragment.OnStrikeInfoListener {
+        StrikeDetailFragment.OnStrikeInfoListener,
+        StrikeMapHelper.OnMarkerClickListener {
 
     static private final boolean D = true;
     static private final String TAG = StrikeDetailActivity.class.getSimpleName();
@@ -63,6 +64,7 @@ public class StrikeDetailActivity extends ActionBarActivity implements
     }
 
     private StrikeMapHelper mStrikeMapHelper;
+    private StrikeDetailFragment mStrikeDetailFragment;
 
     private SQLDatabase mDatabase;
 
@@ -104,17 +106,17 @@ public class StrikeDetailActivity extends ActionBarActivity implements
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
 
-            StrikeDetailFragment fragment = new StrikeDetailFragment();
+            mStrikeDetailFragment = new StrikeDetailFragment();
 
             Bundle bundle = new Bundle();
             bundle.putString(SQLDatabase.KEY_ID, mStrikeId);
             bundle.putString(SQLDatabase.REGION, mRegion);
             bundle.putBoolean(StrikeDetailFragment.ALWAYS_FLEX_VIEW, shouldAlwaysUseFlexLayout());
-            fragment.setArguments(bundle);
+            mStrikeDetailFragment.setArguments(bundle);
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.strike_detail_container, fragment)
+                    .add(R.id.strike_detail_container, mStrikeDetailFragment)
                     .commit();
 
         } else {
@@ -125,7 +127,7 @@ public class StrikeDetailActivity extends ActionBarActivity implements
 
         mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegion);
 
-        mStrikeMapHelper = new StrikeMapHelper();
+        mStrikeMapHelper = new StrikeMapHelper(this);
         showStrikeOnMap(mStrikeId);
 
         configureActionBar();
@@ -222,7 +224,7 @@ public class StrikeDetailActivity extends ActionBarActivity implements
                     .replace(R.id.strike_detail_container, fragment)
                     .commit();
 
-            mStrikeMapHelper = new StrikeMapHelper();
+            mStrikeMapHelper = new StrikeMapHelper(this);
 
             showStrikeOnMap(mStrikeId);
 
@@ -367,6 +369,16 @@ public class StrikeDetailActivity extends ActionBarActivity implements
     public void onStrikeInfoResized(int height) {
         ifd("onStrikeInfoResized: height: " + height);
         changeMapPadding(height);
+    }
+
+    // for interface OnMarkerClickListener
+    public void onMarkerClick(String strikeId) {
+
+        // this will update the StrikeDetailFragment
+        mStrikeDetailFragment.showStrikeDetail(strikeId);
+
+
+        showStrikeOnMap(strikeId);
     }
 
 }

@@ -28,10 +28,12 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import io.indy.drone.AppConfig;
 import io.indy.drone.R;
+import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
 
 public class StrikeMapHelper {
@@ -43,34 +45,47 @@ public class StrikeMapHelper {
         if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 
+    public interface OnMarkerClickListener {
+        public abstract void onMarkerClick(String strikeId);
+    }
+
     protected GoogleMap mMap;
     protected View mMapView;
     protected LatLng mStrikeLocation;
 
     private int mDetailsHeight;
 
+    private OnMarkerClickListener mOnMarkerClickListener;
+
+
+    public StrikeMapHelper(OnMarkerClickListener onMarkerClickListener) {
+        mOnMarkerClickListener = onMarkerClickListener;
+    }
+
     public StrikeMapHelper clearMap() {
         mMap.clear();
         return this;
     }
 
-    public StrikeMapHelper showSurroundingMarkers(Cursor locations) {
+    public StrikeMapHelper showSurroundingMarkers(Cursor cursor) {
 
-        int latIndex = locations.getColumnIndex(Strike.LAT);
-        int lonIndex = locations.getColumnIndex(Strike.LON);
+        int keyIdIndex = cursor.getColumnIndex(SQLDatabase.KEY_ID);
+        int latIndex = cursor.getColumnIndex(Strike.LAT);
+        int lonIndex = cursor.getColumnIndex(Strike.LON);
 
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.aux_map_marker);
 
-        locations.moveToFirst();
+        cursor.moveToFirst();
         do {
             mMap.addMarker(new MarkerOptions()
                     .icon(icon)
                     .anchor(0.5f, 0.5f)
-                    .position(new LatLng(locations.getDouble(latIndex),
-                                         locations.getDouble(lonIndex)))
+                    .snippet(cursor.getString(keyIdIndex))
+                    .position(new LatLng(cursor.getDouble(latIndex),
+                            cursor.getDouble(lonIndex)))
                     .alpha(0.6f));
 
-        } while(locations.moveToNext());
+        } while(cursor.moveToNext());
 
         return this;
     }
@@ -192,6 +207,20 @@ public class StrikeMapHelper {
             vto.addOnGlobalLayoutListener(listener);
             */
         }
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                ifd("clicked on a marker");
+                ifd("got snippet: " + marker.getSnippet());
+
+                String id = marker.getSnippet();
+                mOnMarkerClickListener.onMarkerClick(id);
+
+                return true;
+            }
+        });
+
         return true;
     }
 }
