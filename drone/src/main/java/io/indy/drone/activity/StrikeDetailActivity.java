@@ -178,6 +178,92 @@ public class StrikeDetailActivity extends ActionBarActivity implements
         outState.putString(SQLDatabase.REGION, mRegion);
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+        }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.strike_detail, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        ifd("clicked " + item);
+
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                ifd("clicked on settings");
+                break;
+            case R.id.action_about:
+                Intent intent = new Intent(this, AboutActivity.class);
+                startActivity(intent);
+                break;
+            case android.R.id.home:
+                // This ID represents the Home or Up button. In the case of this
+                // activity, the Up button is shown. Use NavUtils to allow users
+                // to navigate up one level in the application structure. For
+                // more details, see the Navigation pattern on Android Design:
+                //
+                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+                //
+
+                Intent upIntent = new Intent(this, StrikeListActivity.class);
+                upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    startActivity(upIntent);
+                } else {
+                    Bundle translateBundle = ActivityOptions.makeCustomAnimation(
+                            StrikeDetailActivity.this,
+                            R.anim.slide_in_right, R.anim.slide_out_right).toBundle();
+                    startActivity(upIntent, translateBundle);
+                }
+
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private void configureActionBar() {
+        // Show the Up button in the action bar.
+        ActionBar actionBar = getActionBar();
+
+        mSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.locations_array,
+                android.R.layout.simple_spinner_dropdown_item);
+
+        mOnNavigationListener = new ActionBar.OnNavigationListener() {
+            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                onRegionSelected(itemPosition);
+                return true;
+            }
+        };
+
+        actionBar.setTitle("");
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        actionBar.setListNavigationCallbacks(mSpinnerAdapter, mOnNavigationListener);
+
+        try {
+            actionBar.setSelectedNavigationItem(SQLDatabase.indexFromRegion(mRegion));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     /**
      * user has selected a region from the spinner on the action bar
      *
@@ -231,83 +317,6 @@ public class StrikeDetailActivity extends ActionBarActivity implements
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-    }
-
-    private void configureActionBar() {
-        // Show the Up button in the action bar.
-        ActionBar actionBar = getActionBar();
-
-        mSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.locations_array,
-                android.R.layout.simple_spinner_dropdown_item);
-
-        mOnNavigationListener = new ActionBar.OnNavigationListener() {
-            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-                onRegionSelected(itemPosition);
-                return true;
-            }
-        };
-
-        actionBar.setTitle("");
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        actionBar.setListNavigationCallbacks(mSpinnerAdapter, mOnNavigationListener);
-
-        try {
-            actionBar.setSelectedNavigationItem(SQLDatabase.indexFromRegion(mRegion));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        ifd("clicked " + item);
-
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                ifd("clicked on settings");
-                break;
-            case R.id.action_about:
-                Intent intent = new Intent(this, AboutActivity.class);
-                startActivity(intent);
-                break;
-            case android.R.id.home:
-                // This ID represents the Home or Up button. In the case of this
-                // activity, the Up button is shown. Use NavUtils to allow users
-                // to navigate up one level in the application structure. For
-                // more details, see the Navigation pattern on Android Design:
-                //
-                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-                //
-
-                Intent upIntent = new Intent(this, StrikeListActivity.class);
-                upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                    startActivity(upIntent);
-                } else {
-                    Bundle translateBundle = ActivityOptions.makeCustomAnimation(
-                            StrikeDetailActivity.this,
-                            R.anim.slide_in_right, R.anim.slide_out_right).toBundle();
-                    startActivity(upIntent, translateBundle);
-                }
-
-                finish();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private void showStrikeOnMap(String strikeId) {
@@ -351,14 +360,6 @@ public class StrikeDetailActivity extends ActionBarActivity implements
         display.getSize(size);
         int width = size.x;
         return width > 900;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.strike_detail, menu);
-
-        return super.onCreateOptionsMenu(menu);
     }
 
     // for interface OnStrikeInfoListener

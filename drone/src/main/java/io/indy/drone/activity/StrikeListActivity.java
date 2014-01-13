@@ -139,6 +139,14 @@ public class StrikeListActivity extends ActionBarActivity implements
         // TODO: If exposing deep links into your app, handle intents here.
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+
     /**
      * Callback method from {@link StrikeListFragment.Callbacks}
      * indicating that the item with the given ID was selected.
@@ -225,16 +233,13 @@ public class StrikeListActivity extends ActionBarActivity implements
         return super.onCreateOptionsMenu(menu);
     }
 
+    /* Called whenever we call invalidateOptionsMenu() */
     @Override
-    public void onStart() {
-        super.onStart();
-        ifd("onStart");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        ifd("onStop");
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the nav drawer is open, hide action items related to the content view
+        //boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        //menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -244,25 +249,9 @@ public class StrikeListActivity extends ActionBarActivity implements
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
-
-    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    /* Called whenever we call invalidateOptionsMenu() */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        //menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
-        return super.onPrepareOptionsMenu(menu);
     }
 
     protected void setupNavigationDrawer() {
@@ -317,6 +306,26 @@ public class StrikeListActivity extends ActionBarActivity implements
         }
     }
 
+    protected void onDrawerItemClicked(int position) {
+        // Highlight the selected item, update the title, and close the drawer
+        mDrawerList.setItemChecked(position, true);
+        setTitle(mDrawerTitles[position]);
+
+        try {
+            mRegionSelected = SQLDatabase.regionFromIndex(position);
+            mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegionSelected);
+
+            ((StrikeListFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.strike_list))
+                    .onRegionClicked(mRegionSelected);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
     private void showStrikeOnMap(String strikeId) {
 
         Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
@@ -343,6 +352,11 @@ public class StrikeListActivity extends ActionBarActivity implements
     public void onStrikeInfoResized(int height) {
         ifd("height");
         changeMapPadding(height);
+    }
+
+    // for interface OnMarkerClickListener
+    public void onMarkerClick(String strikeId) {
+        //mStrikeDetailFragment.showStrikeDetail(strikeId);
     }
 
     private void setupAlarm() {
@@ -400,32 +414,4 @@ public class StrikeListActivity extends ActionBarActivity implements
         editor.commit();
         ifd("updated ALARM_SET_AT shared preference");
     }
-
-    protected void onDrawerItemClicked(int position) {
-        // Highlight the selected item, update the title, and close the drawer
-        mDrawerList.setItemChecked(position, true);
-        setTitle(mDrawerTitles[position]);
-
-        try {
-            mRegionSelected = SQLDatabase.regionFromIndex(position);
-            mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegionSelected);
-
-            ((StrikeListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.strike_list))
-                    .onRegionClicked(mRegionSelected);
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
-            throw e;
-        }
-
-        mDrawerLayout.closeDrawer(mDrawerList);
-    }
-
-
-    // for interface OnMarkerClickListener
-    public void onMarkerClick(String strikeId) {
-        //mStrikeDetailFragment.showStrikeDetail(strikeId);
-    }
-
-
 }
