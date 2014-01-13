@@ -52,9 +52,7 @@ import io.indy.drone.view.StrikeMapHelper;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link io.indy.drone.fragment.StrikeDetailFragment}.
  */
-public class StrikeDetailActivity extends ActionBarActivity implements
-        StrikeDetailFragment.OnStrikeInfoListener,
-        StrikeMapHelper.OnMarkerClickListener {
+public class StrikeDetailActivity extends BaseActivity {
 
     static private final boolean D = true;
     static private final String TAG = StrikeDetailActivity.class.getSimpleName();
@@ -62,16 +60,6 @@ public class StrikeDetailActivity extends ActionBarActivity implements
     static void ifd(final String message) {
         if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
-
-    private StrikeMapHelper mStrikeMapHelper;
-    private StrikeDetailFragment mStrikeDetailFragment;
-
-    private SQLDatabase mDatabase;
-
-    private String mStrikeId;
-
-    private String mRegion;
-    private Cursor mStrikeLocations;
 
     private SpinnerAdapter mSpinnerAdapter;
     private ActionBar.OnNavigationListener mOnNavigationListener;
@@ -262,124 +250,4 @@ public class StrikeDetailActivity extends ActionBarActivity implements
             e.printStackTrace();
         }
     }
-
-
-    /**
-     * user has selected a region from the spinner on the action bar
-     *
-     */
-    private void onRegionSelected(int itemPosition) {
-
-        ifd("onRegionSelected");
-
-        try {
-            // new region == old region -> do nothing
-            if(itemPosition == SQLDatabase.indexFromRegion(mRegion)) {
-                return;
-            }
-            mRegion = SQLDatabase.regionFromIndex(itemPosition);
-
-            // is mStrikeId also in the new region?
-            // true if we're switching to worldwide view (itemPosition == 0)
-            // or if we're going from worldwide to a region that the current strike is from
-            Strike strike = mDatabase.getStrike(mStrikeId);
-            boolean isCurrentStrikeInNewRegion = itemPosition == 0 || strike.getCountry().equals(mRegion);
-
-            // show markers for the new region
-            mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegion);
-
-            if(!isCurrentStrikeInNewRegion) {
-                // set strikeId to the most recent strike in the new region
-                ifd("getting most recent strike in " + mRegion);
-                mStrikeId = mDatabase.getRecentStrikeIdInRegion(mRegion);
-            } else {
-                ifd("existing strike already took place in the new region: " + mRegion);
-            }
-
-            // create a new StrikeDetailFragment and StrikeMapHelper
-            StrikeDetailFragment fragment = new StrikeDetailFragment();
-
-            Bundle bundle = new Bundle();
-            bundle.putString(SQLDatabase.KEY_ID, mStrikeId);
-            bundle.putString(SQLDatabase.REGION, mRegion);
-            bundle.putBoolean(StrikeDetailFragment.ALWAYS_FLEX_VIEW, shouldAlwaysUseFlexLayout());
-            fragment.setArguments(bundle);
-
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.strike_detail_container, fragment)
-                    .commit();
-
-            mStrikeMapHelper = new StrikeMapHelper(this);
-
-            showStrikeOnMap(mStrikeId);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showStrikeOnMap(String strikeId) {
-        ifd("showStrikeOnMap");
-
-        ifd("strikeId = " + strikeId);
-        mStrikeId = strikeId;
-
-        if(mStrikeLocations == null) {
-            ifd("null strikeLocations");
-        } else {
-            ifd("non null strikelocations");
-        }
-
-        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
-
-        Strike strike = mDatabase.getStrike(strikeId);
-        LatLng strikeLocation = new LatLng(strike.getLat(), strike.getLon());
-
-        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation)) {
-            mStrikeMapHelper.clearMap()
-                    .showMainMarker(strike)
-                    .showSurroundingMarkers(mStrikeLocations);
-        }
-    }
-
-    private void changeMapPadding(int padding) {
-        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
-        mStrikeMapHelper.setMapPadding((SupportMapFragment) mapFragment, padding);
-    }
-
-
-    /**
-     * large screen devices in portrait mode will always have enough room to show all
-     * the information in a StrikeDetailFragment without having to use the
-     * fragment_strike_detail_half.xml layout
-     */
-    private boolean shouldAlwaysUseFlexLayout() {
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        return width > 900;
-    }
-
-    // for interface OnStrikeInfoListener
-    public void onStrikeInfoNavigated(String strikeId) {
-        ifd("onStrikeInfoNavigated: strikeId: " + strikeId);
-        showStrikeOnMap(strikeId);
-    }
-    public void onStrikeInfoResized(int height) {
-        ifd("onStrikeInfoResized: height: " + height);
-        changeMapPadding(height);
-    }
-
-    // for interface OnMarkerClickListener
-    public void onMarkerClick(String strikeId) {
-
-        // this will update the StrikeDetailFragment
-        mStrikeDetailFragment.showStrikeDetail(strikeId);
-
-
-        showStrikeOnMap(strikeId);
-    }
-
 }

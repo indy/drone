@@ -72,10 +72,8 @@ import io.indy.drone.view.StrikeMapHelper;
  * {@link io.indy.drone.fragment.StrikeListFragment.Callbacks} interface
  * to listen for item selections.
  */
-public class StrikeListActivity extends ActionBarActivity implements
-        StrikeListFragment.Callbacks,
-        StrikeDetailFragment.OnStrikeInfoListener,
-        StrikeMapHelper.OnMarkerClickListener {
+public class StrikeListActivity extends BaseActivity implements
+        StrikeListFragment.Callbacks {
 
     static private final boolean D = true;
     static private final String TAG = StrikeListActivity.class.getSimpleName();
@@ -87,8 +85,8 @@ public class StrikeListActivity extends ActionBarActivity implements
 
     private final int mDebugMenuItemId = 0;
 
-    private StrikeMapHelper mStrikeMapHelper;
-    private StrikeDetailFragment mStrikeDetailFragment;
+    //private StrikeMapHelper mStrikeMapHelper;
+    //private StrikeDetailFragment mStrikeDetailFragment;
 
     PendingIntent pi;
     AlarmManager am;
@@ -97,13 +95,13 @@ public class StrikeListActivity extends ActionBarActivity implements
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
 
-    private String mStrikeId;
-    private String mRegion;
+   // /private String mStrikeId;
+    //private String mRegion;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
 
-    private Cursor mStrikeLocations;
+    //private Cursor mStrikeLocations;
 
 
 
@@ -114,7 +112,7 @@ public class StrikeListActivity extends ActionBarActivity implements
      */
     private boolean mTwoPane;
 
-    private SQLDatabase mDatabase;
+    //private SQLDatabase mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -355,43 +353,6 @@ public class StrikeListActivity extends ActionBarActivity implements
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
-    private void showStrikeOnMap(String strikeId) {
-
-        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
-
-        Strike strike = mDatabase.getStrike(strikeId);
-        LatLng strikeLocation = new LatLng(strike.getLat(), strike.getLon());
-
-        if(mStrikeMapHelper.configureMap((SupportMapFragment) mapFragment, strikeLocation)) {
-            mStrikeMapHelper.clearMap()
-                    .showMainMarker(strike)
-                    .showSurroundingMarkers(mStrikeLocations);
-        }
-    }
-
-    private void changeMapPadding(int padding) {
-        Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
-        mStrikeMapHelper.setMapPadding((SupportMapFragment) mapFragment, padding);
-    }
-
-    // for interface OnStrikeInfoListener
-    public void onStrikeInfoNavigated(String strikeId) {
-        showStrikeOnMap(strikeId);
-    }
-    public void onStrikeInfoResized(int height) {
-        ifd("height");
-        changeMapPadding(height);
-    }
-
-    // for interface OnMarkerClickListener
-    public void onMarkerClick(String strikeId) {
-        //mStrikeDetailFragment.showStrikeDetail(strikeId);
-
-        // this will update the StrikeDetailFragment
-        mStrikeDetailFragment.showStrikeDetail(strikeId);
-        showStrikeOnMap(strikeId);
-    }
-
     private void setupAlarm() {
 
         // check a SharedPreferences variable to see if we've already setup an inexact alarm
@@ -446,62 +407,5 @@ public class StrikeListActivity extends ActionBarActivity implements
         editor.putString(ScheduledService.ALARM_SET_AT, DateFormatHelper.dateToSQLite(today));
         editor.commit();
         ifd("updated ALARM_SET_AT shared preference");
-    }
-
-
-
-    /**
-     * user has selected a region from the spinner on the action bar
-     *
-     */
-    private void onRegionSelected(int itemPosition) {
-
-        ifd("onRegionSelected");
-
-        try {
-            // new region == old region -> do nothing
-            if(itemPosition == SQLDatabase.indexFromRegion(mRegion)) {
-                return;
-            }
-            mRegion = SQLDatabase.regionFromIndex(itemPosition);
-
-            // is mStrikeId also in the new region?
-            // true if we're switching to worldwide view (itemPosition == 0)
-            // or if we're going from worldwide to a region that the current strike is from
-            Strike strike = mDatabase.getStrike(mStrikeId);
-            boolean isCurrentStrikeInNewRegion = itemPosition == 0 || strike.getCountry().equals(mRegion);
-
-            // show markers for the new region
-            mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegion);
-
-            if(!isCurrentStrikeInNewRegion) {
-                // set strikeId to the most recent strike in the new region
-                ifd("getting most recent strike in " + mRegion);
-                mStrikeId = mDatabase.getRecentStrikeIdInRegion(mRegion);
-            } else {
-                ifd("existing strike already took place in the new region: " + mRegion);
-            }
-
-            // create a new StrikeDetailFragment and StrikeMapHelper
-            StrikeDetailFragment fragment = new StrikeDetailFragment();
-
-            Bundle bundle = new Bundle();
-            bundle.putString(SQLDatabase.KEY_ID, mStrikeId);
-            bundle.putString(SQLDatabase.REGION, mRegion);
-            bundle.putBoolean(StrikeDetailFragment.ALWAYS_FLEX_VIEW, true);
-            fragment.setArguments(bundle);
-
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.strike_detail_container, fragment)
-                    .commit();
-
-            mStrikeMapHelper = new StrikeMapHelper(this);
-
-            showStrikeOnMap(mStrikeId);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
