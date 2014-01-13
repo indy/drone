@@ -88,6 +88,7 @@ public class StrikeListActivity extends ActionBarActivity implements
     private final int mDebugMenuItemId = 0;
 
     private StrikeMapHelper mStrikeMapHelper;
+    private StrikeDetailFragment mStrikeDetailFragment;
 
     PendingIntent pi;
     AlarmManager am;
@@ -96,12 +97,16 @@ public class StrikeListActivity extends ActionBarActivity implements
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
 
-    private String mRegionSelected;
+    private String mStrikeId;
+    private String mRegion;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
 
     private Cursor mStrikeLocations;
+
+
+
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -147,6 +152,7 @@ public class StrikeListActivity extends ActionBarActivity implements
     }
 
 
+
     /**
      * Callback method from {@link StrikeListFragment.Callbacks}
      * indicating that the item with the given ID was selected.
@@ -155,19 +161,39 @@ public class StrikeListActivity extends ActionBarActivity implements
     public void onItemSelected(String id) {
 
         if (mTwoPane) {
+
+            mStrikeId = id;
+
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
 
+/*
             Bundle bundle = new Bundle();
             bundle.putString(SQLDatabase.KEY_ID, id);
-            bundle.putString(SQLDatabase.REGION, mRegionSelected);
+            bundle.putString(SQLDatabase.REGION, mRegion);
 
             StrikeDetailFragment fragment = new StrikeDetailFragment();
             fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.strike_detail_container, fragment)
                     .commit();
+*/
+            mStrikeDetailFragment = new StrikeDetailFragment();
+
+            Bundle bundle = new Bundle();
+            bundle.putString(SQLDatabase.KEY_ID, id);
+            bundle.putString(SQLDatabase.REGION, mRegion);
+            bundle.putBoolean(StrikeDetailFragment.ALWAYS_FLEX_VIEW, true);
+            mStrikeDetailFragment.setArguments(bundle);
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.strike_detail_container, mStrikeDetailFragment)
+                    .commit();
+
+
+
 
             showStrikeOnMap(id);
             // Fragment mapFragment = (getSupportFragmentManager().findFragmentById(R.id.map));
@@ -178,7 +204,7 @@ public class StrikeListActivity extends ActionBarActivity implements
             // for the selected item ID.
             Intent detailIntent = new Intent(this, StrikeDetailActivity.class);
             detailIntent.putExtra(SQLDatabase.KEY_ID, id);
-            detailIntent.putExtra(SQLDatabase.REGION, mRegionSelected);
+            detailIntent.putExtra(SQLDatabase.REGION, mRegion);
 
             if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
                 startActivity(detailIntent);
@@ -257,12 +283,12 @@ public class StrikeListActivity extends ActionBarActivity implements
     protected void setupNavigationDrawer() {
 
         try {
-            mRegionSelected = SQLDatabase.regionFromIndex(0); // worldwide
+            mRegion = SQLDatabase.regionFromIndex(0); // worldwide
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
 
-        mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegionSelected);
+        mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegion);
 
         mTitle = mDrawerTitle = getTitle();
         mDrawerTitles = getResources().getStringArray(R.array.locations_array);
@@ -312,12 +338,15 @@ public class StrikeListActivity extends ActionBarActivity implements
         setTitle(mDrawerTitles[position]);
 
         try {
-            mRegionSelected = SQLDatabase.regionFromIndex(position);
-            mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegionSelected);
+            onRegionSelected(position);
+            //mRegion = SQLDatabase.regionFromIndex(position);
+            //mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegion);
 
             ((StrikeListFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.strike_list))
-                    .onRegionClicked(mRegionSelected);
+                    .onRegionClicked(mRegion);
+
+
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
             throw e;
@@ -357,6 +386,10 @@ public class StrikeListActivity extends ActionBarActivity implements
     // for interface OnMarkerClickListener
     public void onMarkerClick(String strikeId) {
         //mStrikeDetailFragment.showStrikeDetail(strikeId);
+
+        // this will update the StrikeDetailFragment
+        mStrikeDetailFragment.showStrikeDetail(strikeId);
+        showStrikeOnMap(strikeId);
     }
 
     private void setupAlarm() {
@@ -413,5 +446,62 @@ public class StrikeListActivity extends ActionBarActivity implements
         editor.putString(ScheduledService.ALARM_SET_AT, DateFormatHelper.dateToSQLite(today));
         editor.commit();
         ifd("updated ALARM_SET_AT shared preference");
+    }
+
+
+
+    /**
+     * user has selected a region from the spinner on the action bar
+     *
+     */
+    private void onRegionSelected(int itemPosition) {
+
+        ifd("onRegionSelected");
+
+        try {
+            // new region == old region -> do nothing
+            if(itemPosition == SQLDatabase.indexFromRegion(mRegion)) {
+                return;
+            }
+            mRegion = SQLDatabase.regionFromIndex(itemPosition);
+
+            // is mStrikeId also in the new region?
+            // true if we're switching to worldwide view (itemPosition == 0)
+            // or if we're going from worldwide to a region that the current strike is from
+            Strike strike = mDatabase.getStrike(mStrikeId);
+            boolean isCurrentStrikeInNewRegion = itemPosition == 0 || strike.getCountry().equals(mRegion);
+
+            // show markers for the new region
+            mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegion);
+
+            if(!isCurrentStrikeInNewRegion) {
+                // set strikeId to the most recent strike in the new region
+                ifd("getting most recent strike in " + mRegion);
+                mStrikeId = mDatabase.getRecentStrikeIdInRegion(mRegion);
+            } else {
+                ifd("existing strike already took place in the new region: " + mRegion);
+            }
+
+            // create a new StrikeDetailFragment and StrikeMapHelper
+            StrikeDetailFragment fragment = new StrikeDetailFragment();
+
+            Bundle bundle = new Bundle();
+            bundle.putString(SQLDatabase.KEY_ID, mStrikeId);
+            bundle.putString(SQLDatabase.REGION, mRegion);
+            bundle.putBoolean(StrikeDetailFragment.ALWAYS_FLEX_VIEW, true);
+            fragment.setArguments(bundle);
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.strike_detail_container, fragment)
+                    .commit();
+
+            mStrikeMapHelper = new StrikeMapHelper(this);
+
+            showStrikeOnMap(mStrikeId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
