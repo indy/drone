@@ -51,15 +51,6 @@
                                           ["death" "civilian" "child" "injury"])))]
     (conj strike {:drone-app-summary summary-text})))
 
-(defn- unicode-fix [str]
-  (let [unicodes ["’" "‘"]]
-    (reduce (fn [a b] (clojure.string/replace a b "'")) str unicodes)))
-
-(defn de-unicode [strike]
-  (assoc strike
-    :bij-summary-short
-    (unicode-fix (:bij-summary-short strike))))
-
 (defn add-information-url [strikes tweet-info]
   (map (fn [s]
          (assoc s :information-url (twitter/get-info (:tweet-id s) tweet-info)))
@@ -67,5 +58,5 @@
 
 (defn process [strikes tweet-info]
   (let [s (add-information-url strikes tweet-info)]
-    (map #(-> % de-unicode rangify summarise)
+    (map #(-> % rangify summarise)
          s)))
