@@ -25,7 +25,7 @@
   (spit filename number))
 
 (defn save [data filename]
-  (spit filename (json/write-str data)))
+  (spit filename (json/write-str data :escape-unicode false)))
 
 (defn save-strikes [data filename]
   (save {:status "OK" :strike data} filename))
