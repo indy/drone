@@ -60,11 +60,6 @@
     :bij-summary-short
     (unicode-fix (:bij-summary-short strike))))
 
-(defn add-information-url3 [strikes tweet-info]
-  (map (fn [s]
-         (assoc s :information-url "foobar"))
-       strikes))
-
 (defn add-information-url [strikes tweet-info]
   (map (fn [s]
          (assoc s :information-url (twitter/get-info (:tweet-id s) tweet-info)))
