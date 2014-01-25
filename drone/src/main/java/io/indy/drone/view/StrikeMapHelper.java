@@ -38,6 +38,8 @@ import io.indy.drone.model.Strike;
 
 public class StrikeMapHelper {
 
+    private static final String SNIPPET_ID_PREFIX = "id:";
+
     private static final String TAG = "StrikeMapHelper";
     private static final boolean D = true;
 
@@ -80,7 +82,7 @@ public class StrikeMapHelper {
             mMap.addMarker(new MarkerOptions()
                     .icon(icon)
                     .anchor(0.5f, 0.5f)
-                    .snippet(cursor.getString(keyIdIndex))
+                    .snippet(SNIPPET_ID_PREFIX + cursor.getString(keyIdIndex))
                     .position(new LatLng(cursor.getDouble(latIndex),
                             cursor.getDouble(lonIndex)))
                     .alpha(0.6f));
@@ -211,13 +213,23 @@ public class StrikeMapHelper {
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                ifd("clicked on a marker");
-                ifd("got snippet: " + marker.getSnippet());
+                ifd("clicked on a marker with snippet: " + marker.getSnippet());
 
-                String id = marker.getSnippet();
-                mOnMarkerClickListener.onMarkerClick(id);
-
-                return true;
+                // the currently selected strike location will have the
+                // 'classic' google maps marker on it. If the user
+                // clicks on that this callback will be triggered
+                // and the value of getSnippet() won't be the key id for
+                // the strike.
+                //
+                String snippet = marker.getSnippet();
+                int prefixLength = SNIPPET_ID_PREFIX.length();
+                if(snippet.substring(0, prefixLength).equals(SNIPPET_ID_PREFIX)) {
+                    String id = snippet.substring(prefixLength);
+                    ifd("snippet contains id = " + id);
+                    mOnMarkerClickListener.onMarkerClick(id);
+                    return true;
+                }
+                return false;
             }
         });
 
