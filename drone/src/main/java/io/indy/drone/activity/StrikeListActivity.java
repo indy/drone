@@ -82,11 +82,7 @@ public class StrikeListActivity extends BaseActivity implements
         if (AppConfig.DEBUG && D) Log.d(TAG, message);
     }
 
-
     private final int mDebugMenuItemId = 0;
-
-    //private StrikeMapHelper mStrikeMapHelper;
-    //private StrikeDetailFragment mStrikeDetailFragment;
 
     PendingIntent pi;
     AlarmManager am;
@@ -95,16 +91,9 @@ public class StrikeListActivity extends BaseActivity implements
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
 
-   // /private String mStrikeId;
-    //private String mRegion;
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-
-    //private Cursor mStrikeLocations;
-
-
-
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -112,18 +101,16 @@ public class StrikeListActivity extends BaseActivity implements
      */
     private boolean mTwoPane;
 
-    //private SQLDatabase mDatabase;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_strike_list);
 
-        mDatabase = new SQLDatabase(this);
-        mStrikeMapHelper = new StrikeMapHelper(this);
+        ifd("onCreate");
 
-        setupNavigationDrawer();
-        setupAlarm();
+        mDatabase = new SQLDatabase(this);
+        //mStrikeMapHelper = new StrikeMapHelper(this);
+
 
         if (findViewById(R.id.strike_detail_container) != null) {
             // The detail container view will be present only in the
@@ -139,7 +126,22 @@ public class StrikeListActivity extends BaseActivity implements
                     .setActivateOnItemClick(true);
         }
 
-        // TODO: If exposing deep links into your app, handle intents here.
+        if (savedInstanceState != null) {
+            mStrikeId = savedInstanceState.getString(SQLDatabase.KEY_ID);
+            mRegion = savedInstanceState.getString(SQLDatabase.REGION);
+        } else {
+            mRegion = SQLDatabase.regionFromIndex(0);
+            mStrikeId = "";//mDatabase.getRecentStrikeIdInRegion(mRegion);
+        }
+
+        mStrikeLocations = mDatabase.getStrikeLocationsInRegion(mRegion);
+        mStrikeMapHelper = new StrikeMapHelper(this);
+        if(!mStrikeId.isEmpty()) {
+            showStrikeOnMap(mStrikeId);
+        }
+
+        setupNavigationDrawer();
+        setupAlarm();
     }
 
     @Override
@@ -149,6 +151,50 @@ public class StrikeListActivity extends BaseActivity implements
         mDrawerToggle.syncState();
     }
 
+    @Override
+    public void onStart() {
+        ifd("onStart");
+        super.onStart();
+    }
+
+    @Override
+    public void onRestart() {
+        ifd("onRestart");
+        super.onRestart();
+    }
+
+    @Override
+    public void onResume() {
+        ifd("onResume");
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        ifd("onPause");
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        ifd("onStop");
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        ifd("onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        ifd("onSaveInstanceState");
+
+        super.onSaveInstanceState(outState);
+        outState.putString(SQLDatabase.KEY_ID, mStrikeId);
+        outState.putString(SQLDatabase.REGION, mRegion);
+    }
 
 
     /**
