@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- see release/res/values/private.xml for the release key -->
+  <string name="map_key">"AIzaSyDtXP6DZj1U8plII27sZvliMsPjdWwYiKo"</string>
+</resources>
