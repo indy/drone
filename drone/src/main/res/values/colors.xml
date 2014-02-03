@@ -2,6 +2,7 @@
 <resources>
     <color name="pressed_drone">#CC69D2E7</color>
 
+    <!--
     <color name="drone_blue">#69D2E7</color>
     <color name="drone_lightblue">#A7DBD8</color>
     <color name="drone_beige">#E0E4CC</color>
@@ -11,8 +12,8 @@
     <color name="green">#00eb45</color>
     <color name="blue">#4fb4e7</color>
     <color name="orange">#fa6900</color>
-
     <color name="white">#ffffff</color>
+    -->
 
     <color name="drawer_background">#f3f3f4</color>
     <color name="drawer_text">#000</color>
