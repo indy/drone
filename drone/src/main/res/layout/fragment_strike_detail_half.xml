@@ -79,7 +79,7 @@
                 <!--  style="?android:attr/textAppearanceLarge" -->
                 <TextView android:id="@+id/strike_detail"
                           android:layout_width="match_parent"
-                          android:layout_height="match_parent"
+                          android:layout_height="wrap_content"
 
                           android:textSize="16sp"
                           android:padding="8dp"
@@ -110,18 +110,20 @@
             </LinearLayout>
 
             <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                android:baselineAligned="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
+                        style="?android:attr/buttonBarStyle" 
                         android:layout_weight="1"
                         android:gravity="center_horizontal"
                         android:orientation="horizontal">
 
                     <Button android:id="@+id/btn_previous_strike"
-
+                            style="?android:attr/buttonBarButtonStyle" 
                             android:textSize="16sp"
                             android:padding="8dp"
                             android:fontFamily="sans-serif-light"
@@ -131,7 +133,7 @@
                             android:layout_height="wrap_content"/>
 
                     <Button android:id="@+id/btn_info_link"
-
+                            style="?android:attr/buttonBarButtonStyle" 
                             android:textSize="16sp"
                             android:padding="8dp"
                             android:fontFamily="sans-serif-light"
@@ -141,7 +143,7 @@
                             android:layout_height="wrap_content"/>
 
                     <Button android:id="@+id/btn_next_strike"
-
+                            style="?android:attr/buttonBarButtonStyle" 
                             android:textSize="16sp"
                             android:padding="8dp"
                             android:fontFamily="sans-serif-light"
