@@ -333,7 +333,7 @@ public class SQLDatabase {
 
         private static final String DATABASE_NAME = "drone.db";
 
-        private static final int DATABASE_VERSION = 6;
+        private static final int DATABASE_VERSION = 7;
 
         private static final String STRIKE_TABLE = "strike";
 
@@ -408,12 +408,39 @@ public class SQLDatabase {
             // version. Multiple previous versions can be handled by
             // comparing oldVersion and newVersion values.
 
-            // The simplest case is to drop the old table and create a new one.
-            String dropStrikeTable = new SQLTableStatement(STRIKE_TABLE).drop();
-            db.execSQL(dropStrikeTable);
+            boolean recreate = false;
 
-            // Create a new one.
-            onCreate(db);
+            if (recreate) {
+                // The simplest case is to drop the old table and create a new one.
+                String dropStrikeTable = new SQLTableStatement(STRIKE_TABLE).drop();
+                db.execSQL(dropStrikeTable);
+
+                // Create a new one.
+                onCreate(db);
+            }
+
+            if (oldVersion == 6) {
+                ifd("upgrading db from version 6");
+                ifd("incorrect dates given for strikes 520...523, correcting to March 2014");
+
+                hackFixMayToMarch(db, 520, "2014-03-03T00:00:00.000Z");
+                hackFixMayToMarch(db, 521, "2014-03-03T00:00:00.000Z");
+                hackFixMayToMarch(db, 522, "2014-03-03T00:00:00.000Z");
+                hackFixMayToMarch(db, 523, "2014-03-05T00:00:00.000Z");
+            }
+
+        }
+
+        private void hackFixMayToMarch(SQLiteDatabase db, int number, String jsonDate) {
+
+            ContentValues cv = new ContentValues();
+            String sqlDate = DateFormatHelper.dateToSQLite(DateFormatHelper.parseJsonDateString(jsonDate));
+            cv.put(Strike.HAPPENED, sqlDate);
+
+            String where = Strike.NUMBER + "=?";
+            String[] whereArgs = new String[]{Integer.toString(number)};
+
+            db.update(STRIKE_TABLE, cv, where, whereArgs);
         }
 
         public void addStrike(Strike strike) {
