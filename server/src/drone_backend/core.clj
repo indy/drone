@@ -56,5 +56,8 @@
 (defn process-url [url save-folder]
   (process-json (io/fetch-json-url url) save-folder))
 
+; (defn -main [& terms] (process-url dronestream-url (first terms)))
+
 (defn -main [& terms]
-  (process-url dronestream-url (first terms)))
+  "invoke with $filename $save-folder"
+  (process-file (first terms) (second terms)))

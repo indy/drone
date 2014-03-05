@@ -4,6 +4,7 @@
 DRONE_BACKEND_PATH=`dirname "$0"`
 
 JAR_FILE=$DRONE_BACKEND_PATH/target/drone-backend-0.1.0-SNAPSHOT-standalone.jar
+INPUT_FILE=$DRONE_BACKEND_PATH/resources/canonical.json
 SAVE_PATH=$DRONE_BACKEND_PATH/cache
 
-java -jar $JAR_FILE $SAVE_PATH
+java -jar $JAR_FILE $INPUT_FILE $SAVE_PATH
