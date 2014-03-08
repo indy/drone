@@ -19,8 +19,10 @@ package io.indy.drone.activity;
 import android.app.ActivityOptions;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -39,6 +41,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -95,6 +99,31 @@ public class StrikeListActivity extends BaseActivity implements
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
 
+
+
+    public class ResponseReceiver extends BroadcastReceiver {
+        public static final String ACTION_RESP = "io.indy.drone.intent.action.MESSAGE_PROCESSED";
+        public static final String STRIKE_DIFF = "strike diff";
+        public static final String IS_PTR = "is pull to refresh?";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int diff = intent.getIntExtra(STRIKE_DIFF, 0);
+
+            // maybe show a toast here
+            ifd("got back a response, diff is " + diff);
+            CharSequence text = diff == 0 ? "strike data is up to date" : "strike data updated";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+
+            StrikeListFragment strikeListFragment = (StrikeListFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.strike_list);
+            strikeListFragment.stopPullToRefreshProgress();
+        }
+    }
+
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
@@ -140,9 +169,16 @@ public class StrikeListActivity extends BaseActivity implements
             showStrikeOnMap(mStrikeId);
         }
 
+        IntentFilter filter = new IntentFilter(ResponseReceiver.ACTION_RESP);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        receiver = new ResponseReceiver();
+        registerReceiver(receiver, filter);
+
         setupNavigationDrawer();
         setupAlarm();
     }
+
+    private ResponseReceiver receiver;
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

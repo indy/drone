@@ -6,6 +6,7 @@ repositories {
 }
 
 dependencies {
+  compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
   compile 'com.android.support:appcompat-v7:18.0.+'
   compile 'de.greenrobot:eventbus:2.0.2'
   compile 'com.google.android.gms:play-services:4.0.30'

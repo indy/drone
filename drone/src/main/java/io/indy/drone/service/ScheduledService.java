@@ -43,6 +43,7 @@ import de.greenrobot.event.EventBus;
 import io.indy.drone.AppConfig;
 import io.indy.drone.R;
 import io.indy.drone.activity.StrikeDetailActivity;
+import io.indy.drone.activity.StrikeListActivity;
 import io.indy.drone.event.UpdatedDatabaseEvent;
 import io.indy.drone.model.SQLDatabase;
 import io.indy.drone.model.Strike;
@@ -71,6 +72,12 @@ public class ScheduledService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         ifd("onHandleIntent");
+
+        boolean isPullToRefresh = intent.getBooleanExtra(
+                StrikeListActivity.ResponseReceiver.IS_PTR, false);
+        if(isPullToRefresh) {
+            ifd("invoked service via pull to refresh");
+        }
 
         mDatabase = new SQLDatabase(this);
 
@@ -102,11 +109,23 @@ public class ScheduledService extends IntentService {
                 EventBus.getDefault().post(new UpdatedDatabaseEvent());
 
                 // create a notification
-                createNotification();
+                if(!isPullToRefresh) {
+                    createNotification();
+                }
 
             } else {
                 ifd("serverCount (" + serverCount + ") not greater than localCount (" + localCount + ")");
             }
+
+            if (isPullToRefresh) {
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction(StrikeListActivity.ResponseReceiver.ACTION_RESP);
+                broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                int diff = serverCount - localCount;
+                broadcastIntent.putExtra(StrikeListActivity.ResponseReceiver.STRIKE_DIFF, diff);
+                sendBroadcast(broadcastIntent);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
