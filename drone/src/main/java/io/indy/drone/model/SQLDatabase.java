@@ -157,18 +157,15 @@ public class SQLDatabase {
     public int getNumStrikes() {
 
         SQLiteDatabase db = mModelHelper.getReadableDatabase();
+        String sql = "select max(" + Strike.NUMBER + ") from " + ModelHelper.STRIKE_TABLE;
+        Cursor cursor = db.rawQuery(sql, null);
         try {
-            String sql = "select max(" + Strike.NUMBER + ") from " + ModelHelper.STRIKE_TABLE;
-            Cursor cursor = db.rawQuery(sql, null);
-
             cursor.moveToNext();
-            int largestNumber = cursor.getInt(0);
-            cursor.close();
-
-            return largestNumber;
-
+            return cursor.getInt(0);
         } catch (NullPointerException e) {
             e.printStackTrace();
+        } finally {
+            cursor.close();
         }
 
         return 0;
@@ -199,22 +196,20 @@ public class SQLDatabase {
         String having = null;
         String order = null;
 
-        Strike strike = null;
-
         SQLiteDatabase db = mModelHelper.getReadableDatabase();
+        Cursor cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns,
+                            where, whereArgs,
+                            groupBy, having, order);
         try {
-            Cursor cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns,
-                    where, whereArgs,
-                    groupBy, having, order);
-
             cursor.moveToNext();
-            strike = strikeFromCursor(cursor);
-            cursor.close();
-
+            return strikeFromCursor(cursor);
         } catch (NullPointerException e) {
             e.printStackTrace();
+        } finally {
+            cursor.close();
         }
-        return strike;
+
+        return null;
     }
 
     public Cursor getStrikeLocationsInRegion(String region) {
@@ -266,19 +261,16 @@ public class SQLDatabase {
         String order = Strike.HAPPENED + " desc";
 
         SQLiteDatabase db = mModelHelper.getReadableDatabase();
-        Cursor cursor = null;
+        Cursor cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns, where, whereArgs, groupBy,
+                having, order);
         try {
-            cursor = db.query(ModelHelper.STRIKE_TABLE, result_columns, where, whereArgs, groupBy,
-                    having, order);
-
             cursor.moveToNext();
-            String strikeId = cursor.getString(0);
-            cursor.close();
-
-            return strikeId;
+            return cursor.getString(0);
         } catch (NullPointerException e) {
             e.printStackTrace();
             throw e;
+        } finally {
+            cursor.close();
         }
     }
 
