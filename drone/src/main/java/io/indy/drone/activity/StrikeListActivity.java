@@ -25,14 +25,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,11 +38,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
 
@@ -54,7 +47,6 @@ import io.indy.drone.R;
 import io.indy.drone.fragment.StrikeDetailFragment;
 import io.indy.drone.fragment.StrikeListFragment;
 import io.indy.drone.model.SQLDatabase;
-import io.indy.drone.model.Strike;
 import io.indy.drone.service.ScheduledService;
 import io.indy.drone.utils.DateFormatHelper;
 import io.indy.drone.view.StrikeMapHelper;
@@ -87,6 +79,8 @@ public class StrikeListActivity extends BaseActivity implements
     }
 
     private final int mDebugMenuItemId = 0;
+
+    private ResponseReceiver mResponseReceiver;
 
     PendingIntent pi;
     AlarmManager am;
@@ -171,14 +165,13 @@ public class StrikeListActivity extends BaseActivity implements
 
         IntentFilter filter = new IntentFilter(ResponseReceiver.ACTION_RESP);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
-        receiver = new ResponseReceiver();
-        registerReceiver(receiver, filter);
+        mResponseReceiver = new ResponseReceiver();
+        registerReceiver(mResponseReceiver, filter);
 
         setupNavigationDrawer();
         setupAlarm();
     }
 
-    private ResponseReceiver receiver;
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -220,6 +213,7 @@ public class StrikeListActivity extends BaseActivity implements
     @Override
     public void onDestroy() {
         ifd("onDestroy");
+        unregisterReceiver(mResponseReceiver);
         super.onDestroy();
     }
 
