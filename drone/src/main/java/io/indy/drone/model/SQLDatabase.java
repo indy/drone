@@ -325,7 +325,7 @@ public class SQLDatabase {
 
         private static final String DATABASE_NAME = "drone.db";
 
-        private static final int DATABASE_VERSION = 7;
+        private static final int DATABASE_VERSION = 8;
 
         private static final String STRIKE_TABLE = "strike";
 
@@ -413,14 +413,39 @@ public class SQLDatabase {
 
             if (oldVersion == 6) {
                 ifd("upgrading db from version 6");
-                ifd("incorrect dates given for strikes 520...523, correcting to March 2014");
 
+                ifd("incorrect dates given for strikes 520...523, correcting to March 2014");
                 hackFixMayToMarch(db, 520, "2014-03-03T00:00:00.000Z");
                 hackFixMayToMarch(db, 521, "2014-03-03T00:00:00.000Z");
                 hackFixMayToMarch(db, 522, "2014-03-03T00:00:00.000Z");
                 hackFixMayToMarch(db, 523, "2014-03-05T00:00:00.000Z");
+
+                oldVersion = 7;
             }
 
+            if (oldVersion == 7) {
+                ifd("upgrading db from version 7");
+
+                ifd("incorrect location given for Al Jawf, Yemen");
+                hackFixAlJawfLocation(db);
+            }
+
+        }
+
+
+        private void hackFixAlJawfLocation(SQLiteDatabase db) {
+            int number = 523;
+            double lat = 16.790182;
+            double lon = 45.299386;
+
+            ContentValues cv = new ContentValues();
+            cv.put(Strike.LAT, lat);
+            cv.put(Strike.LON, lon);
+
+            String where = Strike.NUMBER + "=?";
+            String[] whereArgs = new String[]{Integer.toString(number)};
+
+            db.update(STRIKE_TABLE, cv, where, whereArgs);
         }
 
         private void hackFixMayToMarch(SQLiteDatabase db, int number, String jsonDate) {

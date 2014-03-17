@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
 def versionMajor = 0
 def versionMinor = 1
 def versionPatch = 3
-def versionBuild = 0 // bump for dogfood builds, public betas, etc.
+def versionBuild = 1 // bump for dogfood builds, public betas, etc.
 
 def gitSha() { 
   return "git --git-dir=${projectDir}/../.git --work-tree=${projectDir}/.. rev-parse --short HEAD".execute().text.trim()
