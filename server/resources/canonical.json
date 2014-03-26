@@ -13075,6 +13075,81 @@
       "names": [
         ""
       ]
+    },
+    {
+      "_id": "53177dff8d8b4098c5038492",
+      "number": 524,
+      "country": "Yemen",
+      "date": "2014-03-07T00:00:00.000Z",
+      "town": "Ahwar",
+      "location": "Southern Abyan",
+      "deaths": "15",
+      "deaths_min": "15",
+      "deaths_max": "15",
+      "civilians": "",
+      "injuries": "",
+      "children": "",
+      "tweet_id": "444139700656566272",
+      "bureau_id": "YEM167c",
+      "bij_summary_short": "A named Yemeni soldier told the Yemen Times 15 people were killed by drones in Mahfed, Abyan province. Unusually, Yemen Times reported the name of their military source. Shaker al Ghadeer was reportedly a soldier with Brigade 111 base in Abyan province. He was the only source of this strike. However a source in Yemen, speaking independently of this attack, told the Bureau several airstrikes have gone unreported in the Mahfed area of Abyan.",
+      "bij_link": "http://www.yementimes.com/en/1762/news/3574/Monday-attack-leaves-1-soldier-dead-in-Abyan.htm",
+      "target": "",
+      "lat": "13.516330",
+      "lon": "46.711048",
+      "articles": [],
+      "names": [
+        ""
+      ]
+    },
+    {
+      "_id": "53177dff8d8b4098c5038493",
+      "number": 525,
+      "country": "Yemen",
+      "date": "2014-03-10T00:00:00.000Z",
+      "town": "Ma'rib",
+      "location": "al-Arq district in the eastern Maarib province",
+      "deaths": "1-4",
+      "deaths_min": "1",
+      "deaths_max": "4",
+      "civilians": "0-1",
+      "injuries": "",
+      "children": "1",
+      "tweet_id": "443232609166835712",
+      "bureau_id": "YEM168",
+      "bij_summary_short": "At least one person was killed in the fifth airstrike on Yemen in eight days. Initial reports were conflicted - either one, two or four people were killed when one or two vehicles were destroyed. The attack hit at night, suggesting it was a US drone strike - the Yemen Air Force is incapable of flying strike missions at night. Three missiles were reportedly fired on the vehicle, destroying it. The dead were all allegedly al Qaeda members though their identities were not clear. Local and international media reported alleged local al Qaeda commanders Mohammed Jabir al Shabwani and Abdullah Mubarak bin Hamad were killed in the strike. A local official told Turkish state news agency Andolu the strike killed Abbad Mubarak Jabir. However local tribesmen said Ebad al Shabwani died while driving the vehicle. The Yemen Times subsequently reported he was a 16-year old child. Brigadier Abdulkhaleq Mohammed Saleh, army operations director in Mareb, told the paper he was a militant 'with suspected ties to al Qaeda'. Al Shabwani's family denied this, adding the boy's friends and family hadalso been targeted in drone strikes - including a friend Mujahid Jabir al Shabwani, killed on March 3.",
+      "bij_link": "http://news.yahoo.com/drone-strike-kills-4-qaeda-yemen-tribal-source-093320742.html",
+      "target": "",
+      "lat": "15.470031",
+      "lon": "45.322858",
+      "articles": [],
+      "names": [
+        ""
+      ]
+    },
+    {
+      "_id": "53177dff8d8b4098c5038494",
+      "number": 526,
+      "country": "Yemen",
+      "date": "2014-03-12T00:00:00.000Z",
+      "town": "Jebel Jame area",
+      "location": "Al Jawf Province",
+      "deaths": "2-3",
+      "deaths_min": "2",
+      "deaths_max": "3",
+      "civilians": "",
+      "injuries": "",
+      "children": "",
+      "tweet_id": "444146238876041217",
+      "bureau_id": "YEM169",
+      "bij_summary_short": "An airstrike destroyed a vehicle, killing Moajab Aziz Hadban and Ali Hassan Mohammed Hadban. Local media reported Mojab Aziz was a local al Qaeda commander and Hassan Mohammed his bodyguard. This was the sixth strike in 11 days and the second in a week on Jawf province.",
+      "bij_link": "http://www.naharnet.com/stories/en/122283",
+      "target": "",
+      "lat": "17.341389",
+      "lon": "43.550833",
+      "articles": [],
+      "names": [
+        ""
+      ]
     }
   ]
 }
