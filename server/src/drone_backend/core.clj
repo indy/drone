@@ -1,6 +1,5 @@
 (ns drone-backend.core
-  (:require [drone-backend.twitter :as twitter]
-            [drone-backend.augment :as augment]
+  (:require [drone-backend.augment :as augment]
             [drone-backend.io :as io]
             [clojure.string :as str])
   (:gen-class))
@@ -24,13 +23,7 @@
                    (str save-folder "/" "strikes-count.json"))
     (io/save-strikes strikes 
                      (str save-folder "/" "strikes-complete.json"))
-    (save-diffed strikes save-folder)
-    (twitter/save-local-cache strikes save-folder)))
-
-(defn rebuild-tweet-cache [strikes]
-  "rebuild the tweet map"
-  (zipmap (map :tweet-id strikes)
-          (map #(twitter/fetch-information-url (:tweet-id %)) strikes)))
+    (save-diffed strikes save-folder)))
 
 (defn updated-strike-data? [strikes save-folder]
   "are there any new strikes compared to whats already in the cache?"
@@ -41,20 +34,11 @@
 (defn process-json [json save-folder]
   (let [strike-data (:strike json)]
     (when (updated-strike-data? strike-data save-folder)
-      (let [tweet-info (twitter/load-local-cache save-folder)
-            strikes (augment/process (:strike json) tweet-info)]
-        (save-all strikes save-folder)))))
-
-(defn process-json-dbg [json save-folder]
-  (let [tweet-info (twitter/load-local-cache save-folder)
-        strikes (augment/process (:strike json) tweet-info)]
-    [strikes tweet-info]))
+      (save-all (augment/process (:strike json)) 
+                save-folder))))
 
 (defn process-file [filename save-folder]
   (process-json (io/read-json-file filename) save-folder))
-
-(defn process-url [url save-folder]
-  (process-json (io/fetch-json-url url) save-folder))
 
 ; (defn -main [& terms] (process-url dronestream-url (first terms)))
 

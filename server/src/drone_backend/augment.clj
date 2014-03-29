@@ -1,6 +1,5 @@
 (ns drone-backend.augment
-  (:require [drone-backend.twitter :as twitter]
-            [clojure.string :as str]))
+  (:require [clojure.string :as str]))
 
 (def SINGLE-NUMBER #"^\s*(\d+)\s*$")
 (def RANGE #"^\s*(\d+)\s*-\s*(\d+)\s*$")
@@ -60,12 +59,9 @@
     :bij-summary-short
     (unicode-fix (:bij-summary-short strike))))
 
-(defn add-information-url [strikes tweet-info]
-  (map (fn [s]
-         (assoc s :information-url (twitter/get-info (:tweet-id s) tweet-info)))
-       strikes))
-
-(defn process [strikes tweet-info]
-  (let [s (add-information-url strikes tweet-info)]
-    (map #(-> % de-unicode rangify summarise)
-         s)))
+(defn process [strikes]
+  (map #(-> % 
+            de-unicode
+            rangify
+            summarise)
+         strikes))
