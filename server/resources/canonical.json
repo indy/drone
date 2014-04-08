@@ -13673,6 +13673,32 @@
       "names": [
         ""
       ]
+    },
+    {
+      "_id": "53177dff8d8b4098c5038495",
+      "number": 527,
+      "country": "Yemen",
+      "date": "2014-04-01T00:00:00.000Z",
+      "town": "Mahfad",
+      "location": "Abyan Province",
+      "deaths": "3",
+      "deaths_min": "3",
+      "deaths_max": "3",
+      "civilians": "",
+      "injuries": "4",
+      "children": "",
+      "tweet_id": "451197694674239488",
+      "information_url": "http:\/\/news.xinhuanet.com\/english\/world\/2014-04\/02\/c_133230799.htm",
+      "bureau_id": "YEM170",
+      "bij_summary_short": "Three were killed in the first strike in Yemen in 20 days. The attack reportedly hit an alleged al Qaeda camp, meeting or vehicle at around 1pm local time. The dead were reportedly taken to the town of Shabwa by car. US drones reportedly carried out the attack. The day before Yemen Air Force war planes reportedly targeted an al Qaeda position in Abyan - there were no reported casualties.",
+      "bij_link": "http://news.xinhuanet.com/english/world/2014-04/02/c_133230799.htm",
+      "target": "",
+      "lat": "13.634341",
+      "lon": "46.056321",
+      "articles": [],
+      "names": [
+        ""
+      ]
     }
   ]
 }
