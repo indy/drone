@@ -13699,6 +13699,84 @@
       "names": [
         ""
       ]
+    },
+    {
+      "_id": "53177dff8d8b4098c5038496",
+      "number": 528,
+      "country": "Yemen",
+      "date": "2014-04-19T00:00:00.000Z",
+      "town": "Sawmaa",
+      "location": "Al-Bayda Province",
+      "deaths": "13-21",
+      "deaths_min": "13",
+      "deaths_max": "21",
+      "civilians": "3-8",
+      "injuries": "1-6",
+      "children": "",
+      "tweet_id": "457557212760526848",
+      "information_url": "http://edition.cnn.com/2014/04/19/world/meast/yemen-drone-strike/",
+      "bureau_id": "YEM171",
+      "bij_summary_short": "At least 13 - and possibly as many as 21 - were reportedly killed in the attack, including at least three civilians. They were described as 'construction workers' or 'labourers' by some reports. This is the highest death toll of any confirmed drone strike in Yemen so far this year. The attack was reportedly based on 'confirmed intelligence' that the men were 'planning to target vital civil and military institutions'.",
+      "bij_link": "http://www.thebureauinvestigates.com/2014/04/22/bloodiest-us-and-yemeni-attacks-in-two-years-kill-at-least-40-people/",
+      "target": "",
+      "lat": "14.078478",
+      "lon": "45.534264",
+      "articles": [],
+      "names": [
+        ""
+      ]
+    },
+    {
+      "_id": "53177dff8d8b4098c5038497",
+      "number": 529,
+      "country": "Yemen",
+      "date": "2014-04-20T00:00:00.000Z",
+      "town": "Mahfad",
+      "location": "Abyan Province",
+      "deaths": "24-31",
+      "deaths_min": "24",
+      "deaths_max": "31",
+      "civilians": "3",
+      "injuries": "1-3",
+      "children": "",
+      "tweet_id": "457899499784912897",
+      "information_url": "http://www.reuters.com/article/2014/04/20/yemen-violence-idINKBN0D609K20140420",
+      "bureau_id": "YEM172",
+      "bij_summary_short": "A series of air strikes hit alleged AQAP training camps in Yemen's southern Abyan province. The attacks follow a reported US drone strike the previous day in which at least three civilians were reportedly killed. The attacks were carried out by US drones and Yemen Air Force jets, US and Yemeni officials said.",
+      "bij_link": "http://www.thebureauinvestigates.com/2014/04/22/bloodiest-us-and-yemeni-attacks-in-two-years-kill-at-least-40-people/",
+      "target": "",
+      "lat": "13.634341",
+      "lon": "46.056321",
+      "articles": [],
+      "names": [
+        ""
+      ]
+    },
+    {
+      "_id": "53177dff8d8b4098c5038498",
+      "number": 530,
+      "country": "Yemen",
+      "date": "2014-04-21T00:00:00.000Z",
+      "town": "Usylan",
+      "location": "Shabwa Province",
+      "deaths": "3-4",
+      "deaths_min": "3",
+      "deaths_max": "4",
+      "civilians": "",
+      "injuries": "",
+      "children": "",
+      "tweet_id": "458029689206882304",
+      "information_url": "http://www.thebureauinvestigates.com/2014/01/06/yemen-reported-us-covert-actions-2014/#YEM173",
+      "bureau_id": "YEM172",
+      "bij_summary_short": "The third attack in three days killed at least three people in a car in Shabwa, an eastern Yemeni province to the north of location of the previous two attacks. Al Qaeda bomb maker Ibrahim al Asiri - one of the top targets in the US covert drone war - may have been among the dead. The attack reportedly hit just before midnight on April 20 or shortly after, in the small hours of April 21.",
+      "bij_link": "http://www.thebureauinvestigates.com/2014/01/06/yemen-reported-us-covert-actions-2014/#YEM173",
+      "target": "",
+      "lat": "14.754630",
+      "lon": "46.516262",
+      "articles": [],
+      "names": [
+        ""
+      ]
     }
   ]
 }
