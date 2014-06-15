@@ -13803,6 +13803,110 @@
       "names": [
         ""
       ]
+    },
+    {
+      "_id": "53177dff8d8b4098c5038401",
+      "number": 532,
+      "country": "Yemen",
+      "date": "2014-06-04T00:00:00.000Z",
+      "town": "Wadi Abida District",
+      "location": "Marib Province",
+      "deaths": "3-4",
+      "deaths_min": "3",
+      "deaths_max": "4",
+      "civilians": "",
+      "injuries": "",
+      "children": "",
+      "tweet_id": "465832286819061761",
+      "information_url": "http://www.reuters.com/article/2014/06/04/uk-yemen-violence-idUSKBN0EF25O20140604",
+      "bureau_id": "YEM175",
+      "bij_summary_short": "At least three alleged AQAP members were killed in a reported US drone strike on a vehicle in Wadi Abeeda - also the site of the previous reported strike. IANS, citing Xinhua, reported that tribal sources identified the vehicle as a 'small pick-up' belonging to Jafar al-Shabwani, described as a mid-level AQAP commander. His three companions were not named in the report.",
+      "bij_link": "http://www.thebureauinvestigates.com/2014/01/06/yemen-reported-us-covert-actions-2014/#YEM175",
+      "target": "",
+      "lat": "15.515888",
+      "lon": "45.449807",
+      "articles": [],
+      "names": [
+        ""
+      ]
+    },
+    {
+      "_id": "53177dff8d8b4098c5038402",
+      "number": 533,
+      "country": "Pakistan",
+      "date": "2014-06-11T00:00:00.000Z",
+      "town": "Tabi Tolkhel village",
+      "location": "Peshawar",
+      "deaths": "4-6",
+      "deaths_min": "4",
+      "deaths_max": "6",
+      "civilians": "",
+      "injuries": "",
+      "children": "",
+      "tweet_id": "476817706608775168",
+      "information_url": "http://www.nbcnews.com/news/world/six-killed-suspected-u-s-drone-strike-pakistan-officials-n128646",
+      "bureau_id": "Ob333",
+      "bij_summary_short": "The first drone strike in almost six months reportedly hit a house and vehicle, killing six alleged militants. Early reports put the death toll at three, although later a Pakistani intelligence source told reporters that six people had died: 'According to intercepts of the militants, four were Uzbek militants and two members of the Punjabi Taliban,' he said, according to NBC.",
+      "bij_link": "http://www.thebureauinvestigates.com/2014/06/11/obama-2014-pakistan-drone-strikes/#Ob333",
+      "target": "",
+      "lat": "33.031836",
+      "lon": "70.511285",
+      "articles": [],
+      "names": [
+        ""
+      ]
+    },
+    {
+      "_id": "53177dff8d8b4098c5038534",
+      "number": 534,
+      "country": "Pakistan",
+      "date": "2014-06-12T00:00:00.000Z",
+      "town": "Tabi Tolkhel village",
+      "location": "Peshawar",
+      "deaths": "6-10",
+      "deaths_min": "6",
+      "deaths_max": "10",
+      "civilians": "",
+      "injuries": "4",
+      "children": "",
+      "tweet_id": "477102263702675457",
+      "information_url": "http://www.washingtonpost.com/world/pakistani-officials-report-the-first-us-drone-strike-in-six-months/2014/06/11/2cd77c0c-f197-11e3-914c-1fbd0614e2d4_story.html",
+      "bureau_id": "Ob334",
+      "bij_summary_short": "Hours after the five-month hiatus in drone strikes ended, drones fired multiple missiles at alleged militants, reportedly killing either six or 10 people. ",
+      "bij_link": "http://www.thebureauinvestigates.com/2014/06/11/obama-2014-pakistan-drone-strikes/#Ob334",
+      "target": "",
+      "lat": "33.031836",
+      "lon": "70.511285",
+      "articles": [],
+      "names": [
+        ""
+      ]
+    },
+    {
+      "_id": "53177dff8d8b4098c5038535",
+      "number": 535,
+      "country": "Yemen",
+      "date": "2014-06-14T00:00:00.000Z",
+      "town": "al-Saied",
+      "location": "Shabwa Province",
+      "deaths": "5",
+      "deaths_min": "5",
+      "deaths_max": "5",
+      "civilians": "",
+      "injuries": "",
+      "children": "",
+      "tweet_id": "477833330419724288",
+      "information_url": "http://www.washingtonpost.com/world/middle_east/yemen-officials-say-drone-kills-5-militants/2014/06/14/932dd4fc-f3c1-11e3-93f9-5008fb17c37d_story.html",
+      "bureau_id": "Yem176",
+      "bij_summary_short": "A suspected U.S. drone in Yemen's south targeted a car carrying al-Qaida militants Saturday, killing all five passengers. The attack took place in a mountainous area in al-Saied in the southern Shabwa province. One of those killed in the attack was a suspected al-Qaida leader named Musaad al-Habashi",
+      "bij_link": "http://www.thebureauinvestigates.com/2014/01/06/yemen-reported-us-covert-actions-2014/#YEM176",
+      "target": "",
+      "lat": "13.589710",
+      "lon": "44.013889",
+      "articles": [],
+      "names": [
+        ""
+      ]
     }
   ]
 }
