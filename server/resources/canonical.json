@@ -13907,6 +13907,32 @@
       "names": [
         ""
       ]
+    },
+    {
+      "_id": "53177dff8d8b4098c5038536",
+      "number": 536,
+      "country": "Pakistan",
+      "date": "2014-06-18T00:00:00.000Z",
+      "town": "Miranshah",
+      "location": "North Waziristan",
+      "deaths": "4-8",
+      "deaths_min": "4",
+      "deaths_max": "8",
+      "civilians": "",
+      "injuries": "4",
+      "children": "",
+      "tweet_id": "479237647894736896",
+      "information_url": "http://www.nbcnews.com/news/world/drone-strike-kills-six-pakistans-troubled-north-waziristan-n134281",
+      "bureau_id": "Ob335",
+      "bij_summary_short": "The third strike of the month killed at least five alleged militants in the early hours. Most sources reported as many as six missiles hit a house and a vehicle on the outskirts of Miranshah - the capital of North Waziristan.",
+      "bij_link": "http://www.thebureauinvestigates.com/2014/06/11/obama-2014-pakistan-drone-strikes/#Ob335",
+      "target": "",
+      "lat": "33.007300",
+      "lon": "70.065200",
+      "articles": [],
+      "names": [
+        ""
+      ]
     }
   ]
 }
